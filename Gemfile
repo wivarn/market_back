@@ -7,8 +7,6 @@ gem "jets", "~> 3.0.0"
 # and config/database.yml file if you are not
 gem "pg", "~> 1.1.3"
 
-gem "dynomite"
-
 # development and test groups are not bundled as part of the deployment
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -16,6 +14,7 @@ group :development, :test do
   gem 'shotgun'
   gem 'rack'
   gem 'puma'
+  gem 'rubocop', '~> 1.13'
 end
 
 group :test do

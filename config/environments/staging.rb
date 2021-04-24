@@ -1,4 +1,4 @@
 Jets.application.configure do
-  config.gems.disable = true
+  config.prewarm.enable = false
   config.cors = true
 end

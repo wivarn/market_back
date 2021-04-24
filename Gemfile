@@ -1,11 +1,8 @@
 source "https://rubygems.org"
 
 gem "jets", "~> 3.0.0"
-
-
-# Include pg gem if you are using ActiveRecord, remove next line
-# and config/database.yml file if you are not
-gem "pg", "~> 1.1.3"
+gem "pg", "~> 1.2.3"
+gem 'devise', '~> 4.7.3'
 
 # development and test groups are not bundled as part of the deployment
 group :development, :test do

@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV["DB_POOL"] || 5  %>
-  database: <%= ENV['DB_NAME'] || 'market_back_development' %>
+  database: <%= ENV['DB_NAME'] || 'market_back' %>
   username: <%= ENV['DB_USER'] || ENV['USER'] %>
   password: <%= ENV['DB_PASS'] %>
   host: <%= ENV["DB_HOST"] %>
@@ -11,7 +11,10 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV['DB_NAME'] || 'market_back_development' %>
+  database: <%= ENV['DB_NAME'] || 'market_back' %>
+
+staging:
+  <<: *default
 
 test:
   <<: *default

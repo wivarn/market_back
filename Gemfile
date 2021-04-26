@@ -5,6 +5,11 @@ source 'https://rubygems.org'
 gem 'jets', '~> 3.0.0'
 gem 'pg', '~> 1.2.3'
 
+gem 'bcrypt', '~> 3.1'
+gem 'jwt', '~> 2.2'
+gem 'rodauth', '~> 2.12'
+gem 'sequel-activerecord_connection', '~> 1.2'
+
 # development and test groups are not bundled as part of the deployment
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

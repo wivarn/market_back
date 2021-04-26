@@ -1,5 +1,8 @@
-# This file is used by Rack-based servers to start the application.
+# frozen_string_literal: true
 
-require "jets"
+require 'jets'
+require './config/auth'
+
+use Auth
 Jets.boot
 run Jets.application

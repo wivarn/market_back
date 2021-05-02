@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'jets', '~> 3.0.0'
+gem 'jets', git: 'git@github.com:wivarn/jets.git', branch: 'fix-local-rack-route'
 gem 'pg', '~> 1.2.3'
 
 gem 'bcrypt', '~> 3.1'

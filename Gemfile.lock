@@ -1,3 +1,45 @@
+GIT
+  remote: git@github.com:wivarn/jets.git
+  revision: bc83f2802209222f7cccbdbf23e413c425d89395
+  branch: fix-local-rack-route
+  specs:
+    jets (3.0.5)
+      actionmailer (~> 6.1.0)
+      actionpack (~> 6.1.0)
+      actionview (~> 6.1.0)
+      activerecord (~> 6.1.0)
+      activesupport (~> 6.1.0)
+      aws-mfa-secure (~> 0.4.0)
+      aws-sdk-apigateway
+      aws-sdk-cloudformation
+      aws-sdk-cloudwatchlogs
+      aws-sdk-dynamodb
+      aws-sdk-kinesis
+      aws-sdk-lambda
+      aws-sdk-s3
+      aws-sdk-sns
+      aws-sdk-sqs
+      aws-sdk-ssm
+      cfn-status
+      cfn_camelizer (~> 0.4.6)
+      cfn_response
+      dotenv
+      gems
+      hashie
+      jets-html-sanitizer
+      kramdown
+      memoist
+      mini_mime
+      rack
+      railties (~> 6.1.0)
+      rainbow
+      recursive-open-struct
+      serverlessgems (~> 0.1.3)
+      shotgun
+      text-table
+      thor
+      zeitwerk
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,11 +91,11 @@ GEM
       rainbow
       thor
       zeitwerk
-    aws-partitions (1.447.0)
+    aws-partitions (1.449.0)
     aws-sdk-apigateway (1.62.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-cloudformation (1.51.0)
+    aws-sdk-cloudformation (1.52.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-cloudwatchlogs (1.40.0)
@@ -76,7 +118,7 @@ GEM
     aws-sdk-lambda (1.62.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.93.1)
+    aws-sdk-s3 (1.94.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
@@ -121,42 +163,6 @@ GEM
     hashie (4.1.0)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
-    jets (3.0.5)
-      actionmailer (~> 6.1.0)
-      actionpack (~> 6.1.0)
-      actionview (~> 6.1.0)
-      activerecord (~> 6.1.0)
-      activesupport (~> 6.1.0)
-      aws-mfa-secure (~> 0.4.0)
-      aws-sdk-apigateway
-      aws-sdk-cloudformation
-      aws-sdk-cloudwatchlogs
-      aws-sdk-dynamodb
-      aws-sdk-kinesis
-      aws-sdk-lambda
-      aws-sdk-s3
-      aws-sdk-sns
-      aws-sdk-sqs
-      aws-sdk-ssm
-      cfn-status
-      cfn_camelizer (~> 0.4.6)
-      cfn_response
-      dotenv
-      gems
-      hashie
-      jets-html-sanitizer
-      kramdown
-      memoist
-      mini_mime
-      rack
-      railties (~> 6.1.0)
-      rainbow
-      recursive-open-struct
-      serverlessgems (~> 0.1.3)
-      shotgun
-      text-table
-      thor
-      zeitwerk
     jets-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
     jmespath (1.4.0)
@@ -173,7 +179,7 @@ GEM
     memoist (0.16.2)
     method_source (1.0.0)
     mini_mime (1.1.0)
-    mini_portile2 (2.5.0)
+    mini_portile2 (2.5.1)
     minitest (5.14.4)
     nio4r (2.5.7)
     nokogiri (1.11.3)
@@ -263,7 +269,7 @@ DEPENDENCIES
   bcrypt (~> 3.1)
   byebug
   capybara
-  jets (~> 3.0.0)
+  jets!
   jwt (~> 2.2)
   launchy
   pg (~> 1.2.3)

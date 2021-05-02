@@ -6,7 +6,10 @@ require 'bcrypt'
 
 class Auth < Roda
   DB = Sequel.connect('postgresql://', extensions: :activerecord_connection)
+
   # plugin :middleware
+  # plugin :json
+  # plugin :json_parser
 
   plugin :rodauth, json: :only do
     enable :create_account, :verify_account, :verify_account_grace_period,

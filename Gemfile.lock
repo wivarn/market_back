@@ -1,7 +1,7 @@
 GIT
   remote: git@github.com:wivarn/jets.git
-  revision: bc83f2802209222f7cccbdbf23e413c425d89395
-  branch: fix-local-rack-route
+  revision: be4736ec96df24427e7e202503a1566820a18c9f
+  branch: master
   specs:
     jets (3.0.5)
       actionmailer (~> 6.1.0)

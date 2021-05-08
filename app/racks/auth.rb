@@ -12,10 +12,15 @@ class Auth < Roda
   # plugin :json_parser
 
   plugin :rodauth, json: :only do
-    enable :create_account, :verify_account, :verify_account_grace_period,
+    enable :create_account,
            :login, :logout, :jwt,
-           :reset_password, :change_password, :change_password_notify,
-           :change_login, :verify_login_change
+           :reset_password, :change_password,
+           :change_login
+
+    # enable :create_account, :verify_account, :verify_account_grace_period,
+    #        :login, :logout, :jwt,
+    #        :reset_password, :change_password, :change_password_notify,
+    #        :change_login, :verify_login_change
 
     use_database_authentication_functions? false
 
@@ -27,6 +32,20 @@ class Auth < Roda
     # account_closed_status_value 'closed'
 
     verify_account_set_password? false
+
+    # create_reset_password_email do
+    #   RodauthMailer.reset_password(email_to, reset_password_email_link)
+    # end
+    # create_verify_account_email do
+    #   RodauthMailer.verify_account(email_to, verify_account_email_link)
+    # end
+    # create_verify_login_change_email do |login|
+    #   RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login,
+    #                                     verify_login_change_email_link)
+    # end
+    # create_password_changed_email do
+    #   RodauthMailer.password_changed(email_to)
+    # end
   end
 
   route do |r|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RodauthMailer < ApplicationMailer
   def verify_account(recipient, email_link)
     @email_link = email_link

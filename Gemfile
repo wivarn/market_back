@@ -11,6 +11,8 @@ gem 'jwt', '~> 2.2'
 gem 'rodauth', '~> 2.12'
 gem 'sequel-activerecord_connection', '~> 1.2'
 
+gem 'letter_opener', '~> 1.7'
+
 # development and test groups are not bundled as part of the deployment
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

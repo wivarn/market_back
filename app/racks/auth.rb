@@ -17,7 +17,6 @@ class Auth < Roda
            :reset_password, :change_password, :change_password_notify,
            :change_login, :verify_login_change
 
-    # account_password_hash_column :password_hash
     use_database_authentication_functions? false
 
     jwt_secret '657e57e5784301eeab3dcbfef181d6b86d5c97eb3dd2770ee89f1b656248311c068e45a46e796d254be3cbacfaa96da60426696c99a68d4d5a3978a2b6d4b2d3'
@@ -35,5 +34,3 @@ class Auth < Roda
     r.rodauth
   end
 end
-
-# run Auth.app if __FILE__ == $0

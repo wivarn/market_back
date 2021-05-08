@@ -171,6 +171,8 @@ GEM
       rexml
     launchy (2.5.0)
       addressable (~> 2.7)
+    letter_opener (1.7.0)
+      launchy (~> 2.2)
     loofah (2.9.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -272,6 +274,7 @@ DEPENDENCIES
   jets!
   jwt (~> 2.2)
   launchy
+  letter_opener (~> 1.7)
   pg (~> 1.2.3)
   puma
   rack

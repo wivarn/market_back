@@ -1,4 +1,4 @@
-require 'letter_opener'
+# frozen_string_literal: true
 
 Jets.application.configure do
   config.gems.disable = true

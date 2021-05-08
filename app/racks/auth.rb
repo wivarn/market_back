@@ -17,6 +17,8 @@ class Auth < Roda
            :reset_password, :change_password,
            :change_login
 
+    require_login_confirmation? false
+
     # enable :create_account, :verify_account, :verify_account_grace_period,
     #        :login, :logout, :jwt,
     #        :reset_password, :change_password, :change_password_notify,
@@ -31,7 +33,7 @@ class Auth < Roda
     account_open_status_value 'verified'
     # account_closed_status_value 'closed'
 
-    verify_account_set_password? false
+    # verify_account_set_password? false
 
     # create_reset_password_email do
     #   RodauthMailer.reset_password(email_to, reset_password_email_link)

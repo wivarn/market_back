@@ -1,6 +1,6 @@
 Jets.application.configure do
-  config.project_name = "market_back"
-  config.mode = "api"
+  config.project_name = 'market_back'
+  config.mode = 'api'
 
   config.prewarm.enable = true # default is true
   # config.prewarm.rate = '30 minutes' # default is '30 minutes'
@@ -15,9 +15,9 @@ Jets.application.configure do
   # config.cors = true # for '*'' # defaults to false
   # config.cors = '*.mydomain.com' # for specific domain
 
-  # config.function.timeout = 30 # defaults to 30
+  config.function.timeout = 15 # defaults to 30
   # config.function.role = "arn:aws:iam::#{Jets.aws.account}:role/service-role/pre-created"
-  # config.function.memory_size = 1536
+  config.function.memory_size = 256
 
   # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' (https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-create/#endpointConfiguration)
 
@@ -46,7 +46,6 @@ Jets.application.configure do
 
   # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' https://amzn.to/2r0Iu2L
   # config.api.authorization_type = "AWS_IAM" # default is 'NONE' https://amzn.to/2qZ7zLh
-
 
   # More info: http://rubyonjets.com/docs/routing/custom-domain/
   # config.domain.hosted_zone_name = "example.com"

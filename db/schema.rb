@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_25_222504) do
+ActiveRecord::Schema.define(version: 2021_05_10_023055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -42,6 +42,25 @@ ActiveRecord::Schema.define(version: 2021_04_25_222504) do
     t.citext "email", null: false
     t.string "status", default: "unverified", null: false
     t.index ["email"], name: "index_accounts_on_email", unique: true, where: "((status)::text = ANY ((ARRAY['unverified'::character varying, 'verified'::character varying])::text[]))"
+  end
+
+  create_table "listings", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "photos", null: false, array: true
+    t.string "title", null: false
+    t.string "condition", null: false
+    t.text "description"
+    t.string "currency", limit: 3, null: false
+    t.decimal "price", precision: 12, scale: 4, null: false
+    t.decimal "domestic_shipping", precision: 12, scale: 4, null: false
+    t.decimal "international_shipping", precision: 12, scale: 4
+    t.string "status", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_listings_on_account_id"
+    t.index ["currency"], name: "index_listings_on_currency"
+    t.index ["price"], name: "index_listings_on_price"
+    t.index ["status"], name: "index_listings_on_status"
   end
 
   add_foreign_key "account_login_change_keys", "accounts", column: "id"

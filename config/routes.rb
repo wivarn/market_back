@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Jets.application.routes.draw do
+  resources :listings
   root 'jets/public#show'
   mount Auth, at: 'auth'
 

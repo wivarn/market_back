@@ -2,6 +2,7 @@
 
 class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show update delete]
+  before_action :current_account, only: %i[create update delete]
 
   # GET /listings
   def index
@@ -17,7 +18,7 @@ class ListingsController < ApplicationController
 
   # POST /listings
   def create
-    @listing = Listing.new(listing_params)
+    @listing = current_account.listings.new(listing_params)
 
     if @listing.save
       render json: @listing, status: :created
@@ -50,7 +51,7 @@ class ListingsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def listing_params
-    params.required(:listing).permit(:username, { photos: [] }, :title, :condition, :currency, :description, :price,
+    params.required(:listing).permit({ photos: [] }, :title, :condition, :currency, :description, :price,
                                      :domestic_shipping, :status)
   end
 end

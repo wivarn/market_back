@@ -7,7 +7,7 @@ require 'bcrypt'
 class Auth < Roda
   DB = Sequel.connect('postgresql://', extensions: :activerecord_connection)
 
-  # plugin :middleware
+  plugin :middleware
   # plugin :json
   # plugin :json_parser
 

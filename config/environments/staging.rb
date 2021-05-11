@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Jets.application.configure do
-  config.gems.disable = true
+  config.gems.disable = false
   config.prewarm.enable = false
   config.cors = true
 
@@ -11,7 +11,7 @@ Jets.application.configure do
     # subnet_ids: %w[subnet-0acbe6648d2c3fbb0 subnet-0029d53651927eeb2 subnet-08f73460ec50bdb05]
   }
 
-  config.lambda.layers = [
-    'arn:aws:lambda:us-east-1:446093344105:layer:rubylayer:1'
-  ]
+  # config.lambda.layers = [
+  #   'arn:aws:lambda:us-east-1:446093344105:layer:rubylayer:1'
+  # ]
 end

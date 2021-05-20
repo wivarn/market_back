@@ -2,16 +2,14 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV["DB_POOL"] || 5  %>
-  # database: <%= ENV['DB_NAME'] || 'market_back' %>
-  # username: <%= ENV['DB_USER'] || ENV['USER'] %>
-  # password: <%= ENV['DB_PASS'] %>
-  # host: <%= ENV["DB_HOST"] %>
-  url: <%= ENV['DATABASE_URL'] %> # takes higher precedence than other settings
+  database: <%= ENV['PGDATABASE'] %>
+  username: <%= ENV['PGUSER'] %>
+  password: <%= ENV['PGPASSWORD'] %>
+  host: <%= ENV["PGHOST"] %>
   reconnect: true
 
 development:
   <<: *default
-  # database: <%= ENV['DB_NAME'] || 'market_back' %>
 
 staging:
   <<: *default
@@ -22,5 +20,3 @@ test:
 
 production:
   <<: *default
-  database: market_back_production
-  url: <%= ENV['DATABASE_URL'] %>

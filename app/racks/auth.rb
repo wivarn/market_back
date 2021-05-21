@@ -17,23 +17,42 @@ class Auth < Roda
            :reset_password, :change_password,
            :change_login, :jwt_refresh, :remember
 
-    require_login_confirmation? false
-
     # enable :create_account, :verify_account, :verify_account_grace_period,
     #        :login, :logout, :jwt,
     #        :reset_password, :change_password, :change_password_notify,
     #        :change_login, :verify_login_change
 
+    # login/email config
+    require_login_confirmation? false
+
+    # custom account fields
+    before_create_account do
+      unless given_name = param_or_nil('given_name')
+        throw_error_status(422, 'given_name', 'must be present')
+      end
+
+      unless family_name = param_or_nil('family_name')
+        throw_error_status(422, 'family_name', 'must be present')
+      end
+
+      account[:given_name] = given_name
+      account[:family_name] = family_name
+    end
+
+    # password config
     use_database_authentication_functions? false
+    password_minimum_length 8
 
-    jwt_secret '657e57e5784301eeab3dcbfef181d6b86d5c97eb3dd2770ee89f1b656248311c068e45a46e796d254be3cbacfaa96da60426696c99a68d4d5a3978a2b6d4b2d3'
-
+    # account verification config
     account_status_column :status
     account_unverified_status_value 'unverified'
     account_open_status_value 'verified'
     # account_closed_status_value 'closed'
 
+    # jwt config
+    jwt_secret '657e57e5784301eeab3dcbfef181d6b86d5c97eb3dd2770ee89f1b656248311c068e45a46e796d254be3cbacfaa96da60426696c99a68d4d5a3978a2b6d4b2d3'
     expired_jwt_access_token_status 401
+    jwt_access_token_period 900
 
     # verify_account_set_password? false
 
@@ -51,6 +70,7 @@ class Auth < Roda
     #   RodauthMailer.password_changed(email_to)
     # end
 
+    # remember cookie configu
     after_login do
       remember_login
     end

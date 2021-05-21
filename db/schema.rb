@@ -54,6 +54,9 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
   create_table "accounts", force: :cascade do |t|
     t.citext "email", null: false
     t.string "status", default: "unverified", null: false
+    t.string "given_name", null: false
+    t.string "family_name", null: false
+    t.string "picture"
     t.index ["email"], name: "index_accounts_on_email", unique: true, where: "((status)::text = ANY ((ARRAY['unverified'::character varying, 'verified'::character varying])::text[]))"
   end
 

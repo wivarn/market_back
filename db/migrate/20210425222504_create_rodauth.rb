@@ -5,6 +5,9 @@ class CreateRodauth < ActiveRecord::Migration[6.1]
     create_table :accounts do |t|
       t.citext :email, null: false, index: { unique: true, where: "status IN ('unverified', 'verified')" }
       t.string :status, null: false, default: 'unverified'
+      t.string :given_name, null: false
+      t.string :family_name, null: false
+      t.string :picture
     end
 
     # Used if storing password hashes in a separate table (default)

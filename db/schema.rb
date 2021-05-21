@@ -16,6 +16,14 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
   enable_extension "citext"
   enable_extension "plpgsql"
 
+  create_table "account_jwt_refresh_keys", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "key", null: false
+    t.datetime "deadline", default: -> { "(CURRENT_TIMESTAMP + ((14 || ' days'::text))::interval)" }, null: false
+    t.index ["account_id"], name: "account_jwt_rk_account_id_idx"
+    t.index ["account_id"], name: "index_account_jwt_refresh_keys_on_account_id"
+  end
+
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -30,6 +38,11 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.string "key", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
+  end
+
+  create_table "account_remember_keys", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "deadline", default: -> { "(CURRENT_TIMESTAMP + ((14 || ' days'::text))::interval)" }, null: false
   end
 
   create_table "account_verification_keys", force: :cascade do |t|
@@ -63,8 +76,10 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.index ["status"], name: "index_listings_on_status"
   end
 
+  add_foreign_key "account_jwt_refresh_keys", "accounts"
   add_foreign_key "account_login_change_keys", "accounts", column: "id"
   add_foreign_key "account_password_hashes", "accounts", column: "id"
   add_foreign_key "account_password_reset_keys", "accounts", column: "id"
+  add_foreign_key "account_remember_keys", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
 end

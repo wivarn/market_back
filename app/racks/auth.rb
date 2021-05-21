@@ -15,7 +15,7 @@ class Auth < Roda
     enable :create_account,
            :login, :logout, :jwt,
            :reset_password, :change_password,
-           :change_login
+           :change_login, :jwt_refresh
 
     require_login_confirmation? false
 
@@ -47,6 +47,10 @@ class Auth < Roda
     # end
     # create_password_changed_email do
     #   RodauthMailer.password_changed(email_to)
+    # end
+
+    # after_login do
+    #   remember_login
     # end
   end
 

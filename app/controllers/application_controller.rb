@@ -8,9 +8,12 @@ class ApplicationController < Jets::Controller::Base
   end
 
   def current_account
-    @current_account ||= Account.find(rodauth.session_value)
+    response = catch(:halt) do
+      @current_account ||= Account.find(rodauth.session_value)
+    end
+    @current_account || render(json: response[2][0], status: response[0])
   rescue ActiveRecord::RecordNotFound
     rodauth.logout
-    rodauth.login_required
+    render plain: 'you are not logged in'
   end
 end

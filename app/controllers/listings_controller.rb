@@ -2,7 +2,7 @@
 
 class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show update delete]
-  before_action :current_account, only: %i[create update delete]
+  before_action :authenticate!, only: %i[create update delete]
 
   # GET /listings
   def index

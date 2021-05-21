@@ -15,7 +15,7 @@ class Auth < Roda
     enable :create_account,
            :login, :logout, :jwt,
            :reset_password, :change_password,
-           :change_login, :jwt_refresh
+           :change_login, :jwt_refresh, :remember
 
     require_login_confirmation? false
 
@@ -33,6 +33,8 @@ class Auth < Roda
     account_open_status_value 'verified'
     # account_closed_status_value 'closed'
 
+    expired_jwt_access_token_status 401
+
     # verify_account_set_password? false
 
     # create_reset_password_email do
@@ -49,9 +51,9 @@ class Auth < Roda
     #   RodauthMailer.password_changed(email_to)
     # end
 
-    # after_login do
-    #   remember_login
-    # end
+    after_login do
+      remember_login
+    end
   end
 
   route do |r|

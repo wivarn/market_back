@@ -6,9 +6,10 @@ class ListingsController < ApplicationController
 
   # GET /listings
   def index
-    @listings = Listing.all
+    listings = Listing.preload(:account)
+    listings_with_name = listings.map { |listing| listing.serializable_hash.merge(listing.account.slice(:given_name)) }
 
-    render json: @listings
+    render json: listings_with_name
   end
 
   # GET /listings/1

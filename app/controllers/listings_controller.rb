@@ -2,19 +2,21 @@
 
 class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show update delete]
-  before_action :authenticate!, only: %i[create update delete]
+  before_action :authenticate!, only: %i[index create update delete]
 
   # GET /listings
   def index
-    listings = Listing.preload(:account)
-    listings_with_name = listings.map { |listing| listing.serializable_hash.merge(listing.account.slice(:given_name)) }
+    render json: current_account.listings
+  end
 
-    render json: listings_with_name
+  def search
+    render json: Listing.all
   end
 
   # GET /listings/1
   def show
-    render json: @listing
+    listing_with_name = @listing.serializable_hash.merge(@listing.account.slice(:given_name, :family_name))
+    render json: listing_with_name
   end
 
   # POST /listings

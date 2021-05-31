@@ -15,7 +15,7 @@ class Auth < Roda
     enable :create_account,
            :login, :logout, :jwt,
            :reset_password, :change_password,
-           :change_login, :jwt_refresh, :remember
+           :change_login, :jwt_refresh
 
     # enable :create_account, :verify_account, :verify_account_grace_period,
     #        :login, :logout, :jwt,
@@ -27,11 +27,11 @@ class Auth < Roda
 
     # custom account fields
     before_create_account do
-      unless given_name = param_or_nil('given_name')
+      unless (given_name = param_or_nil('given_name'))
         throw_error_status(422, 'given_name', 'must be present')
       end
 
-      unless family_name = param_or_nil('family_name')
+      unless (family_name = param_or_nil('family_name'))
         throw_error_status(422, 'family_name', 'must be present')
       end
 
@@ -69,11 +69,6 @@ class Auth < Roda
     # create_password_changed_email do
     #   RodauthMailer.password_changed(email_to)
     # end
-
-    # remember cookie configu
-    after_login do
-      remember_login
-    end
   end
 
   route do |r|

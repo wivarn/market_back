@@ -9,7 +9,6 @@ class ApplicationController < Jets::Controller::Base
 
   def authenticate!
     response = catch(:halt) do
-      load_session
       @current_account = Account.find(rodauth.session_value)
     end
     # response is in format: [status, headers, [body]]
@@ -17,13 +16,6 @@ class ApplicationController < Jets::Controller::Base
   rescue ActiveRecord::RecordNotFound
     rodauth.logout
     render json: { error: 'you are not logged in' }, status: 401
-  end
-
-  def load_session
-    return if rodauth.valid_jwt?
-
-    rodauth.load_memory
-    rodauth.session_value && response.add_header('Authorization', rodauth.session_jwt)
   end
 
   def current_account

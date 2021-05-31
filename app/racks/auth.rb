@@ -59,7 +59,8 @@ class Auth < Roda
     # jwt config
     jwt_secret ENV['JWT_SECRET']
     expired_jwt_access_token_status 401
-    jwt_access_token_period 900
+    jwt_access_token_period 1800 # 30 min
+    allow_refresh_with_expired_jwt_access_token? true
 
     # verify_account_set_password? false
 

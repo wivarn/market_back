@@ -8,19 +8,25 @@ class Auth < Roda
   DB = Sequel.connect('postgresql://', extensions: :activerecord_connection)
 
   plugin :middleware
-  # plugin :json
-  # plugin :json_parser
 
   plugin :rodauth, json: :only do
     enable :create_account,
            :login, :logout, :jwt,
-           :reset_password, :change_password,
-           :change_login, :jwt_refresh
+           :reset_password, :change_password, :update_password_hash,
+           :change_login, :jwt_refresh, :password_pepper
 
-    # enable :create_account, :verify_account, :verify_account_grace_period,
-    #        :login, :logout, :jwt,
-    #        :reset_password, :change_password, :change_password_notify,
-    #        :change_login, :verify_login_change
+    # enable :verify_account, :verify_account_grace_period,
+    #        :change_password_notify
+
+    # TODO: :two_factor, :audit_logging, :otp, :recovery_codes
+    # Maybe? :change_login, :verify_login_change, :close_account, :disallow_password_reuse
+    # :email_auth, :lockout, :password_complexity, :password_expiration, :sms_codes
+
+    # Not required
+    # session_expiration because we're using jwt/jwt refresh
+
+    hmac_secret ENV['HMAC_SECRET']
+    password_pepper ENV['PASSWORD_PEPPER']
 
     # login/email config
     require_login_confirmation? false
@@ -42,6 +48,7 @@ class Auth < Roda
     # password config
     use_database_authentication_functions? false
     password_minimum_length 8
+    password_hash_cost 12
 
     # account verification config
     account_status_column :status
@@ -50,7 +57,7 @@ class Auth < Roda
     # account_closed_status_value 'closed'
 
     # jwt config
-    jwt_secret '657e57e5784301eeab3dcbfef181d6b86d5c97eb3dd2770ee89f1b656248311c068e45a46e796d254be3cbacfaa96da60426696c99a68d4d5a3978a2b6d4b2d3'
+    jwt_secret ENV['JWT_SECRET']
     expired_jwt_access_token_status 401
     jwt_access_token_period 900
 

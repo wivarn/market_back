@@ -11,9 +11,10 @@ class Auth < Roda
 
   plugin :rodauth, json: :only do
     enable :create_account,
-           :login, :logout, :jwt, :active_sessions,
+           :login, :logout, :active_sessions,
+           :jwt, :jwt_cors, :jwt_refresh,
            :reset_password, :change_password, :update_password_hash,
-           :change_login, :jwt_refresh, :password_pepper
+           :change_login, :password_pepper
 
     # enable :verify_account, :verify_account_grace_period,
     #        :change_password_notify
@@ -58,6 +59,7 @@ class Auth < Roda
 
     # jwt config
     jwt_secret ENV['JWT_SECRET']
+    jwt_cors_allow_origin true
     expired_jwt_access_token_status 401
     jwt_access_token_period 1800 # 30 min
     allow_refresh_with_expired_jwt_access_token? true

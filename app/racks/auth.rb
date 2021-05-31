@@ -11,7 +11,7 @@ class Auth < Roda
 
   plugin :rodauth, json: :only do
     enable :create_account,
-           :login, :logout, :jwt,
+           :login, :logout, :jwt, :active_sessions,
            :reset_password, :change_password, :update_password_hash,
            :change_login, :jwt_refresh, :password_pepper
 
@@ -82,5 +82,6 @@ class Auth < Roda
   route do |r|
     env['rodauth'] = rodauth
     r.rodauth
+    rodauth.check_active_session
   end
 end

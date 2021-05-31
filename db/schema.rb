@@ -16,6 +16,14 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
   enable_extension "citext"
   enable_extension "plpgsql"
 
+  create_table "account_active_session_keys", primary_key: ["account_id", "session_id"], force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "session_id", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_use", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["account_id"], name: "index_account_active_session_keys_on_account_id"
+  end
+
   create_table "account_jwt_refresh_keys", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "key", null: false
@@ -79,6 +87,7 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.index ["status"], name: "index_listings_on_status"
   end
 
+  add_foreign_key "account_active_session_keys", "accounts"
   add_foreign_key "account_jwt_refresh_keys", "accounts"
   add_foreign_key "account_login_change_keys", "accounts", column: "id"
   add_foreign_key "account_password_hashes", "accounts", column: "id"

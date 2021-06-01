@@ -26,11 +26,18 @@ class Auth < Roda
 
     # TODO: :two_factor,
 
+    # base config
+    use_database_authentication_functions? false
+    set_deadline_values? true
     hmac_secret ENV['HMAC_SECRET']
-    password_pepper ENV['PASSWORD_PEPPER']
 
     # login/email config
     require_login_confirmation? false
+
+    # account verification config
+    account_status_column :status
+    account_unverified_status_value 'unverified'
+    account_open_status_value 'verified'
 
     # custom account fields
     before_create_account do
@@ -47,16 +54,11 @@ class Auth < Roda
     end
 
     # password config
-    use_database_authentication_functions? false
-    password_minimum_length 8
     password_hash_cost 12
+    password_pepper ENV['PASSWORD_PEPPER']
     change_password_requires_password? true
-
-    # account verification config
-    account_status_column :status
-    account_unverified_status_value 'unverified'
-    account_open_status_value 'verified'
-    # account_closed_status_value 'closed'
+    reset_password_deadline_interval days: 1
+    reset_password_skip_resend_email_within minutes: 1
 
     # jwt config
     jwt_secret ENV['JWT_SECRET']
@@ -67,6 +69,7 @@ class Auth < Roda
 
     # account lockout
     max_invalid_logins 5
+    account_lockouts_deadline_interval years: 99
 
     # verify_account_set_password? false
 

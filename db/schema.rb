@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_10_023055) do
+ActiveRecord::Schema.define(version: 2021_06_01_023806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -24,6 +24,16 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.index ["account_id"], name: "index_account_active_session_keys_on_account_id"
   end
 
+  create_table "account_authentication_audit_logs", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.text "message", null: false
+    t.jsonb "metadata"
+    t.index ["account_id", "at"], name: "audit_account_at_idx"
+    t.index ["account_id"], name: "index_account_authentication_audit_logs_on_account_id"
+    t.index ["at"], name: "audit_at_idx"
+  end
+
   create_table "account_jwt_refresh_keys", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "key", null: false
@@ -32,10 +42,26 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.index ["account_id"], name: "index_account_jwt_refresh_keys_on_account_id"
   end
 
+  create_table "account_lockouts", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "deadline", null: false
+    t.datetime "email_last_sent"
+  end
+
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
     t.datetime "deadline", null: false
+  end
+
+  create_table "account_login_failures", force: :cascade do |t|
+    t.integer "number", default: 1, null: false
+  end
+
+  create_table "account_otp_keys", force: :cascade do |t|
+    t.string "key", null: false
+    t.integer "num_failures", default: 0, null: false
+    t.datetime "last_use", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "account_password_hashes", force: :cascade do |t|
@@ -48,9 +74,15 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
-  create_table "account_remember_keys", force: :cascade do |t|
-    t.string "key", null: false
-    t.datetime "deadline", default: -> { "(CURRENT_TIMESTAMP + ((14 || ' days'::text))::interval)" }, null: false
+  create_table "account_previous_password_hashes", force: :cascade do |t|
+    t.bigint "account_id"
+    t.string "password_hash", null: false
+    t.index ["account_id"], name: "index_account_previous_password_hashes_on_account_id"
+  end
+
+  create_table "account_recovery_codes", primary_key: ["id", "code"], force: :cascade do |t|
+    t.bigint "id", null: false
+    t.string "code", null: false
   end
 
   create_table "account_verification_keys", force: :cascade do |t|
@@ -65,7 +97,22 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
     t.string "given_name", null: false
     t.string "family_name", null: false
     t.string "picture"
+    t.string "currency", limit: 3, default: "USD", null: false
+    t.string "role", default: "user", null: false
     t.index ["email"], name: "index_accounts_on_email", unique: true, where: "((status)::text = ANY ((ARRAY['unverified'::character varying, 'verified'::character varying])::text[]))"
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street1", null: false
+    t.string "street2"
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "zip", null: false
+    t.string "country", null: false
+    t.bigint "account_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_addresses_on_account_id"
   end
 
   create_table "listings", force: :cascade do |t|
@@ -88,10 +135,16 @@ ActiveRecord::Schema.define(version: 2021_05_10_023055) do
   end
 
   add_foreign_key "account_active_session_keys", "accounts"
+  add_foreign_key "account_authentication_audit_logs", "accounts"
   add_foreign_key "account_jwt_refresh_keys", "accounts"
+  add_foreign_key "account_lockouts", "accounts", column: "id"
   add_foreign_key "account_login_change_keys", "accounts", column: "id"
+  add_foreign_key "account_login_failures", "accounts", column: "id"
+  add_foreign_key "account_otp_keys", "accounts", column: "id"
   add_foreign_key "account_password_hashes", "accounts", column: "id"
   add_foreign_key "account_password_reset_keys", "accounts", column: "id"
-  add_foreign_key "account_remember_keys", "accounts", column: "id"
+  add_foreign_key "account_previous_password_hashes", "accounts"
+  add_foreign_key "account_recovery_codes", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
+  add_foreign_key "addresses", "accounts"
 end

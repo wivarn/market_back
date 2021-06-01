@@ -110,6 +110,7 @@ GEM
       memoist
       rainbow
     cfn_response (0.2.0)
+    chunky_png (1.4.0)
     concurrent-ruby (1.1.8)
     crass (1.0.6)
     diff-lcs (1.4.4)
@@ -211,6 +212,11 @@ GEM
     rodauth (2.12.0)
       roda (>= 2.6.0)
       sequel (>= 4)
+    rotp (6.2.0)
+    rqrcode (2.0.0)
+      chunky_png (~> 1.0)
+      rqrcode_core (~> 1.0)
+    rqrcode_core (1.0.0)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -270,6 +276,8 @@ DEPENDENCIES
   puma
   rack
   rodauth (~> 2.12)
+  rotp (~> 6.2)
+  rqrcode (~> 2.0)
   rspec
   rubocop (~> 1.13)
   sequel-activerecord_connection (~> 1.2)

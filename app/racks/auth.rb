@@ -3,6 +3,8 @@
 require 'roda'
 require 'sequel'
 require 'bcrypt'
+require 'rotp'
+require 'rqrcode'
 
 class Auth < Roda
   DB = Sequel.connect('postgresql://', extensions: :activerecord_connection)
@@ -13,18 +15,16 @@ class Auth < Roda
     enable :create_account,
            :login, :logout, :active_sessions,
            :jwt, :jwt_cors, :jwt_refresh,
-           :reset_password, :change_password, :update_password_hash,
-           :change_login, :password_pepper
+           :password_pepper, :reset_password, :change_password, :update_password_hash,
+           :disallow_password_reuse, :password_complexity, :disallow_common_passwords,
+           :change_login, :verify_login_change,
+           :otp, :recovery_codes, :lockout,
+           :audit_logging
 
     # enable :verify_account, :verify_account_grace_period,
     #        :change_password_notify
 
-    # TODO: :two_factor, :audit_logging, :otp, :recovery_codes
-    # Maybe? :change_login, :verify_login_change, :close_account, :disallow_password_reuse
-    # :email_auth, :lockout, :password_complexity, :password_expiration, :sms_codes
-
-    # Not required
-    # session_expiration because we're using jwt/jwt refresh
+    # TODO: :two_factor,
 
     hmac_secret ENV['HMAC_SECRET']
     password_pepper ENV['PASSWORD_PEPPER']
@@ -50,6 +50,7 @@ class Auth < Roda
     use_database_authentication_functions? false
     password_minimum_length 8
     password_hash_cost 12
+    change_password_requires_password? true
 
     # account verification config
     account_status_column :status
@@ -63,6 +64,9 @@ class Auth < Roda
     expired_jwt_access_token_status 401
     jwt_access_token_period 1800 # 30 min
     allow_refresh_with_expired_jwt_access_token? true
+
+    # account lockout
+    max_invalid_logins 5
 
     # verify_account_set_password? false
 

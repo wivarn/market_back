@@ -2,4 +2,5 @@
 
 class Account < ApplicationRecord
   has_many :listings
+  has_many :addresses
 end

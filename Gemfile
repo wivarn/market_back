@@ -2,8 +2,12 @@
 
 source 'https://rubygems.org'
 
+gem 'aws-sdk-sesv2', '~> 1.17'
 gem 'jets', '~> 3.0'
 gem 'pg', '~> 1.2.3'
+
+# seems to be a dependancy for ActionMailer::Base.add_delivery_method to work
+gem 'mailgun-ruby', '~> 1.2'
 
 # rodauth
 gem 'bcrypt', '~> 3.1'

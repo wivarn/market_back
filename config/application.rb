@@ -3,6 +3,7 @@ require_relative '../app/racks/auth'
 Jets.application.configure do
   config.project_name = 'market_back'
   config.mode = 'api'
+  config.cors = true
 
   config.prewarm.enable = true # default is true
   # config.prewarm.rate = '30 minutes' # default is '30 minutes'
@@ -14,14 +15,21 @@ Jets.application.configure do
 
   # config.asset_base_url = 'https://cloudfront.domain.com/assets' # example
 
-  # config.cors = true # for '*'' # defaults to false
-  # config.cors = '*.mydomain.com' # for specific domain
-
   config.function.timeout = 15 # defaults to 30
   # config.function.role = "arn:aws:iam::#{Jets.aws.account}:role/service-role/pre-created"
   config.function.memory_size = 512
+  config.iam_policy = [
+    {
+      action: ['ses:SendEmail'],
+      effect: 'Allow',
+      resource: "arn:aws:ses:#{Jets.aws.region}:#{Jets.aws.account}:identity/*"
+    }
+  ]
 
   config.middleware.use Auth
+
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :ses
 
   # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' (https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-create/#endpointConfiguration)
 

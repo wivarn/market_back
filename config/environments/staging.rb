@@ -5,9 +5,6 @@ Jets.application.configure do
   config.prewarm.enable = false
   config.cors = true
 
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :ses
-
   config.function.vpc_config = {
     security_group_ids: %w[sg-0ea722b0ee62aea2a],
     subnet_ids: %w[subnet-0ef4dcc378bce1fad subnet-05fae8cc3204c29d5 subnet-0b37866a3f88a58b7]

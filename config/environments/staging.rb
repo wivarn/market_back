@@ -3,7 +3,9 @@
 Jets.application.configure do
   config.gems.disable = false
   config.prewarm.enable = false
-  config.cors = true
+
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :ses
 
   config.function.vpc_config = {
     security_group_ids: %w[sg-0ea722b0ee62aea2a],

@@ -17,7 +17,7 @@ Jets.application.configure do
 
   config.function.timeout = 15 # defaults to 30
   # config.function.role = "arn:aws:iam::#{Jets.aws.account}:role/service-role/pre-created"
-  config.function.memory_size = 512
+  config.function.memory_size = 256
   config.iam_policy = [
     {
       action: ['ses:SendEmail'],
@@ -27,9 +27,6 @@ Jets.application.configure do
   ]
 
   config.middleware.use Auth
-
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :ses
 
   # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' (https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-create/#endpointConfiguration)
 

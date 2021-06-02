@@ -13,7 +13,10 @@ gem 'rotp', '~> 6.2'
 gem 'rqrcode', '~> 2.0'
 gem 'sequel-activerecord_connection', '~> 1.2'
 
-# development and test groups are not bundled as part of the deployment
+group :development, :staging do
+  gem 'mail_safe', '~> 0.3.4'
+end
+
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'puma'

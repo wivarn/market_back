@@ -1,0 +1,2 @@
+class AccountPasswordHash < ApplicationRecord
+end

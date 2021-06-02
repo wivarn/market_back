@@ -83,6 +83,9 @@ class Auth < Roda
     create_password_changed_email do
       RodauthMailer.password_changed(email_to)
     end
+    create_unlock_account_email do
+      RodauthMailer.unlock_account(email_to, unlock_account_email_link)
+    end
   end
 
   route do |r|

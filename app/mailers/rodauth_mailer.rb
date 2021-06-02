@@ -31,9 +31,9 @@ class RodauthMailer < ApplicationMailer
   #   mail to: recipient
   # end
 
-  # def unlock_account(recipient, email_link)
-  #   @email_link = email_link
-  #
-  #   mail to: recipient
-  # end
+  def unlock_account(recipient, email_link)
+    @email_link = email_link
+
+    mail to: recipient
+  end
 end

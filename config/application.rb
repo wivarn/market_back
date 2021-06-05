@@ -36,10 +36,14 @@ Jets.application.configure do
   # }
   # More examples:
   # config.function.dead_letter_config = { target_arn: "arn" }
-  # config.function.vpc_config = {
-  #   security_group_ids: %w[sg-1 sg-2],
-  #   subnet_ids: %w[subnet-1 subnet-2],
-  # }
+  config.function.vpc_config = {
+    security_group_ids: [ENV['LAMBDA_SG_ID']],
+    subnet_ids: ENV['PRIVATE_SUBNET_ID_LIST'].split(',')
+  }
+
+  config.domain.cert_arn = ENV['API_DOMAIN_CERT_ARN']
+  config.domain.hosted_zone_name = ENV['DOMAIN']
+  config.domain.name = "api.#{ENV['DOMAIN']}"
   # The config.function settings to the CloudFormation Lambda Function properties.
   # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
   # Underscored format can be used for keys to make it look more ruby-ish.
@@ -57,9 +61,9 @@ Jets.application.configure do
   # config.api.authorization_type = "AWS_IAM" # default is 'NONE' https://amzn.to/2qZ7zLh
 
   # More info: http://rubyonjets.com/docs/routing/custom-domain/
-  # config.domain.hosted_zone_name = "example.com"
-  # us-west-2 REGIONAL endpoint - takes 2 minutes
-  # config.domain.cert_arn = "arn:aws:acm:us-west-2:112233445566:certificate/8d8919ce-a710-4050-976b-b33da991e123"
+  config.domain.cert_arn = ENV['API_DOMAIN_CERT_ARN']
+  config.domain.hosted_zone_name = ENV['DOMAIN']
+  config.domain.name = "api.#{ENV['DOMAIN']}"
   # us-east-1 EDGE endpoint - takes 10-15 minutes
   # config.domain.cert_arn = "arn:aws:acm:us-east-1:112233445566:certificate/d68472ba-04f8-45ba-b9db-14f839d57123"
   # config.domain.endpoint_type = "EDGE"

@@ -8,10 +8,12 @@ Jets.application.configure do
   config.action_mailer.delivery_method = :ses
 
   config.function.vpc_config = {
-    security_group_ids: %w[sg-0ea722b0ee62aea2a],
-    subnet_ids: %w[subnet-0ef4dcc378bce1fad subnet-05fae8cc3204c29d5 subnet-0b37866a3f88a58b7]
-    # subnet_ids: %w[subnet-0acbe6648d2c3fbb0 subnet-0029d53651927eeb2 subnet-08f73460ec50bdb05]
+    security_group_ids: %w[sg-0c7dfee716adf3909],
+    subnet_ids: %w[subnet-091bf49612a0f7abe subnet-091bf49612a0f7abe subnet-0e47637bd652c39ce]
   }
+
+  config.domain.cert_arn = 'arn:aws:acm:us-west-2:112233445577:certificate/8d8919ce-a710-4050-976b-b33da991e7e8' # String
+  config.domain.hosted_zone_name = 'coolapp.com'
 
   # config.lambda.layers = [
   #   'arn:aws:lambda:us-east-1:446093344105:layer:rubylayer:1'

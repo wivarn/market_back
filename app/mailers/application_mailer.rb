@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationMailer < ActionMailer::Base
-  default from: ENV['DEFAULT_EMAIL']
+  default from: "info@#{ENV['DOMAIN']}"
   layout 'mailer'
 end

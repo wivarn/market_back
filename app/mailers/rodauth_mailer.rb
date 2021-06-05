@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RodauthMailer < ApplicationMailer
-  default from: ENV['RODAUTH_EMAIL']
+  default from: "accounts@#{ENV['DOMAIN']}"
 
   def verify_account(recipient, email_link)
     @email_link = email_link

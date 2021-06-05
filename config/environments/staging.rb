@@ -8,6 +8,6 @@ Jets.application.configure do
   config.action_mailer.delivery_method = :ses
 
   # config.lambda.layers = [
-  #   'arn:aws:lambda:us-east-1:446093344105:layer:rubylayer:1'
+  #   'arn:aws:lambda:us-east-1:446093344105:layer:rubylayer:7'
   # ]
 end

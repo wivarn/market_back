@@ -17,7 +17,7 @@ Jets.application.configure do
 
   config.function.timeout = 15 # defaults to 30
   # config.function.role = "arn:aws:iam::#{Jets.aws.account}:role/service-role/pre-created"
-  config.function.memory_size = 256
+  config.function.memory_size = 512
   config.iam_policy = [
     {
       action: ['ses:SendEmail'],

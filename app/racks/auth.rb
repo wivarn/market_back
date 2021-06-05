@@ -57,6 +57,7 @@ class Auth < Roda
     change_password_requires_password? true
     reset_password_deadline_interval days: 1
     reset_password_skip_resend_email_within 60
+    reset_password_autologin? true
 
     # jwt config
     jwt_secret ENV['JWT_SECRET']

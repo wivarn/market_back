@@ -5,7 +5,11 @@ Jets.application.routes.draw do
     resources :listings, param: :id do
       get :search, on: :collection
     end
-    resource :profile, only: %i[show update]
+
+    prefix :account do
+      resource :profile, only: %i[show update]
+      resource :address, only: %i[show update]
+    end
 
     mount Auth, at: 'auth'
   end

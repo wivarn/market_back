@@ -19,6 +19,6 @@ class ProfilesController < ApplicationController
   private
 
   def account_params
-    params.permit(:given_name, :family_name)
+    params.permit(:given_name, :family_name, :currency)
   end
 end

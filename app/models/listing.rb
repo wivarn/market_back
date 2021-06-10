@@ -18,6 +18,7 @@ class Listing < ApplicationRecord
               less_than: 100_000_000
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true
+  validates :currency, inclusion: { in: %w[USD CAD] }
 
   belongs_to :account
 end

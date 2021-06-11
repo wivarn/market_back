@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
   create_table "listings", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "photos", null: false, array: true
+    t.string "category", null: false
     t.string "title", null: false
     t.string "condition", null: false
     t.text "description"
@@ -129,9 +130,11 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_listings_on_account_id"
+    t.index ["category"], name: "index_listings_on_category"
     t.index ["currency"], name: "index_listings_on_currency"
     t.index ["price"], name: "index_listings_on_price"
     t.index ["status"], name: "index_listings_on_status"
+    t.index ["title"], name: "index_listings_on_title"
   end
 
   add_foreign_key "account_active_session_keys", "accounts"

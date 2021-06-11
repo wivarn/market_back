@@ -5,6 +5,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
 
       t.string :photos, array: true, null: false
 
+      t.string :category, null: false
       t.string :title, null: false
       t.string :condition, null: false
       t.text :description
@@ -16,6 +17,8 @@ class CreateListings < ActiveRecord::Migration[6.1]
 
       t.string :status, null: false
 
+      t.index :category, using: 'btree'
+      t.index :title, using: 'btree'
       t.index :currency, using: 'btree'
       t.index :price, using: 'btree'
       t.index :status, using: 'btree'

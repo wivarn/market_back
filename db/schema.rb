@@ -119,6 +119,8 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
     t.bigint "account_id", null: false
     t.string "photos", null: false, array: true
     t.string "category", null: false
+    t.string "subcategory", null: false
+    t.string "tags", default: [], array: true
     t.string "title", null: false
     t.string "grading_company"
     t.string "condition", null: false

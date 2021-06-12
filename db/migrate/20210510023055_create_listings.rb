@@ -6,6 +6,8 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.string :photos, array: true, null: false
 
       t.string :category, null: false
+      t.string :subcategory, null: false
+      t.string :tags, array: true, default: []
       t.string :title, null: false
       t.string :grading_company
       t.string :condition, null: false

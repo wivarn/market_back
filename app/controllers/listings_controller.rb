@@ -59,6 +59,7 @@ class ListingsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def listing_params
-    params.permit({ photos: [] }, :title, :condition, :description, :price, :domestic_shipping, :status)
+    params.permit({ photos: [] }, :category, :subcategory, :title, :condition, :description, :price,
+                  :domestic_shipping, :status)
   end
 end

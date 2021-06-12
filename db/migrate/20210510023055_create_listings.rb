@@ -7,6 +7,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
 
       t.string :category, null: false
       t.string :title, null: false
+      t.string :grading_company
       t.string :condition, null: false
       t.text :description
 

@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
     t.string "photos", null: false, array: true
     t.string "category", null: false
     t.string "title", null: false
+    t.string "grading_company"
     t.string "condition", null: false
     t.text "description"
     t.string "currency", limit: 3, null: false

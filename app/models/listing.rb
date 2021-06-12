@@ -10,9 +10,9 @@ class Listing < ApplicationRecord
   validates :title, length: { in: 2..256 }
   validates :description, length: { minimum: 5 }
 
-  validates :category, inclusion: { in: %w[SPORTS_CARD TRADING_CARD OTHER] }
-  validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARD' }
-  validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARD' }
+  validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS OTHER] }
+  validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }
+  validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }
   validates :subcategory, inclusion: { in: %w[OTHER] }, if: -> { category == 'OTHER' }
 
   validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true

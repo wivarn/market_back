@@ -2,7 +2,9 @@
 
 class Listing < ApplicationRecord
   SPORTS_CARDS = %w[HOCKEY BASEBALL BASKETBALL FOOTBALL SOCCER OTHER].freeze
-  TRADING_CARDS = %w[MAGIC POKEMON YUGIOH OTHER].freeze
+  TRADING_CARDS = %w[CARDFIGHT_VANGUARD DRAGON_BALL_SUPER FLESH_AND_BLOOD MAGIC POKEMON STAR_WARS_DESTINY YUGIOH
+                     OTHER].freeze
+  COLLECTIBLES = %w[ANTIQUES ART COINS COMICS STAMPS TOYS WATCHES OTHER].freeze
   GRADING_COMPANIES = %w[BGS PSA KSA MNT HGA SGC CSG OTHER].freeze
 
   validates :account, :photos, :title, :condition, :category, :subcategory, :currency, :price, :domestic_shipping,
@@ -10,10 +12,10 @@ class Listing < ApplicationRecord
   validates :title, length: { in: 2..256 }
   validates :description, length: { minimum: 5 }
 
-  validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS OTHER] }
+  validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] }
   validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }
   validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }
-  validates :subcategory, inclusion: { in: %w[OTHER] }, if: -> { category == 'OTHER' }
+  validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
   validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true
   validates :condition, inclusion: { in: %w[NEAR_MINT EXCELLENT VERY_GOOD GOOD DAMAGED] }

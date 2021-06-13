@@ -7,11 +7,15 @@ class ListingsController < ApplicationController
 
   # GET /listings
   def index
-    render json: current_account.listings
+    if params[:status]
+      render json: current_account.listings.send(params[:status])
+    else
+      render json: current_account.listings.active
+    end
   end
 
   def search
-    render json: Listing.all
+    render json: Listing.active
   end
 
   # GET /listings/1

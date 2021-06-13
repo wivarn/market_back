@@ -38,4 +38,12 @@ class Listing < ApplicationRecord
   validates :currency, inclusion: { in: %w[USD CAD] }
 
   belongs_to :account
+
+  scope :draft, -> { where(status: 'DRAFT') }
+  scope :active, -> { where(status: 'ACTIVE') }
+  scope :removed, -> { where(status: 'REMOVED') }
+  scope :pending_shipment, -> { where(status: 'PENDING_SHIPMENT') }
+  scope :shipped, -> { where(status: 'SHIPPED') }
+  scope :sold, -> { where(status: %w[PENDING_SHIPMENT SHIPPED]) }
+  scope :refunded, -> { where(status: 'REFUNDED') }
 end

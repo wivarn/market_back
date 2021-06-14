@@ -5,12 +5,11 @@ class Listing < ApplicationRecord
   TRADING_CARDS = %w[CARDFIGHT_VANGUARD DRAGON_BALL_SUPER FLESH_AND_BLOOD MAGIC POKEMON STAR_WARS_DESTINY YUGIOH
                      OTHER].freeze
   COLLECTIBLES = %w[ANTIQUES ART COINS COMICS STAMPS TOYS WATCHES OTHER].freeze
-  GRADING_COMPANIES = %w[BGS PSA KSA MNT HGA SGC CSG OTHER].freeze
+  GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
   validates :account, :photos, :title, :condition, :category, :subcategory, :currency, :price, :domestic_shipping,
             :status, presence: true
   validates :title, length: { in: 2..256 }
-  validates :description, length: { minimum: 5 }
 
   validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] }
   validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }
@@ -18,7 +17,8 @@ class Listing < ApplicationRecord
   validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
   validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true
-  validates :condition, inclusion: { in: %w[NEAR_MINT EXCELLENT VERY_GOOD GOOD DAMAGED] }
+  # validates :condition, inclusion: { in: %w[10 8 6 4 2] }, if: -> { grading_company.nil? }
+  # validates :condition, inclusion: { in: %w[10 9.5 9 ] }, if: -> { grading_company }
 
   validates :status, inclusion: { in: %w[DRAFT ACTIVE REMOVED PENDING_SHIPMENT SHIPPED REFUNDED] }
 

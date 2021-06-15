@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
-  before_action :set_listing, only: %i[show]
   before_action :authenticate!, only: %i[index create update delete]
+  before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[update delete]
+  before_action :enforce_address_set!, only: %i[create update]
   before_action :search_params, only: %i[search]
 
   # GET /listings
@@ -59,6 +60,12 @@ class ListingsController < ApplicationController
 
   def set_listing_through_account
     @listing = current_account.listings.find(params[:id])
+  end
+
+  def enforce_address_set!
+    return unless current_account.addresses.none?
+
+    render json: { error: 'address must be set before creating listings' }, status: :forbidden
   end
 
   def listing_params

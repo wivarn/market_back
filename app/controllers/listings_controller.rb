@@ -4,6 +4,7 @@ class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show]
   before_action :authenticate!, only: %i[index create update delete]
   before_action :set_listing_through_account, only: %i[update delete]
+  before_action :search_params, only: %i[search]
 
   # GET /listings
   def index
@@ -15,7 +16,7 @@ class ListingsController < ApplicationController
   end
 
   def search
-    render json: Listing.active
+    render json: Listing.active.where('title ilike :title', title: "%#{params[:title]}%")
   end
 
   # GET /listings/1
@@ -52,7 +53,6 @@ class ListingsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_listing
     @listing = Listing.find(params[:id])
   end
@@ -61,9 +61,12 @@ class ListingsController < ApplicationController
     @listing = current_account.listings.find(params[:id])
   end
 
-  # Only allow a trusted parameter "white list" through.
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :condition, :description, :price,
                   :domestic_shipping, :status)
+  end
+
+  def search_params
+    params.permit(:category, :title, :currency, :price, :status)
   end
 end

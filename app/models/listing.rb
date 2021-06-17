@@ -17,8 +17,8 @@ class Listing < ApplicationRecord
   validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
   validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true
-  # validates :condition, inclusion: { in: %w[10 8 6 4 2] }, if: -> { grading_company.nil? }
-  # validates :condition, inclusion: { in: %w[10 9.5 9 ] }, if: -> { grading_company }
+  validates :condition, inclusion: { in: (2..10).step(2).to_a }, if: -> { grading_company.nil? }
+  validates :condition, inclusion: { in: (1..10).step(0.5).to_a }, if: -> { !grading_company.nil? }
 
   validates :status, inclusion: { in: %w[DRAFT ACTIVE REMOVED PENDING_SHIPMENT SHIPPED REFUNDED] }
 

@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
     t.string "tags", default: [], array: true
     t.string "title", null: false
     t.string "grading_company"
-    t.string "condition", null: false
+    t.decimal "condition", precision: 3, scale: 1, null: false
     t.text "description"
     t.string "currency", limit: 3, null: false
     t.decimal "price", precision: 12, scale: 4, null: false

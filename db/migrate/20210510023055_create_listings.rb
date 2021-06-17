@@ -10,7 +10,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.string :tags, array: true, default: []
       t.string :title, null: false
       t.string :grading_company
-      t.string :condition, null: false
+      t.numeric :condition, null: false, precision: 3, scale: 1
       t.text :description
 
       t.string :currency, null: false, limit: 3

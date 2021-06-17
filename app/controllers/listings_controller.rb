@@ -69,7 +69,7 @@ class ListingsController < ApplicationController
   end
 
   def listing_params
-    params.permit({ photos: [] }, :category, :subcategory, :title, :condition, :description, :price,
+    params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
                   :domestic_shipping, :status)
   end
 

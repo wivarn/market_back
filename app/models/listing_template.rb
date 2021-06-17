@@ -6,18 +6,25 @@ class ListingTemplate < ApplicationRecord
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
   validates :account, presence: true
-  validates :title, length: { in: 2..256 }, allow_nil: true
+  validates :title, length: { in: 2..256 }, allow_nil: true, allow_blank: true
 
-  validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] }, allow_nil: true
-  validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }, allow_nil: true
-  validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }, allow_nil: true
-  validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }, allow_nil: true
+  validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] },
+                       allow_nil: true, allow_blank: true
+  validates :subcategory,
+            inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }, allow_nil: true, allow_blank: true
+  validates :subcategory,
+            inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }, allow_nil: true, allow_blank: true
+  validates :subcategory,
+            inclusion: { in: COLLECTIBLES },  if: -> { category == 'COLLECTIBLES' }, allow_nil: true, allow_blank: true
 
-  validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true
-  validates :condition, inclusion: { in: (2..10).step(2).to_a }, if: -> { grading_company.nil? }, allow_nil: true
-  validates :condition, inclusion: { in: (1..10).step(0.5).to_a }, if: -> { !grading_company.nil? }, allow_nil: true
+  validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true, allow_blank: true
+  validates :condition, inclusion: { in: (2..10).step(2).to_a },
+                        if: -> { grading_company.nil? }, allow_nil: true, allow_blank: true
+  validates :condition, inclusion: { in: (1..10).step(0.5).to_a },
+                        if: -> { !grading_company.nil? }, allow_nil: true, allow_blank: true
 
-  validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }, allow_nil: true, allow_blank: false
+  validates :price,
+            :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }, allow_nil: true, allow_blank: false
   validates :price, numericality: {
     greater_than_or_equal_to: 0.25,
     less_than: 100_000_000

@@ -18,7 +18,7 @@ class CreateListingTemplates < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    add_foreign_key :listing_templates, :accounts, dependent: :destroy, unique: true
+    add_foreign_key :listing_templates, :accounts
     add_index :listing_templates, :account_id, unique: true
   end
 end

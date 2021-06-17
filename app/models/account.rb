@@ -17,6 +17,7 @@ class Account < ApplicationRecord
   has_one :account_verification_key, foreign_key: :id
 
   has_many :listings
+  has_one :listing_template
   has_many :addresses
 
   validates :currency, inclusion: { in: %w[USD CAD] }, presence: true

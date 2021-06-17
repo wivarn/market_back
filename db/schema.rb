@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_01_023806) do
+ActiveRecord::Schema.define(version: 2021_06_17_061646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -113,6 +113,23 @@ ActiveRecord::Schema.define(version: 2021_06_01_023806) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_addresses_on_account_id"
+  end
+
+  create_table "listing_templates", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "category"
+    t.string "subcategory"
+    t.string "tags", default: [], array: true
+    t.string "title"
+    t.string "grading_company"
+    t.decimal "condition", precision: 3, scale: 1
+    t.text "description"
+    t.decimal "price", precision: 12, scale: 4
+    t.decimal "domestic_shipping", precision: 12, scale: 4
+    t.decimal "international_shipping", precision: 12, scale: 4
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_listing_templates_on_account_id"
   end
 
   create_table "listings", force: :cascade do |t|

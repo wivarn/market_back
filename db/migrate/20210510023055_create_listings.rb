@@ -1,7 +1,7 @@
 class CreateListings < ActiveRecord::Migration[6.1]
   def change
     create_table :listings do |t|
-      t.references :account, null: false
+      t.references :account, null: false, foreign_key: true, dependent: :destroy
 
       t.string :photos, array: true, null: false
 

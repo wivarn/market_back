@@ -129,7 +129,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_061646) do
     t.decimal "international_shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_listing_templates_on_account_id"
+    t.index ["account_id"], name: "index_listing_templates_on_account_id", unique: true
   end
 
   create_table "listings", force: :cascade do |t|
@@ -170,4 +170,6 @@ ActiveRecord::Schema.define(version: 2021_06_17_061646) do
   add_foreign_key "account_recovery_codes", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "addresses", "accounts"
+  add_foreign_key "listing_templates", "accounts"
+  add_foreign_key "listings", "accounts"
 end

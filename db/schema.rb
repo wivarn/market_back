@@ -117,16 +117,16 @@ ActiveRecord::Schema.define(version: 2021_06_17_061646) do
 
   create_table "listing_templates", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "category"
-    t.string "subcategory"
+    t.string "category", default: ""
+    t.string "subcategory", default: ""
     t.string "tags", default: [], array: true
-    t.string "title"
-    t.string "grading_company"
-    t.decimal "condition", precision: 3, scale: 1
-    t.text "description"
-    t.decimal "price", precision: 12, scale: 4
-    t.decimal "domestic_shipping", precision: 12, scale: 4
-    t.decimal "international_shipping", precision: 12, scale: 4
+    t.string "title", default: ""
+    t.string "grading_company", default: ""
+    t.decimal "condition", precision: 3, scale: 1, default: "2.0"
+    t.text "description", default: ""
+    t.decimal "price", precision: 12, scale: 4, default: "0.25"
+    t.decimal "domestic_shipping", precision: 12, scale: 4, default: "0.0"
+    t.decimal "international_shipping", precision: 12, scale: 4, default: "0.0"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_listing_templates_on_account_id", unique: true

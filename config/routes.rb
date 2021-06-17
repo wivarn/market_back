@@ -9,6 +9,7 @@ Jets.application.routes.draw do
     prefix :account do
       resource :profile, only: %i[show update]
       resource :address, only: %i[show update]
+      resource :listing_template, only: %i[show update]
     end
 
     mount Auth, at: 'auth'

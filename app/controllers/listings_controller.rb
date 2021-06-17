@@ -70,7 +70,7 @@ class ListingsController < ApplicationController
 
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :status)
+                  :domestic_shipping, :international_shipping, :status)
   end
 
   def search_params

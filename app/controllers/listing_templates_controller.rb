@@ -3,6 +3,7 @@
 class ListingTemplatesController < ApplicationController
   before_action :authenticate!
   before_action :set_listing_template
+  before_action :listing_template_params, only: [:update]
 
   def show
     render json: @listing_template
@@ -10,16 +11,16 @@ class ListingTemplatesController < ApplicationController
 
   # PATCH/PUT /listings/1
   def update
-    if @listing.update(listing_params)
-      render json: @listing
+    if @listing_template.update(listing_template_params)
+      render json: @listing_template
     else
-      render json: @listing.errors, status: :unprocessable_entity
+      render json: @listing_template.errors, status: :unprocessable_entity
     end
   end
 
   # DELETE /listings/1
   def delete
-    @listing.destroy
+    @listing_template.destroy
     render json: { deleted: true }
   end
 
@@ -29,22 +30,8 @@ class ListingTemplatesController < ApplicationController
     @listing_template = ListingTemplate.find_or_create_by(account: current_account)
   end
 
-  def set_listing_through_account
-    @listing = current_account.listings.find(params[:id])
-  end
-
-  def enforce_address_set!
-    return unless current_account.addresses.none?
-
-    render json: { error: 'address must be set before creating listings' }, status: :forbidden
-  end
-
-  def listing_params
-    params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :status)
-  end
-
-  def search_params
-    params.permit(:category, :title, :currency, :price, :status)
+  def listing_template_params
+    params.permit(:category, :subcategory, :title, :grading_company, :condition, :description, :price,
+                  :domestic_shipping, :international_shipping)
   end
 end

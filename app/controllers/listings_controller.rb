@@ -17,23 +17,33 @@ class ListingsController < ApplicationController
   end
 
   def search
-    render json: [] unless search_params[:title]
+    # unless search_params[:title]
+    #   render json: []
+    #   return
+    # end
 
-    query = Listing.active.where('title ilike :title', title: "%#{search_params[:title]}%")
-    query = query.where('price >= :gt', gt: search_params[:gt]) if search_params[:gt]
-    query = query.where('price <= :lt', lt: search_params[:lt]) if search_params[:lt]
-    query = query..where('category = :category', category: search_params[:category]) if search_params[:category]
-    if search_params[:subcategory]
+    query = Listing.active
+    if search_params[:title].present?
+      query = Listing.active.where('title ilike :title',
+                                   title: "%#{search_params[:title]}%")
+    end
+    query = query.where('price >= :gt', gt: search_params[:gt]) if search_params[:gt].present?
+    query = query.where('price <= :lt', lt: search_params[:lt]) if search_params[:lt].present?
+    query = query.where('category = :category', category: search_params[:category]) if search_params[:category].present?
+    if search_params[:subcategory].present?
       query = query.where('subcategory = :subcategory',
                           subcategory: search_params[:subcategory])
     end
-    if search_params[:grading_company]
+    if search_params[:grading_company].present?
       query = query.where('grading_company = :grading_company',
                           grading_company: search_params[:grading_company])
     end
-    query = query.where('condition IN :condition', condition: search_params[:condition]) if search_params[:condition]
+    if search_params[:condition].present?
+      query = query.where('condition IN :condition',
+                          condition: search_params[:condition])
+    end
 
-    if search_params[:sort]
+    if search_params[:sort].present?
       query = query.order(price: :asc) if search_params[:sort] == 'priceLow'
       query = query.order(price: :desc) if search_params[:sort] == 'priceHigh'
       query = query.order('price + domestic_shipping ASC') if search_params[:sort] == 'priceShipLow'

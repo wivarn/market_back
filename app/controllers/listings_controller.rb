@@ -17,7 +17,23 @@ class ListingsController < ApplicationController
   end
 
   def search
-    render json: Listing.active.where('title ilike :title', title: "%#{params[:title]}%")
+    render json: [] unless search_params[:title]
+
+    query = Listing.active.where('title ilike :title', title: "%#{search_params[:title]}%")
+    query = query.where('price >= :gt', gt: search_params[:gt]) if search_params[:gt]
+    query = query.where('price <= :lt', lt: search_params[:lt]) if search_params[:lt]
+    query = query..where('category = :category', category: search_params[:category]) if search_params[:category]
+    if search_params[:subcategory]
+      query = query.where('subcategory = :subcategory',
+                          subcategory: search_params[:subcategory])
+    end
+    if search_params[:grading_company]
+      query = query.where('grading_company = :grading_company',
+                          grading_company: search_params[:grading_company])
+    end
+    query = query.where('condition IN :condition', condition: search_params[:condition]) if search_params[:condition]
+
+    render json: query
   end
 
   # GET /listings/1
@@ -74,6 +90,6 @@ class ListingsController < ApplicationController
   end
 
   def search_params
-    params.permit(:category, :title, :currency, :price, :status)
+    params.permit(:title, :gt, :lt, :category, :subcategory, :grading_company, :condition)
   end
 end

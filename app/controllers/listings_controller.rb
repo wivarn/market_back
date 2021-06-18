@@ -33,6 +33,15 @@ class ListingsController < ApplicationController
     end
     query = query.where('condition IN :condition', condition: search_params[:condition]) if search_params[:condition]
 
+    if search_params[:sort]
+      query = query.order(price: :asc) if search_params[:sort] == 'priceLow'
+      query = query.order(price: :desc) if search_params[:sort] == 'priceHigh'
+      query = query.order('price + domestic_shipping ASC') if search_params[:sort] == 'priceShipLow'
+      query = query.order('price + domestic_shipping DESC') if search_params[:sort] == 'priceShipHigh'
+      query = query.order(created_at: :asc) if search_params[:sort] == 'newest'
+      query = query.order(created_at: :desc) if search_params[:sort] == 'oldest'
+    end
+
     render json: query
   end
 
@@ -90,6 +99,6 @@ class ListingsController < ApplicationController
   end
 
   def search_params
-    params.permit(:title, :gt, :lt, :category, :subcategory, :grading_company, :condition)
+    params.permit(:title, :gt, :lt, :category, :subcategory, :grading_company, :condition, :sort)
   end
 end

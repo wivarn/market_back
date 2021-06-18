@@ -46,8 +46,12 @@ class ListingsController < ApplicationController
     if search_params[:sort].present?
       query = query.order(price: :asc) if search_params[:sort] == 'priceLow'
       query = query.order(price: :desc) if search_params[:sort] == 'priceHigh'
-      query = query.order('price + domestic_shipping ASC') if search_params[:sort] == 'priceShipLow'
-      query = query.order('price + domestic_shipping DESC') if search_params[:sort] == 'priceShipHigh'
+      if search_params[:sort] == 'priceShipLow'
+        query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
+      end
+      if search_params[:sort] == 'priceShipHigh'
+        query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
+      end
       query = query.order(created_at: :asc) if search_params[:sort] == 'newest'
       query = query.order(created_at: :desc) if search_params[:sort] == 'oldest'
     end

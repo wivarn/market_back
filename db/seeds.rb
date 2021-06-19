@@ -8,7 +8,7 @@ STUB_PHOTOS = [
   '/images/picture-5.jpg'
 ].freeze
 
-def generate_listings(items: 50, currency: 'CAD', subcategories: [], status: 'ACTIVE')
+def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'ACTIVE')
   listings = []
   items.times do
     if subcategories.include?('BASKETBALL')
@@ -216,7 +216,7 @@ ivan.addresses.create(street1: '604-1003 Burnaby Street', street2: 'Buzzer 1007'
 active_listings = generate_listings(subcategories: %w[TOYS STAMPS ART RANDOM_COLLECTIBLES POKEMON DRAGON_BALL_SUPER],
                                     status: 'ACTIVE')
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(items: 20, subcategories: %w[ART RANDOM_COLLECTIBLES], status: 'DRAFT')
+draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], status: 'DRAFT')
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
 
 kevin = Account.create(email: 'kevin@skwirl.io', status: 'verified', given_name: 'Kevin', family_name: 'Legere',
@@ -229,5 +229,5 @@ active_listings = generate_listings(currency: 'USD',
                                                       STAR_WARS_DESTINY],
                                     status: 'ACTIVE')
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(items: 20, subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], status: 'DRAFT')
+draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], status: 'DRAFT')
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)

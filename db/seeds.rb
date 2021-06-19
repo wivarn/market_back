@@ -8,12 +8,23 @@ STUB_PHOTOS = [
   '/images/picture-5.jpg'
 ].freeze
 
+def generate_sports_image
+  images = []
+  Faker::Number.between(from: 1, to: 10).times do
+    images << Faker::LoremPixel.image(
+      size: "#{Faker::Number.between(from: 100, to: 1000)}x#{Faker::Number.between(from: 100, to: 1000)}",
+      is_gray: false, category: 'sports', secure: !(Jets.env.development? || Jets.env.test?)
+    )
+  end
+  images
+end
+
 def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'ACTIVE')
   listings = []
   items.times do
     if subcategories.include?('BASKETBALL')
       listings << {
-        photos: STUB_PHOTOS.sample(rand(1..5)),
+        photos: generate_sports_image,
         category: 'SPORTS_CARDS',
         subcategory: 'BASKETBALL',
         title: "#{Faker::Number.within(range: 1930..2021)} #{Faker::Sports::Basketball.player} #{Faker::Sports::Basketball.team} #{Faker::Sports::Basketball.position}",
@@ -29,7 +40,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
     end
     if subcategories.include?('FOOTBALL')
       listings << {
-        photos: STUB_PHOTOS.sample(rand(1..5)),
+        photos: generate_sports_image,
         category: 'SPORTS_CARDS',
         subcategory: 'FOOTBALL',
         title: "#{Faker::Number.within(range: 1930..2021)} #{Faker::Sports::Football.player} #{Faker::Sports::Football.team} #{Faker::Sports::Football.position}",
@@ -45,7 +56,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
     end
     if subcategories.include?('HOCKEY')
       listings << {
-        photos: STUB_PHOTOS.sample(rand(1..5)),
+        photos: generate_sports_image,
         category: 'SPORTS_CARDS',
         subcategory: 'HOCKEY',
         title: Faker::Name.name,
@@ -61,7 +72,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
     end
     if subcategories.include?('RANDOM_SPORTS')
       listings << {
-        photos: STUB_PHOTOS.sample(rand(1..5)),
+        photos: generate_sports_image,
         category: 'SPORTS_CARDS',
         subcategory: Listing::SPORTS_CARDS.sample,
         title: "#{Faker::Esport.game} #{Faker::Esport.team} #{Faker::Esport.player} #{Faker::Esport.league} #{Faker::Esport.event}",
@@ -193,7 +204,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
       photos: STUB_PHOTOS.sample(rand(1..5)),
       category: 'COLLECTIBLES',
       subcategory: Listing::COLLECTIBLES.sample,
-      title: Faker::String.random(length: 10..75),
+      title: Faker::Lorem.sentence(word_count: 5, supplemental: true, random_words_to_add: 10),
       description: Faker::Lorem.paragraphs(number: Faker::Number.between(from: 1, to: 10)).join("\n"),
       grading_company: nil,
       condition: (2..10).step(2).to_a.sample,

@@ -21,7 +21,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -37,7 +37,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -53,7 +53,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: nil,
         condition: (2..10).step(2).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         status: status
@@ -69,7 +69,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         status: status
@@ -85,7 +85,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -101,7 +101,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -117,7 +117,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: nil,
         condition: (2..10).step(2).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         status: status
@@ -133,7 +133,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: Listing::GRADING_COMPANIES.sample,
         condition: (1..10).step(0.5).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         status: status
@@ -149,7 +149,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: nil,
         condition: (2..10).step(2).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -165,7 +165,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: nil,
         condition: (2..10).step(2).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         status: status
@@ -181,7 +181,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         grading_company: nil,
         condition: (2..10).step(2).to_a.sample,
         currency: currency,
-        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+        price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         status: status
@@ -198,7 +198,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
       grading_company: nil,
       condition: (2..10).step(2).to_a.sample,
       currency: currency,
-      price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 6), r_digits: 2),
+      price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
       domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
       international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
       status: status

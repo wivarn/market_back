@@ -16,7 +16,7 @@ class Listing < ApplicationRecord
   validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }
   validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
-  validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true
+  validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true, allow_blank: true
   validates :condition, inclusion: { in: (2..10).step(2).to_a }, if: -> { grading_company.nil? }
   validates :condition, inclusion: { in: (1..10).step(0.5).to_a }, if: -> { !grading_company.nil? }
 

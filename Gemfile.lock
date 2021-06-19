@@ -121,6 +121,8 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.6)
     erubi (1.10.0)
+    faker (2.18.0)
+      i18n (>= 1.6, < 2)
     gems (1.2.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -294,6 +296,7 @@ DEPENDENCIES
   bcrypt (~> 3.1)
   byebug
   capybara
+  faker (~> 2.18)
   jets (~> 3.0)
   jwt (~> 2.2)
   launchy

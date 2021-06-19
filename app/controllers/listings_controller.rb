@@ -56,7 +56,7 @@ class ListingsController < ApplicationController
       query = query.order(created_at: :desc) if search_params[:sort] == 'oldest'
     end
 
-    render json: query
+    render json: query.limit(50)
   end
 
   # GET /listings/1

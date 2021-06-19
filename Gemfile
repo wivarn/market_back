@@ -23,6 +23,7 @@ end
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'faker', '~> 2.18'
   gem 'puma'
   gem 'rack'
   gem 'rubocop', '~> 1.13'

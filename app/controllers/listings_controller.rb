@@ -5,52 +5,45 @@ class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[update delete]
   before_action :enforce_address_set!, only: %i[create update]
-  before_action :search_params, only: %i[search]
 
   def index
-    if params[:status]
-      render json: current_account.listings.send(params[:status]).limit(20)
-    else
-      render json: current_account.listings.active.limit(20)
-    end
+    scope = params[:status] || 'active'
+
+    render json: current_account.listings.send(scope).page(params[:page])
   end
 
   def search
-    query = Listing.active
-    if search_params[:title].present?
-      query = Listing.active.where('title ilike :title',
-                                   title: "%#{search_params[:title]}%")
-    end
-    query = query.where('price >= :gt', gt: search_params[:gt]) if search_params[:gt].present?
-    query = query.where('price <= :lt', lt: search_params[:lt]) if search_params[:lt].present?
-    query = query.where('category = :category', category: search_params[:category]) if search_params[:category].present?
-    if search_params[:subcategory].present?
+    query = Listing.active.where('title ilike :title', title: "%#{params[:title]}%")
+    query = query.where('price >= :gt', gt: params[:gt]) if params[:gt].present?
+    query = query.where('price <= :lt', lt: params[:lt]) if params[:lt].present?
+    query = query.where('category = :category', category: params[:category]) if params[:category].present?
+    if params[:subcategory].present?
       query = query.where('subcategory = :subcategory',
-                          subcategory: search_params[:subcategory])
+                          subcategory: params[:subcategory])
     end
-    if search_params[:grading_company].present?
+    if params[:grading_company].present?
       query = query.where('grading_company = :grading_company',
-                          grading_company: search_params[:grading_company])
+                          grading_company: params[:grading_company])
     end
-    if search_params[:condition].present?
+    if params[:condition].present?
       query = query.where('condition IN :condition',
-                          condition: search_params[:condition])
+                          condition: params[:condition])
     end
 
-    if search_params[:sort].present?
-      query = query.order(price: :asc) if search_params[:sort] == 'priceLow'
-      query = query.order(price: :desc) if search_params[:sort] == 'priceHigh'
-      if search_params[:sort] == 'priceShipLow'
+    if params[:sort].present?
+      query = query.order(price: :asc) if params[:sort] == 'priceLow'
+      query = query.order(price: :desc) if params[:sort] == 'priceHigh'
+      if params[:sort] == 'priceShipLow'
         query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
       end
-      if search_params[:sort] == 'priceShipHigh'
+      if params[:sort] == 'priceShipHigh'
         query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
       end
-      query = query.order(created_at: :asc) if search_params[:sort] == 'newest'
-      query = query.order(created_at: :desc) if search_params[:sort] == 'oldest'
+      query = query.order(created_at: :asc) if params[:sort] == 'newest'
+      query = query.order(created_at: :desc) if params[:sort] == 'oldest'
     end
 
-    render json: query.limit(20)
+    render json: query.page(params[:page])
   end
 
   def show
@@ -100,9 +93,5 @@ class ListingsController < ApplicationController
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
                   :domestic_shipping, :international_shipping, :status)
-  end
-
-  def search_params
-    params.permit(:title, :gt, :lt, :category, :subcategory, :grading_company, :condition, :sort)
   end
 end

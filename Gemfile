@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'aws-sdk-sesv2', '~> 1.17'
 gem 'jets', '~> 3.0'
+gem 'kaminari-activerecord', '~> 1.2'
 gem 'pg', '~> 1.2.3'
 
 # seems to be a dependancy for ActionMailer::Base.add_delivery_method to work

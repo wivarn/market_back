@@ -7,21 +7,15 @@ class ListingsController < ApplicationController
   before_action :enforce_address_set!, only: %i[create update]
   before_action :search_params, only: %i[search]
 
-  # GET /listings
   def index
     if params[:status]
-      render json: current_account.listings.send(params[:status])
+      render json: current_account.listings.send(params[:status]).limit(20)
     else
-      render json: current_account.listings.active
+      render json: current_account.listings.active.limit(20)
     end
   end
 
   def search
-    # unless search_params[:title]
-    #   render json: []
-    #   return
-    # end
-
     query = Listing.active
     if search_params[:title].present?
       query = Listing.active.where('title ilike :title',
@@ -59,13 +53,11 @@ class ListingsController < ApplicationController
     render json: query.limit(20)
   end
 
-  # GET /listings/1
   def show
     listing_with_name = @listing.serializable_hash.merge(@listing.account.slice(:given_name, :family_name))
     render json: listing_with_name
   end
 
-  # POST /listings
   def create
     @listing = current_account.listings.new(listing_params.merge(currency: current_account.currency))
 
@@ -76,7 +68,6 @@ class ListingsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /listings/1
   def update
     if @listing.update(listing_params)
       render json: @listing
@@ -85,7 +76,6 @@ class ListingsController < ApplicationController
     end
   end
 
-  # DELETE /listings/1
   def delete
     @listing.destroy
     render json: { deleted: true }

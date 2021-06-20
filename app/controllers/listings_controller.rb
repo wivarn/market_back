@@ -15,8 +15,8 @@ class ListingsController < ApplicationController
 
   def search
     query = Listing.active.where('title ilike :title', title: "%#{params[:title]}%")
-    query = query.where('price >= :gt', gt: params[:gt]) if params[:gt].present?
-    query = query.where('price <= :lt', lt: params[:lt]) if params[:lt].present?
+    query = query.where('price >= :min_price', min_price: params[:min_price]) if params[:min_price].present?
+    query = query.where('price <= :max_price', max_price: params[:max_price]) if params[:max_price].present?
     query = query.where('category = :category', category: params[:category]) if params[:category].present?
     if params[:subcategory].present?
       query = query.where('subcategory = :subcategory',
@@ -26,10 +26,7 @@ class ListingsController < ApplicationController
       query = query.where('grading_company = :grading_company',
                           grading_company: params[:grading_company])
     end
-    if params[:condition].present?
-      query = query.where('condition IN :condition',
-                          condition: params[:condition])
-    end
+    query = query.where('condition >= :condition', condition: params[:min_condition]) if params[:min_condition].present?
 
     if params[:sort].present?
       query = query.order(price: :asc) if params[:sort] == 'priceLow'

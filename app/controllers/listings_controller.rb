@@ -8,8 +8,9 @@ class ListingsController < ApplicationController
 
   def index
     scope = params[:status] || 'active'
+    listings = current_account.listings.send(scope).page(params[:page].to_i + 1)
 
-    render json: current_account.listings.send(scope).page(params[:page])
+    render json: { listings: listings, total_pages: listings.total_pages }
   end
 
   def search
@@ -43,7 +44,8 @@ class ListingsController < ApplicationController
       query = query.order(created_at: :desc) if params[:sort] == 'oldest'
     end
 
-    render json: query.page(params[:page])
+    query = query.page(params[:page].to_i + 1)
+    render json: { listings: query, total_pages: query.total_pages }
   end
 
   def show

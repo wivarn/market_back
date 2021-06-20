@@ -19,12 +19,12 @@ gem 'rqrcode', '~> 2.0'
 gem 'sequel-activerecord_connection', '~> 1.2'
 
 group :development, :staging do
+  gem 'faker', '~> 2.18'
   gem 'mail_safe', '~> 0.3.4'
 end
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'faker', '~> 2.18'
   gem 'puma'
   gem 'rack'
   gem 'rubocop', '~> 1.13'

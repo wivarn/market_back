@@ -3,17 +3,17 @@ class CreateListingTemplates < ActiveRecord::Migration[6.1]
     create_table :listing_templates do |t|
       t.bigint :account_id, null: false
 
-      t.string :category, default: ''
-      t.string :subcategory, default: ''
-      t.string :tags, array: true, default: []
-      t.string :title, default: ''
-      t.string :grading_company, default: ''
-      t.numeric :condition, precision: 3, scale: 1, default: 2
-      t.text :description, default: ''
+      t.string :category, default: nil
+      t.string :subcategory, default: nil
+      t.string :tags, array: true, default: nil
+      t.string :title, default: nil
+      t.string :grading_company, default: nil
+      t.numeric :condition, precision: 3, scale: 1, default: nil
+      t.text :description, default: nil
 
-      t.numeric :price, precision: 12, scale: 4, default: 0.25
-      t.numeric :domestic_shipping, precision: 12, scale: 4, default: 0
-      t.numeric :international_shipping, precision: 12, scale: 4, default: 0
+      t.numeric :price, precision: 12, scale: 4, default: nil
+      t.numeric :domestic_shipping, precision: 12, scale: 4, default: nil
+      t.numeric :international_shipping, precision: 12, scale: 4, default: nil
 
       t.timestamps
     end

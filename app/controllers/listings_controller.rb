@@ -84,6 +84,7 @@ class ListingsController < ApplicationController
       listings = listings.where('subcategory = :subcategory',
                                 subcategory: filters[:subcategory])
     end
+    listings = listings.where.not(grading_company: nil) if filters[:graded] == 'true'
     if filters[:grading_company].present?
       listings = listings.where('grading_company = :grading_company',
                                 grading_company: filters[:grading_company])

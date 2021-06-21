@@ -8,41 +8,15 @@ class ListingsController < ApplicationController
 
   def index
     scope = params[:status] || 'active'
-    listings = current_account.listings.send(scope).page(params[:page].to_i + 1)
+    listings = current_account.listings.send(scope)
+    listings = filter_and_sort(listings, params)
 
     render json: { listings: listings, total_pages: listings.total_pages }
   end
 
   def search
-    query = Listing.active.where('title ilike :title', title: "%#{params[:title]}%")
-    query = query.where('price >= :min_price', min_price: params[:min_price]) if params[:min_price].present?
-    query = query.where('price <= :max_price', max_price: params[:max_price]) if params[:max_price].present?
-    query = query.where('category = :category', category: params[:category]) if params[:category].present?
-    if params[:subcategory].present?
-      query = query.where('subcategory = :subcategory',
-                          subcategory: params[:subcategory])
-    end
-    if params[:grading_company].present?
-      query = query.where('grading_company = :grading_company',
-                          grading_company: params[:grading_company])
-    end
-    query = query.where('condition >= :condition', condition: params[:min_condition]) if params[:min_condition].present?
-
-    if params[:sort].present?
-      query = query.order(price: :asc) if params[:sort] == 'priceLow'
-      query = query.order(price: :desc) if params[:sort] == 'priceHigh'
-      if params[:sort] == 'priceShipLow'
-        query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
-      end
-      if params[:sort] == 'priceShipHigh'
-        query = query.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
-      end
-      query = query.order(created_at: :asc) if params[:sort] == 'newest'
-      query = query.order(created_at: :desc) if params[:sort] == 'oldest'
-    end
-
-    query = query.page(params[:page].to_i + 1)
-    render json: { listings: query, total_pages: query.total_pages }
+    listings = filter_and_sort(Listing.active, params)
+    render json: { listings: listings, total_pages: listings.total_pages }
   end
 
   def show
@@ -92,5 +66,51 @@ class ListingsController < ApplicationController
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
                   :domestic_shipping, :international_shipping, :status)
+  end
+
+  def filter_and_sort(listings, params)
+    listings = filter(listings, params)
+    listings = sort(listings, params[:sort])
+
+    listings.page(params[:page].to_i + 1)
+  end
+
+  def filter(listings, filters)
+    listings = listings.where('title ilike :title', title: "%#{params[:title]}%") if filters[:title].present?
+    listings = listings.where('price >= :min_price', min_price: filters[:min_price]) if filters[:min_price].present?
+    listings = listings.where('price <= :max_price', max_price: filters[:max_price]) if filters[:max_price].present?
+    listings = listings.where('category = :category', category: filters[:category]) if filters[:category].present?
+    if filters[:subcategory].present?
+      listings = listings.where('subcategory = :subcategory',
+                                subcategory: filters[:subcategory])
+    end
+    if filters[:grading_company].present?
+      listings = listings.where('grading_company = :grading_company',
+                                grading_company: filters[:grading_company])
+    end
+    if filters[:min_condition].present?
+      listings = listings.where('condition >= :condition',
+                                condition: filters[:min_condition])
+    end
+    listings
+  end
+
+  def sort(listings, order)
+    case order
+    when 'priceLow'
+      listings.order(price: :asc)
+    when 'priceHigh'
+      listings.order(price: :desc)
+    when 'priceShipLow'
+      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
+    when 'priceShipHigh'
+      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
+    when 'newest'
+      listings.order(created_at: :asc)
+    when 'oldest'
+      listings.order(created_at: :desc)
+    else
+      listings
+    end
   end
 end

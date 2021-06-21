@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_061646) do
 
   create_table "listings", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "photos", null: false, array: true
+    t.string "photos", default: [], null: false, array: true
     t.string "category", null: false
     t.string "subcategory", null: false
     t.string "tags", default: [], array: true

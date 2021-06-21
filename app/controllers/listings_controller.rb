@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
-  before_action :authenticate!, only: %i[index create update delete]
+  before_action :authenticate!, only: %i[index create bulk_create update delete]
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[update delete]
   before_action :enforce_address_set!, only: %i[create update]
@@ -32,6 +32,16 @@ class ListingsController < ApplicationController
     else
       render json: @listing.errors, status: :unprocessable_entity
     end
+  end
+
+  def bulk_create
+    listings =
+      current_account
+      .listings
+      .create_with(created_at: Time.now, updated_at: Time.now, currency: current_account.currency, status: 'DRAFT')
+      .insert_all(bulk_create_params[:listings])
+
+    render json: listings, status: :created
   end
 
   def update
@@ -66,6 +76,11 @@ class ListingsController < ApplicationController
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
                   :domestic_shipping, :international_shipping, :status)
+  end
+
+  def bulk_create_params
+    params.permit(listings: %i[category subcategory title grading_company condition description price
+                               domestic_shipping international_shipping status])
   end
 
   def filter_and_sort(listings, params)

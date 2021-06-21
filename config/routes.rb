@@ -4,6 +4,7 @@ Jets.application.routes.draw do
   prefix :v0 do
     resources :listings, param: :id do
       get :search, on: :collection
+      post :bulk_create, on: :collection
     end
 
     prefix :account do

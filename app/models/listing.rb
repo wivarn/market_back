@@ -8,7 +8,7 @@ class Listing < ApplicationRecord
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
   validates :account, :photos, :title, :condition, :category, :subcategory, :currency, :price, :domestic_shipping,
-            :status, presence: true
+            :shipping_country, :status, presence: true
   validates :title, length: { in: 2..256 }
 
   validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] }
@@ -38,6 +38,7 @@ class Listing < ApplicationRecord
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true, allow_blank: false
   validates :currency, inclusion: { in: %w[USD CAD] }
+  validates :shipping_country, inclusion: { in: %w[USA CAN] }
 
   belongs_to :account
 

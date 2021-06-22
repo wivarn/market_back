@@ -25,7 +25,9 @@ class ListingsController < ApplicationController
   end
 
   def create
-    @listing = current_account.listings.new(listing_params.merge(currency: current_account.currency))
+    currency = current_account.currency
+    country = current_account.addresses.first.country
+    @listing = current_account.listings.new(listing_params.merge(currency: currency, shipping_country: country))
 
     if @listing.save
       render json: @listing, status: :created
@@ -35,10 +37,13 @@ class ListingsController < ApplicationController
   end
 
   def bulk_create
+    currency = current_account.currency
+    country = current_account.addresses.first.country
     listings =
       current_account
       .listings
-      .create_with(created_at: Time.now, updated_at: Time.now, currency: current_account.currency, status: 'DRAFT')
+      .create_with(created_at: Time.now, updated_at: Time.now,
+                   currency: currency, shipping_country: country, status: 'DRAFT')
       .insert_all(bulk_create_params[:listings])
 
     render json: listings, status: :created
@@ -92,23 +97,42 @@ class ListingsController < ApplicationController
 
   def filter(listings, filters)
     listings = listings.where('title ilike :title', title: "%#{params[:title]}%") if filters[:title].present?
+    listings = filter_price(listings, filters)
+    listings = filter_category(listings, filters)
+    listings = filter_condition(listings, filters)
+    filter_country(listings, filters)
+  end
+
+  def filter_price(listings, filters)
     listings = listings.where('price >= :min_price', min_price: filters[:min_price]) if filters[:min_price].present?
     listings = listings.where('price <= :max_price', max_price: filters[:max_price]) if filters[:max_price].present?
+    listings
+  end
+
+  def filter_category(listings, filters)
     listings = listings.where('category = :category', category: filters[:category]) if filters[:category].present?
     if filters[:subcategory].present?
-      listings = listings.where('subcategory = :subcategory',
-                                subcategory: filters[:subcategory])
-    end
-    listings = listings.where.not(grading_company: nil) if filters[:graded] == 'true'
-    if filters[:grading_company].present?
-      listings = listings.where('grading_company = :grading_company',
-                                grading_company: filters[:grading_company])
-    end
-    if filters[:min_condition].present?
-      listings = listings.where('condition >= :condition',
-                                condition: filters[:min_condition])
+      listings = listings.where('subcategory = :subcategory', subcategory: filters[:subcategory])
     end
     listings
+  end
+
+  def filter_condition(listings, filters)
+    listings = listings.where.not(grading_company: nil) if filters[:graded] == 'true'
+    if filters[:grading_company].present?
+      listings = listings.where('grading_company = :grading_company', grading_company: filters[:grading_company])
+    end
+    if filters[:min_condition].present?
+      listings = listings.where('condition >= :condition', condition: filters[:min_condition])
+    end
+    listings
+  end
+
+  def filter_country(listings, filters)
+    return listings unless filters[:shipping_country].present?
+
+    listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
+                   country: filters[:shipping_country])
   end
 
   def sort(listings, order)

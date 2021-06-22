@@ -19,7 +19,7 @@ def generate_sports_image
   images
 end
 
-def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'ACTIVE')
+def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subcategories: [], status: 'ACTIVE')
   listings = []
   items.times do
     if subcategories.include?('BASKETBALL')
@@ -35,6 +35,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -51,6 +52,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -67,6 +69,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -83,6 +86,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -99,6 +103,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -115,6 +120,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -131,6 +137,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -147,6 +154,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -163,6 +171,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -179,6 +188,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -195,6 +205,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
         price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+        shipping_country: shipping_country,
         status: status
       }
     end
@@ -212,6 +223,7 @@ def generate_listings(items: 100, currency: 'CAD', subcategories: [], status: 'A
       price: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 6), r_digits: 2),
       domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
       international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
+      shipping_country: shipping_country,
       status: status
     }
   end
@@ -227,7 +239,7 @@ ivan.addresses.create(street1: '604-1003 Burnaby Street', street2: 'Buzzer 1007'
 active_listings = generate_listings(subcategories: %w[TOYS STAMPS ART RANDOM_COLLECTIBLES POKEMON DRAGON_BALL_SUPER],
                                     status: 'ACTIVE')
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], status: 'DRAFT')
+draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], status: 'DRAFT', shipping_country: 'USA')
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
 
 kevin = Account.create(email: 'kevin@skwirl.io', status: 'verified', given_name: 'Kevin', family_name: 'Legere',
@@ -238,7 +250,8 @@ kevin.addresses.create(street1: '930 Lodge', city: 'Victoria', state: 'BC', zip:
 active_listings = generate_listings(currency: 'USD',
                                     subcategories: %w[BASKETBALL FOOTBALL HOCKEY RANDOM_SPORTS POKEMON
                                                       STAR_WARS_DESTINY],
-                                    status: 'ACTIVE')
+                                    status: 'ACTIVE',
+                                    shipping_country: 'USA')
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
 draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], status: 'DRAFT')
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)

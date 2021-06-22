@@ -17,11 +17,15 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.numeric :price, null: false, precision: 12, scale: 4
       t.numeric :domestic_shipping, null: false, precision: 12, scale: 4
       t.numeric :international_shipping, precision: 12, scale: 4
+      t.string :shipping_country, null: false, limit: 3
 
       t.string :status, null: false
 
       t.index :category, using: 'btree'
+      t.index :subcategory, using: 'btree'
       t.index :title, using: 'btree'
+      t.index :grading_company, using: 'btree'
+      t.index :condition, using: 'btree'
       t.index :currency, using: 'btree'
       t.index :price, using: 'btree'
       t.index :status, using: 'btree'

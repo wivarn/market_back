@@ -6,6 +6,8 @@ gem 'aws-sdk-sesv2', '~> 1.17'
 gem 'jets', '~> 3.0'
 gem 'kaminari-activerecord', '~> 1.2'
 gem 'pg', '~> 1.2.3'
+gem "stripe", "~> 5.34"
+
 
 # seems to be a dependancy for ActionMailer::Base.add_delivery_method to work
 gem 'mailgun-ruby', '~> 1.2'

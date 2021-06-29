@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_053316) do
+ActiveRecord::Schema.define(version: 2021_06_29_103603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -177,6 +177,14 @@ ActiveRecord::Schema.define(version: 2021_06_29_053316) do
     t.index ["title"], name: "index_listings_on_title"
   end
 
+  create_table "stripe_connections", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "stripe_account", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_stripe_connections_on_account_id", unique: true
+  end
+
   add_foreign_key "account_active_session_keys", "accounts"
   add_foreign_key "account_authentication_audit_logs", "accounts"
   add_foreign_key "account_jwt_refresh_keys", "accounts"
@@ -195,4 +203,5 @@ ActiveRecord::Schema.define(version: 2021_06_29_053316) do
   add_foreign_key "carts", "accounts"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
+  add_foreign_key "stripe_connections", "accounts"
 end

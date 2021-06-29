@@ -5,7 +5,9 @@ class CartController < ApplicationController
   before_action :load_cart
 
   def show
-    render json: @cart
+    listings = @cart.listings
+
+    render json: listings
   end
 
   def add_item
@@ -16,6 +18,8 @@ class CartController < ApplicationController
       render json: cart_item.errors, status: :unprocessable_entity
     end
   end
+
+  def checkout; end
 
   private
 

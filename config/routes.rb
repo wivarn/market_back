@@ -10,12 +10,16 @@ Jets.application.routes.draw do
     prefix :cart do
       get '/', to: 'cart#show'
       post :add_item, to: 'cart#add_item'
+      post :checkout, to: 'cart#checkout'
     end
 
     prefix :account do
       resource :profile, only: %i[show update]
       resource :address, only: %i[show update]
       resource :listing_template, only: %i[show update]
+      resource :payments, only: %i[show] do
+        post :link_account, on: :collection
+      end
     end
 
     mount Auth, at: 'auth'

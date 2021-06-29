@@ -18,6 +18,7 @@ class Account < ApplicationRecord
 
   has_one :cart
   has_one :listing_template
+  has_one :stripe_connection
   has_many :addresses
   has_many :listings
 

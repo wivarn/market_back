@@ -10,11 +10,15 @@ class CreateCarts < ActiveRecord::Migration[6.1]
     add_index :carts, :account_id, unique: true
 
     create_table :cart_items do |t|
-      t.references :carts, null: false, foreign_key: true
-      t.references :listings, null: false, foreign_key: true
+      t.bigint :cart_id, null: false
+      t.bigint :listing_id, null: false
       t.integer :quantity, null: false, default: 1
 
       t.timestamps
     end
+
+    add_foreign_key :cart_items, :carts
+    add_foreign_key :cart_items, :listings
+    add_index :cart_items, %i[cart_id listing_id], unique: true
   end
 end

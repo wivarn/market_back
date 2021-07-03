@@ -156,11 +156,11 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
     t.string "tags", default: [], array: true
     t.string "title", null: false
     t.string "grading_company"
-    t.decimal "condition", precision: 3, scale: 1, null: false
+    t.decimal "condition", precision: 3, scale: 1, default: "0.0"
     t.text "description"
     t.string "currency", limit: 3, null: false
-    t.decimal "price", precision: 12, scale: 4, null: false
-    t.decimal "domestic_shipping", precision: 12, scale: 4, null: false
+    t.decimal "price", precision: 12, scale: 4, default: "0.0"
+    t.decimal "domestic_shipping", precision: 12, scale: 4, default: "0.0"
     t.decimal "international_shipping", precision: 12, scale: 4
     t.string "shipping_country", limit: 3, null: false
     t.string "status", null: false

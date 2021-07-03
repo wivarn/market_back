@@ -27,12 +27,12 @@ class ListingsController < ApplicationController
   def create
     currency = current_account.currency
     country = current_account.addresses.first.country
-    @listing = current_account.listings.new(listing_params.merge(currency: currency, shipping_country: country))
+    listing = current_account.listings.new(listing_params.merge(currency: currency, shipping_country: country))
 
-    if @listing.save
-      render json: @listing, status: :created
+    if listing.save
+      render json: listing, status: :created
     else
-      render json: @listing.errors, status: :unprocessable_entity
+      render json: listing.errors, status: :unprocessable_entity
     end
   end
 
@@ -146,9 +146,9 @@ class ListingsController < ApplicationController
     when 'priceShipHigh'
       listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
     when 'newest'
-      listings.order(created_at: :asc)
-    when 'oldest'
       listings.order(created_at: :desc)
+    when 'oldest'
+      listings.order(created_at: :asc)
     else
       listings
     end

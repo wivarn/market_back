@@ -4,7 +4,7 @@ class ListingsController < ApplicationController
   before_action :authenticate!, only: %i[index create bulk_create update delete]
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[update delete]
-  before_action :enforce_address_set!, only: %i[create update]
+  before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
 
   def index
     scope = params[:status] || 'active'
@@ -72,10 +72,10 @@ class ListingsController < ApplicationController
     @listing = current_account.listings.find(params[:id])
   end
 
-  def enforce_address_set!
-    return unless current_account.addresses.none?
+  def enforce_listing_prerequisites!
+    return unless current_account.addresses.none? && !current_account.stripe_connection
 
-    render json: { error: 'address must be set before creating listings' }, status: :forbidden
+    render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
   end
 
   def listing_params

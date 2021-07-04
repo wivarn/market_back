@@ -9,7 +9,7 @@ class Listing < ApplicationRecord
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
   validates :account, :title, :currency, :shipping_country, :status, presence: true
-  validates :status, inclusion: { in: %w[DRAFT ACTIVE REMOVED PENDING_SHIPMENT SHIPPED REFUNDED] }
+  validates :status, inclusion: { in: %w[DRAFT ACTIVE REMOVED RESERVED PENDING_SHIPMENT SHIPPED REFUNDED] }
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }
   validates :shipping_country, inclusion: { in: %w[USA CAN] }

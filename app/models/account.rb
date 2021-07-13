@@ -19,7 +19,7 @@ class Account < ApplicationRecord
   has_many :carts
   has_one :listing_template
   has_one :stripe_connection
-  has_many :addresses
+  has_one :address
   has_many :listings
 
   validates :currency, inclusion: { in: %w[USD CAD] }, presence: true

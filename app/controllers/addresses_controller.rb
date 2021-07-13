@@ -2,16 +2,13 @@
 
 class AddressesController < ApplicationController
   before_action :authenticate!
+
   def show
-    render json: current_account.addresses
+    render json: current_account.address || {}
   end
 
   def update
-    address = if current_account.addresses.any?
-                current_account.addresses.first
-              else
-                current_account.addresses.new
-              end
+    address = Address.where(account: current_account).first_or_initialize
 
     if address.update(address_params)
       render json: address

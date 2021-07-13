@@ -72,6 +72,7 @@ Jets.application.configure do
   # local testing environment you may want to log these messages to 'test.log' file to keep your
   # testing suite output readable.
   # config.logger = Jets::Logger.new($stderr)
+  config.controllers.filtered_parameters += %i[password password-confirm]
 
   config.controllers.default_protect_from_forgery = false
 end

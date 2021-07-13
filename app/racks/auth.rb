@@ -12,7 +12,7 @@ class Auth < Roda
   plugin :middleware
 
   plugin :rodauth, json: :only do
-    enable :create_account, :verify_account, :verify_account_grace_period,
+    enable :create_account, :verify_account,
            :login, :logout, :active_sessions,
            :jwt, :jwt_cors, :jwt_refresh,
            :reset_password, :change_password, :update_password_hash, :change_password_notify,

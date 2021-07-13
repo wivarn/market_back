@@ -41,7 +41,7 @@ class PaymentsController < ApplicationController
   private
 
   def address
-    @address ||= current_account.addresses.first
+    @address ||= current_account.address
   end
 
   def stripe_connection
@@ -93,7 +93,7 @@ class PaymentsController < ApplicationController
   end
 
   def enforce_address_set!
-    return unless current_account.addresses.none?
+    return if current_account.address
 
     render json: { error: 'Address must be set before linking Stripe account' }, status: :forbidden
   end

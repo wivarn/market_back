@@ -2,15 +2,17 @@
 
 class CartsController < ApplicationController
   before_action :authenticate!
+  before_action :validate_address_set!
   before_action :validate_listing_active, only: %i[validate_listing_active]
   before_action :load_cart_through_seller_id, only: %i[add_item checkout]
 
   def index
-    carts = current_account.carts.includes(:listings, :seller)
+    carts = current_account.carts.includes(:listings, seller: :address)
 
-    response = carts.each_with_object({}) do |cart, hash|
-      cart_with_seller = cart.serializable_hash.merge(cart.seller.slice(:given_name, :family_name))
-      hash[cart_with_seller] = cart.listings
+    response = carts.map do |cart|
+      cart.serializable_hash.merge(cart.seller.slice(:given_name, :family_name),
+                                   total: total(cart.seller.address, cart.listings),
+                                   listings: cart.listings)
     end
 
     render json: response
@@ -33,11 +35,11 @@ class CartsController < ApplicationController
 
   def checkout
     listings = @cart.listings
-    total_price = 0
+    seller_address = listings.first.account.address
+    total_price = total(seller_address, listings)
     line_items = []
     listings.each do |listing|
-      amount = (listing.price + listing.domestic_shipping) * 100
-      total_price += amount
+      amount = subtotal(seller_address, listing)
       line_items << {
         name: listing.title,
         amount: amount.to_i,
@@ -66,6 +68,25 @@ class CartsController < ApplicationController
   end
 
   private
+
+  def validate_address_set!
+    return if current_account.address
+
+    render json: { error: 'You must set your address before you can have a shopping cart' },
+           status: :unprocessable_entity
+  end
+
+  def subtotal(seller_address, listing)
+    shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
+    (listing.price + listing.public_send(shipping)) * 100
+  end
+
+  def total(seller_address, listings)
+    shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
+    listing_prices = listings.map(&:price)
+    shipping_prices = listings.map(&shipping)
+    (listing_prices + shipping_prices).inject(0) { |sum, price| sum + price }
+  end
 
   def validate_listing_active
     listing = Listing.find(listing_params[:listing_id])

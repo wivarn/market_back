@@ -16,7 +16,7 @@ class Account < ApplicationRecord
   has_one :account_password_reset_key, foreign_key: :id
   has_one :account_verification_key, foreign_key: :id
 
-  has_one :cart
+  has_many :carts
   has_one :listing_template
   has_one :stripe_connection
   has_many :addresses

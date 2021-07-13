@@ -83,4 +83,8 @@ class Listing < ApplicationRecord
   scope :shipped, -> { where(status: 'SHIPPED') }
   scope :sold, -> { where(status: %w[PENDING_SHIPMENT SHIPPED]) }
   scope :refunded, -> { where(status: 'REFUNDED') }
+
+  def active?
+    status == 'ACTIVE'
+  end
 end

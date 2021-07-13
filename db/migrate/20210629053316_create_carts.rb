@@ -2,12 +2,14 @@ class CreateCarts < ActiveRecord::Migration[6.1]
   def change
     create_table :carts do |t|
       t.bigint :account_id, null: false
+      t.bigint :seller_id, null: false
 
       t.timestamps
     end
 
     add_foreign_key :carts, :accounts
-    add_index :carts, :account_id, unique: true
+    add_foreign_key :carts, :accounts, column: :seller_id
+    add_index :carts, :account_id
 
     create_table :cart_items do |t|
       t.bigint :cart_id, null: false

@@ -1,8 +1,20 @@
 # frozen_string_literal: true
 
-class CartController < ApplicationController
+class CartsController < ApplicationController
   before_action :authenticate!
-  before_action :load_cart
+  before_action :validate_listing_active, only: %i[validate_listing_active]
+  before_action :load_cart_through_seller_id, only: %i[add_item checkout]
+
+  def index
+    carts = current_account.carts.includes(:listings, :seller)
+
+    response = carts.each_with_object({}) do |cart, hash|
+      cart_with_seller = cart.serializable_hash.merge(cart.seller.slice(:given_name, :family_name))
+      hash[cart_with_seller] = cart.listings
+    end
+
+    render json: response
+  end
 
   def show
     listings = @cart.listings
@@ -55,11 +67,17 @@ class CartController < ApplicationController
 
   private
 
-  def load_cart
-    @cart = Cart.where(account: current_account).first_or_create
+  def validate_listing_active
+    listing = Listing.find(listing_params[:listing_id])
+
+    render json: { error: 'Listing is no longer availbile' }, status: :unprocessable_entity unless listing.active?
+  end
+
+  def load_cart_through_seller_id
+    @cart = Cart.where(account: current_account, seller_id: listing_params[:seller_id]).first_or_create
   end
 
   def listing_params
-    params.permit(:listing_id)
+    params.permit(:seller_id, :listing_id)
   end
 end

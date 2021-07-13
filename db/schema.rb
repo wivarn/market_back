@@ -126,9 +126,10 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
 
   create_table "carts", force: :cascade do |t|
     t.bigint "account_id", null: false
+    t.bigint "seller_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_carts_on_account_id", unique: true
+    t.index ["account_id"], name: "index_carts_on_account_id"
   end
 
   create_table "listing_templates", force: :cascade do |t|
@@ -201,6 +202,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "listings"
   add_foreign_key "carts", "accounts"
+  add_foreign_key "carts", "accounts", column: "seller_id"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
   add_foreign_key "stripe_connections", "accounts"

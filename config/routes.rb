@@ -7,10 +7,15 @@ Jets.application.routes.draw do
       post :bulk_create, on: :collection
     end
 
-    prefix :cart do
-      get '/', to: 'cart#show'
-      post :add_item, to: 'cart#add_item'
-      post :checkout, to: 'cart#checkout'
+    # prefix :cart do
+    #   get '/', to: 'cart#index'
+    #   post :add_item, to: 'cart#add_item'
+    #   post :checkout, to: 'cart#checkout'
+    # end
+
+    resources :carts, only: %i[show index], param: :seller_id do
+      post :add_item, on: :member
+      post :checkout, on: :member
     end
 
     prefix :account do

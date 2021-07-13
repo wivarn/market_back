@@ -3,22 +3,22 @@
 class RodauthMailer < ApplicationMailer
   default from: "accounts@#{ENV['DOMAIN']}"
 
-  def verify_account(recipient, email_link)
-    @email_link = email_link
+  def verify_account(recipient, key)
+    @email_link = "#{ENV['FRONT_END_BASE_URL']}/auth/verifyAccount?key=#{key}"
 
     mail to: recipient
   end
 
-  def reset_password(recipient, email_link)
-    @email_link = email_link
+  def reset_password(recipient, key)
+    @email_link = "#{ENV['FRONT_END_BASE_URL']}/auth/resetPassword?key=#{key}"
 
     mail to: recipient
   end
 
-  def verify_login_change(recipient, old_login, new_login, email_link)
+  def verify_login_change(recipient, old_login, new_login, key)
     @old_login  = old_login
     @new_login  = new_login
-    @email_link = email_link
+    @email_link = "#{ENV['FRONT_END_BASE_URL']}/auth/verifyAccountChange?key=#{key}"
 
     mail to: recipient
   end
@@ -33,8 +33,8 @@ class RodauthMailer < ApplicationMailer
   #   mail to: recipient
   # end
 
-  def unlock_account(recipient, email_link)
-    @email_link = email_link
+  def unlock_account(recipient, key)
+    @email_link = "#{ENV['FRONT_END_BASE_URL']}/auth/unlockAccount?key=#{key}"
 
     mail to: recipient
   end

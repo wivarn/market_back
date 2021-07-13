@@ -72,20 +72,20 @@ class Auth < Roda
 
     # email configs
     create_verify_account_email do
-      RodauthMailer.verify_account(email_to, verify_account_email_link)
+      RodauthMailer.verify_account(email_to, "#{account_id}#{token_separator}#{compute_hmac(verify_account_key_value)}")
     end
     create_reset_password_email do
-      RodauthMailer.reset_password(email_to, reset_password_email_link)
+      RodauthMailer.reset_password(email_to, "#{account_id}#{token_separator}#{compute_hmac(reset_password_key_value)}")
     end
     create_verify_login_change_email do |login|
       RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login,
-                                        verify_login_change_email_link)
+                                        "#{account_id}#{token_separator}#{compute_hmac(verify_login_change_key_value)}")
     end
     create_password_changed_email do
       RodauthMailer.password_changed(email_to)
     end
     create_unlock_account_email do
-      RodauthMailer.unlock_account(email_to, unlock_account_email_link)
+      RodauthMailer.unlock_account(email_to, "#{account_id}#{token_separator}#{compute_hmac(unlock_account_key)}")
     end
   end
 

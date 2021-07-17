@@ -107,4 +107,8 @@ class Listing < ApplicationRecord
       transitions from: %i[pending_shipment shipped], to: :refunded
     end
   end
+
+  def editable?
+    draft? || active?
+  end
 end

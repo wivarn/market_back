@@ -5,6 +5,8 @@ class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[update update_state delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
+  before_action :enfore_updateable!, only: %i[update]
+  before_action :enfore_destroyable!, only: %i[destroy]
 
   def index
     scope = params[:state] || :active
@@ -86,6 +88,18 @@ class ListingsController < ApplicationController
     return unless current_account.address && !current_account.stripe_connection
 
     render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
+  end
+
+  def enfore_updateable!
+    return if @listing.editable?
+
+    render json: { error: 'Only draft and active listings can be updated' }, status: :unprocessable_entity
+  end
+
+  def enforce_destroyable!
+    return unless @listing.draft?
+
+    render json: { error: 'Only drafts can be deleted' }, status: :unprocessable_entity
   end
 
   def listing_params

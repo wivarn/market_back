@@ -79,6 +79,11 @@ class Listing < ApplicationRecord
 
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 
+  scope :ships_to, lambda { |country|
+                     where('shipping_country = :country OR international_shipping IS NOT NULL',
+                           country: country)
+                   }
+
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
     state :active, :removed, :reserved, :pending_shipment, :shipped, :sold, :refunded

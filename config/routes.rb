@@ -9,11 +9,9 @@ Jets.application.routes.draw do
       post :update_state, on: :member
     end
 
-    # prefix :cart do
-    #   get '/', to: 'cart#index'
-    #   post :add_item, to: 'cart#add_item'
-    #   post :checkout, to: 'cart#checkout'
-    # end
+    resources :users, only: %i[show] do
+      get :listings, on: :member
+    end
 
     resources :carts, only: %i[show index], param: :seller_id do
       post :add_item, on: :member

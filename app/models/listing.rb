@@ -22,7 +22,7 @@ class Listing < ApplicationRecord
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true, allow_blank: false
 
-  with_options if: -> { aasm_state != :draft } do |active|
+  with_options if: -> { !draft? } do |active|
     active.validates :account, :photos, :condition, :category, :subcategory, :price, :domestic_shipping,
                      presence: true
 
@@ -32,9 +32,9 @@ class Listing < ApplicationRecord
     active.validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
     active.validates :condition, inclusion: { in: (2..10).step(2).to_a },
-                                 if: -> { aasm_state != :draft && !grading_company.present? }
+                                 if: -> { !draft? && !grading_company.present? }
     active.validates :condition, inclusion: { in: (1..10).step(0.5).to_a },
-                                 if: -> { aasm_state != :draft && grading_company.present? }
+                                 if: -> { !draft? && grading_company.present? }
 
     active.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
                                                  allow_blank: false
@@ -48,7 +48,7 @@ class Listing < ApplicationRecord
     }
   end
 
-  with_options if: -> { aasm_state == :draft } do |draft|
+  with_options if: -> { draft? } do |draft|
     draft.validates :category, inclusion: { in: CATEGORIES }, allow_blank: true
     draft.validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' },
                                   allow_blank: true
@@ -58,10 +58,10 @@ class Listing < ApplicationRecord
                                   allow_blank: true
 
     draft.validates :condition, inclusion: { in: (2..10).step(2).to_a }, allow_blank: true, allow_nil: true,
-                                if: -> { aasm_state == :draft && !grading_company.present? }
+                                if: -> { draft? && !grading_company.present? }
 
     draft.validates :condition, inclusion: { in: (1..10).step(0.5).to_a }, allow_blank: true, allow_nil: true,
-                                if: -> { aasm_state == :draft && grading_company.present? }
+                                if: -> { draft? && grading_company.present? }
 
     draft.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
                                                 allow_blank: true, allow_nil: true

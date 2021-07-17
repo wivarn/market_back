@@ -3,11 +3,11 @@
 class ListingsController < ApplicationController
   before_action :authenticate!, only: %i[index create bulk_create update delete]
   before_action :set_listing, only: %i[show]
-  before_action :set_listing_through_account, only: %i[update delete]
+  before_action :set_listing_through_account, only: %i[update update_state delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
 
   def index
-    scope = params[:status] || 'active'
+    scope = params[:state] || :active
     listings = current_account.listings.send(scope)
     listings = filter_and_sort(listings, params)
 
@@ -43,14 +43,24 @@ class ListingsController < ApplicationController
       current_account
       .listings
       .create_with(created_at: Time.now, updated_at: Time.now,
-                   currency: currency, shipping_country: country, status: 'DRAFT')
+                   currency: currency, shipping_country: country)
       .insert_all(bulk_create_params[:listings])
 
     render json: listings, status: :created
   end
 
   def update
+    @listing.aasm.fire(state_transition) if state_transition
     if @listing.update(listing_params)
+      render json: @listing
+    else
+      render json: @listing.errors, status: :unprocessable_entity
+    end
+  end
+
+  def update_state
+    @listing.aasm.fire(state_transition)
+    if @listing.save
       render json: @listing
     else
       render json: @listing.errors, status: :unprocessable_entity
@@ -73,19 +83,23 @@ class ListingsController < ApplicationController
   end
 
   def enforce_listing_prerequisites!
-    return unless current_account.addresses.none? && !current_account.stripe_connection
+    return unless current_account.address && !current_account.stripe_connection
 
     render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
   end
 
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :international_shipping, :status)
+                  :domestic_shipping, :international_shipping)
+  end
+
+  def state_transition
+    params[:state_transition]
   end
 
   def bulk_create_params
     params.permit(listings: %i[category subcategory title grading_company condition description price
-                               domestic_shipping international_shipping status])
+                               domestic_shipping international_shipping])
   end
 
   def filter_and_sort(listings, params)

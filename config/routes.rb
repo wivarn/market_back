@@ -5,6 +5,7 @@ Jets.application.routes.draw do
     resources :listings, param: :id do
       get :search, on: :collection
       post :bulk_create, on: :collection
+      post :update_state, on: :member
     end
 
     # prefix :cart do

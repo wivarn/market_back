@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'aasm', '~> 5.2'
-gem 'after_commit_everywhere', '~> 0.1.5'
+gem 'after_commit_everywhere', '~> 1.0.0'
 gem 'aws-sdk-sesv2', '~> 1.17'
 gem 'jets', '~> 3.0'
 gem 'kaminari-activerecord', '~> 1.2'
@@ -19,7 +19,7 @@ gem 'jwt', '~> 2.2'
 gem 'rodauth', '~> 2.12'
 gem 'rotp', '~> 6.2'
 gem 'rqrcode', '~> 2.0'
-gem 'sequel-activerecord_connection', '~> 1.2'
+gem 'sequel-activerecord_connection', '~> 1.2.3'
 
 group :development, :staging do
   gem 'faker', '~> 2.18'

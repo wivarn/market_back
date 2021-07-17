@@ -19,7 +19,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.numeric :international_shipping, precision: 12, scale: 4
       t.string :shipping_country, null: false, limit: 3
 
-      t.string :aasm_state, null: false
+      t.string :aasm_state, null: false, default: 'draft'
       t.datetime :reserved_at
 
       t.index :category, using: 'btree'

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
-  before_action :authenticate!, only: %i[index create bulk_create update delete]
+  before_action :authenticate!, only: %i[index create bulk_create edit update delete]
   before_action :set_listing, only: %i[show]
-  before_action :set_listing_through_account, only: %i[update update_state delete]
+  before_action :set_listing_through_account, only: %i[edit update update_state delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
   before_action :enfore_updateable!, only: %i[update]
   before_action :enfore_destroyable!, only: %i[destroy]
@@ -27,9 +27,9 @@ class ListingsController < ApplicationController
   end
 
   def create
-    currency = current_account.currency
-    country = current_account.address.country
-    listing = current_account.listings.new(listing_params.merge(currency: currency, shipping_country: country))
+    listing = current_account.listings.new(listing_params.merge(currency: current_account.currency,
+                                                                shipping_country: current_account.address.country))
+    listing.aasm.fire(state_transition) if state_transition
 
     if listing.save
       render json: listing, status: :created
@@ -49,6 +49,10 @@ class ListingsController < ApplicationController
       .insert_all(bulk_create_params[:listings])
 
     render json: listings, status: :created
+  end
+
+  def edit
+    render json: @listing
   end
 
   def update
@@ -77,7 +81,7 @@ class ListingsController < ApplicationController
   private
 
   def set_listing
-    @listing = Listing.find(params[:id])
+    @listing = Listing.active.find(params[:id])
   end
 
   def set_listing_through_account
@@ -93,7 +97,7 @@ class ListingsController < ApplicationController
   def enfore_updateable!
     return if @listing.editable?
 
-    render json: { error: 'Only draft and active listings can be updated' }, status: :unprocessable_entity
+    render json: { error: 'Only draft, active and removed listings can be updated' }, status: :unprocessable_entity
   end
 
   def enforce_destroyable!

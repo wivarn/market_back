@@ -109,6 +109,6 @@ class Listing < ApplicationRecord
   end
 
   def editable?
-    draft? || active?
+    draft? || active? || removed?
   end
 end

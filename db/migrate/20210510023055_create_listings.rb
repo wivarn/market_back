@@ -19,7 +19,8 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.numeric :international_shipping, precision: 12, scale: 4
       t.string :shipping_country, null: false, limit: 3
 
-      t.string :status, null: false
+      t.string :aasm_state, null: false
+      t.datetime :reserved_at
 
       t.index :category, using: 'btree'
       t.index :subcategory, using: 'btree'
@@ -28,7 +29,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.index :condition, using: 'btree'
       t.index :currency, using: 'btree'
       t.index :price, using: 'btree'
-      t.index :status, using: 'btree'
+      t.index :aasm_state, using: 'btree'
 
       t.timestamps
     end

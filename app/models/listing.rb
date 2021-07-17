@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Listing < ApplicationRecord
+  include AASM
+
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[HOCKEY BASEBALL BASKETBALL FOOTBALL SOCCER OTHER].freeze
   TRADING_CARDS = %w[CARDFIGHT_VANGUARD DRAGON_BALL_SUPER FLESH_AND_BLOOD MAGIC POKEMON STAR_WARS_DESTINY YUGIOH
@@ -8,8 +10,7 @@ class Listing < ApplicationRecord
   COLLECTIBLES = %w[ANTIQUES ART COINS COMICS STAMPS TOYS WATCHES OTHER].freeze
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
-  validates :account, :title, :currency, :shipping_country, :status, presence: true
-  validates :status, inclusion: { in: %w[DRAFT ACTIVE REMOVED RESERVED PENDING_SHIPMENT SHIPPED REFUNDED] }
+  validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }
   validates :shipping_country, inclusion: { in: %w[USA CAN] }
@@ -21,7 +22,7 @@ class Listing < ApplicationRecord
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true, allow_blank: false
 
-  with_options if: -> { status != 'DRAFT' } do |active|
+  with_options if: -> { aasm_state != :draft } do |active|
     active.validates :account, :photos, :condition, :category, :subcategory, :price, :domestic_shipping,
                      presence: true
 
@@ -31,9 +32,9 @@ class Listing < ApplicationRecord
     active.validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
     active.validates :condition, inclusion: { in: (2..10).step(2).to_a },
-                                 if: -> { status != 'DRAFT' && !grading_company.present? }
+                                 if: -> { aasm_state != :draft && !grading_company.present? }
     active.validates :condition, inclusion: { in: (1..10).step(0.5).to_a },
-                                 if: -> { status != 'DRAFT' && grading_company.present? }
+                                 if: -> { aasm_state != :draft && grading_company.present? }
 
     active.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
                                                  allow_blank: false
@@ -47,7 +48,7 @@ class Listing < ApplicationRecord
     }
   end
 
-  with_options if: -> { status == 'DRAFT' } do |draft|
+  with_options if: -> { aasm_state == :draft } do |draft|
     draft.validates :category, inclusion: { in: CATEGORIES }, allow_blank: true
     draft.validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' },
                                   allow_blank: true
@@ -57,10 +58,10 @@ class Listing < ApplicationRecord
                                   allow_blank: true
 
     draft.validates :condition, inclusion: { in: (2..10).step(2).to_a }, allow_blank: true, allow_nil: true,
-                                if: -> { status == 'DRAFT' && !grading_company.present? }
+                                if: -> { aasm_state == :draft && !grading_company.present? }
 
     draft.validates :condition, inclusion: { in: (1..10).step(0.5).to_a }, allow_blank: true, allow_nil: true,
-                                if: -> { status == 'DRAFT' && grading_company.present? }
+                                if: -> { aasm_state == :draft && grading_company.present? }
 
     draft.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
                                                 allow_blank: true, allow_nil: true
@@ -76,15 +77,34 @@ class Listing < ApplicationRecord
 
   belongs_to :account
 
-  scope :draft, -> { where(status: 'DRAFT') }
-  scope :active, -> { where(status: 'ACTIVE') }
-  scope :removed, -> { where(status: 'REMOVED') }
-  scope :pending_shipment, -> { where(status: 'PENDING_SHIPMENT') }
-  scope :shipped, -> { where(status: 'SHIPPED') }
-  scope :sold, -> { where(status: %w[PENDING_SHIPMENT SHIPPED]) }
-  scope :refunded, -> { where(status: 'REFUNDED') }
+  before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 
-  def active?
-    status == 'ACTIVE'
+  aasm timestamps: true, no_direct_assignment: true do
+    state :draft, initial: true
+    state :active, :removed, :reserved, :pending_shipment, :shipped, :sold, :refunded
+
+    event :publish do
+      transitions from: %i[draft removed], to: :active
+    end
+
+    event :remove do
+      transitions from: :active, to: :removed
+    end
+
+    event :reserve do
+      transitions from: :active, to: :reserved
+    end
+
+    event :paid do
+      transitions from: :reserved, to: :pending_shipment
+    end
+
+    event :ship do
+      transitions from: :pending_shipment, to: :shipped
+    end
+
+    event :refund do
+      transitions from: %i[pending_shipment shipped], to: :refunded
+    end
   end
 end

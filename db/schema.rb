@@ -164,16 +164,17 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
     t.decimal "domestic_shipping", precision: 12, scale: 4, default: "0.0"
     t.decimal "international_shipping", precision: 12, scale: 4
     t.string "shipping_country", limit: 3, null: false
-    t.string "status", null: false
+    t.string "aasm_state", null: false
+    t.datetime "reserved_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["aasm_state"], name: "index_listings_on_aasm_state"
     t.index ["account_id"], name: "index_listings_on_account_id"
     t.index ["category"], name: "index_listings_on_category"
     t.index ["condition"], name: "index_listings_on_condition"
     t.index ["currency"], name: "index_listings_on_currency"
     t.index ["grading_company"], name: "index_listings_on_grading_company"
     t.index ["price"], name: "index_listings_on_price"
-    t.index ["status"], name: "index_listings_on_status"
     t.index ["subcategory"], name: "index_listings_on_subcategory"
     t.index ["title"], name: "index_listings_on_title"
   end

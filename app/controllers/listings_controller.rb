@@ -26,7 +26,7 @@ class ListingsController < ApplicationController
 
   def create
     currency = current_account.currency
-    country = current_account.addresses.first.country
+    country = current_account.address.country
     listing = current_account.listings.new(listing_params.merge(currency: currency, shipping_country: country))
 
     if listing.save
@@ -38,7 +38,7 @@ class ListingsController < ApplicationController
 
   def bulk_create
     currency = current_account.currency
-    country = current_account.addresses.first.country
+    country = current_account.address.country
     listings =
       current_account
       .listings

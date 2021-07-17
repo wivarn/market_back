@@ -19,7 +19,7 @@ def generate_sports_image
   images
 end
 
-def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subcategories: [], status: 'ACTIVE')
+def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subcategories: [], aasm_state: :active)
   listings = []
   items.times do
     if subcategories.include?('BASKETBALL')
@@ -36,7 +36,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('FOOTBALL')
@@ -53,7 +53,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('HOCKEY')
@@ -70,7 +70,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('RANDOM_SPORTS')
@@ -87,7 +87,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('POKEMON')
@@ -104,7 +104,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('DRAGON_BALL_SUPER')
@@ -121,7 +121,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('STAR_WARS_DESTINY')
@@ -138,7 +138,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('RANDOM_TRADING')
@@ -155,7 +155,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('TOYS')
@@ -172,7 +172,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('ART')
@@ -189,7 +189,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: nil,
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     if subcategories.include?('STAMPS')
@@ -206,7 +206,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
         domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
         international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
         shipping_country: shipping_country,
-        status: status
+        aasm_state: aasm_state
       }
     end
     next unless subcategories.include?('RANDOM_COLLECTIBLES')
@@ -224,7 +224,7 @@ def generate_listings(items: 100, currency: 'CAD', shipping_country: 'CAN', subc
       domestic_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 1, to: 2), r_digits: 2),
       international_shipping: Faker::Number.decimal(l_digits: Faker::Number.between(from: 2, to: 3), r_digits: 2),
       shipping_country: shipping_country,
-      status: status
+      aasm_state: aasm_state
     }
   end
   listings
@@ -237,9 +237,10 @@ ivan.create_address(street1: '604-1003 Burnaby Street', street2: 'Buzzer 1007', 
                     zip: 'V6E4R7', country: 'CAN')
 
 active_listings = generate_listings(subcategories: %w[TOYS STAMPS ART RANDOM_COLLECTIBLES POKEMON DRAGON_BALL_SUPER],
-                                    status: 'ACTIVE')
+                                    aasm_state: :active)
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], status: 'DRAFT', shipping_country: 'USA')
+draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], aasm_state: :draft,
+                                   shipping_country: 'USA')
 ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
 
 kevin = Account.create(email: 'kevin@skwirl.io', status: 'verified', given_name: 'Kevin', family_name: 'Legere',
@@ -250,8 +251,8 @@ kevin.create_address(street1: '930 Lodge', city: 'Victoria', state: 'BC', zip: '
 active_listings = generate_listings(currency: 'USD',
                                     subcategories: %w[BASKETBALL FOOTBALL HOCKEY RANDOM_SPORTS POKEMON
                                                       STAR_WARS_DESTINY],
-                                    status: 'ACTIVE',
+                                    aasm_state: :active,
                                     shipping_country: 'USA')
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], status: 'DRAFT')
+draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], aasm_state: :draft)
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)

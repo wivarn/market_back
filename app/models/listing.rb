@@ -83,6 +83,9 @@ class Listing < ApplicationRecord
                      where('shipping_country = :country OR international_shipping IS NOT NULL',
                            country: country)
                    }
+  scope :sports_cards, -> { where('category = :category', category: 'SPORTS_CARDS') }
+  scope :trading_cards, -> { where('category = :category', category: 'TRADING_CARDS') }
+  scope :collectibles, -> { where('category = :category', category: 'COLLECTIBLES') }
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true

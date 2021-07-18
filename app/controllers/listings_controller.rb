@@ -21,6 +21,15 @@ class ListingsController < ApplicationController
     render json: { listings: listings, total_pages: listings.total_pages }
   end
 
+  # used in the home page
+  def recent_by_category
+    sports_cards = Listing.active.sports_cards.order(created_at: :desc).limit(4)
+    trading_cards = Listing.active.trading_cards.order(created_at: :desc).limit(4)
+    collectibles = Listing.active.collectibles.order(created_at: :desc).limit(4)
+
+    render json: { sports_cards: sports_cards, trading_cards: trading_cards, collectibles: collectibles }
+  end
+
   def show
     listing_with_name = @listing.serializable_hash.merge(@listing.account.slice(:given_name, :family_name))
     render json: listing_with_name

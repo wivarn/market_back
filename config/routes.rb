@@ -7,6 +7,7 @@ Jets.application.routes.draw do
       post :bulk_create, on: :collection
       get :edit, on: :member
       post :update_state, on: :member
+      get :recent_by_category, on: :collection
     end
 
     resources :users, only: %i[show] do

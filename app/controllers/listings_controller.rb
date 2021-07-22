@@ -5,7 +5,7 @@ class ListingsController < ApplicationController
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account, only: %i[edit update update_state delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
-  before_action :enfore_updateable!, only: %i[update]
+  before_action :enfore_editable!, only: %i[update]
   before_action :enfore_destroyable!, only: %i[destroy]
 
   def index
@@ -103,7 +103,7 @@ class ListingsController < ApplicationController
     render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
   end
 
-  def enfore_updateable!
+  def enfore_editable!
     return if @listing.editable?
 
     render json: { error: 'Only draft, active and removed listings can be updated' }, status: :unprocessable_entity

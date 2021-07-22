@@ -3,6 +3,8 @@
 class Listing < ApplicationRecord
   include AASM
 
+  RESERVE_TIME = 15.minutes
+
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[HOCKEY BASEBALL BASKETBALL FOOTBALL SOCCER OTHER].freeze
   TRADING_CARDS = %w[CARDFIGHT_VANGUARD DRAGON_BALL_SUPER FLESH_AND_BLOOD MAGIC POKEMON STAR_WARS_DESTINY YUGIOH
@@ -96,15 +98,15 @@ class Listing < ApplicationRecord
     end
 
     event :remove do
-      transitions from: :active, to: :removed
+      transitions to: :removed, guard: :active?
     end
 
     event :reserve do
-      transitions from: :active, to: :reserved
+      transitions to: :reserved, guard: :active?
     end
 
     event :paid do
-      transitions from: :reserved, to: :pending_shipment
+      transitions to: :pending_shipment, guard: :reserved?
     end
 
     event :ship do
@@ -114,6 +116,21 @@ class Listing < ApplicationRecord
     event :refund do
       transitions from: %i[pending_shipment shipped], to: :refunded
     end
+  end
+
+  scope :active, lambda {
+                   where('aasm_state = ? OR (aasm_state = ? AND reserved_at < ?)', :active, :reserved,
+                         Time.now.utc - RESERVE_TIME)
+                 }
+
+  scope :reserved, -> { where('aasm_state = ? AND reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME) }
+
+  def active?
+    aasm_state == 'active' || (aasm_state == 'reserved' && reserved_at < Time.now.utc - RESERVE_TIME)
+  end
+
+  def reserved?
+    aasm_state == 'reserved' && reserved_at >= Time.now.utc - RESERVE_TIME
   end
 
   def editable?

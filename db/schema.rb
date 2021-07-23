@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
     t.decimal "price", precision: 12, scale: 4
     t.decimal "domestic_shipping", precision: 12, scale: 4
     t.decimal "international_shipping", precision: 12, scale: 4
+    t.decimal "combined_shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_listing_templates_on_account_id", unique: true
@@ -163,6 +164,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
     t.decimal "price", precision: 12, scale: 4, default: "0.0"
     t.decimal "domestic_shipping", precision: 12, scale: 4, default: "0.0"
     t.decimal "international_shipping", precision: 12, scale: 4
+    t.decimal "combined_shipping", precision: 12, scale: 4
     t.string "shipping_country", limit: 3, null: false
     t.string "aasm_state", default: "draft", null: false
     t.datetime "reserved_at"

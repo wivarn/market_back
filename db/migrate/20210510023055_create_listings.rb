@@ -17,6 +17,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
       t.numeric :price, precision: 12, scale: 4, default: 0
       t.numeric :domestic_shipping, precision: 12, scale: 4, default: 0
       t.numeric :international_shipping, precision: 12, scale: 4
+      t.numeric :combined_shipping, precision: 12, scale: 4
       t.string :shipping_country, null: false, limit: 3
 
       t.string :aasm_state, null: false, default: 'draft'

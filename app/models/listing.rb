@@ -17,34 +17,34 @@ class Listing < ApplicationRecord
   validates :currency, inclusion: { in: %w[USD CAD] }
   validates :shipping_country, inclusion: { in: %w[USA CAN] }
   validates :grading_company, inclusion: { in: GRADING_COMPANIES }, allow_nil: true, allow_blank: true
-  validates :international_shipping,
+  validates :international_shipping, :combined_shipping,
             numericality: {
               greater_than_or_equal_to: 0,
               less_than: 100_000_000
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true, allow_blank: false
 
-  with_options if: -> { !draft? } do |active|
-    active.validates :account, :photos, :condition, :category, :subcategory, :price, :domestic_shipping,
-                     presence: true
+  with_options if: -> { !draft? } do |not_draft|
+    not_draft.validates :account, :photos, :condition, :category, :subcategory, :price, :domestic_shipping,
+                        presence: true
 
-    active.validates :category, inclusion: { in: CATEGORIES }
-    active.validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }
-    active.validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }
-    active.validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
+    not_draft.validates :category, inclusion: { in: CATEGORIES }
+    not_draft.validates :subcategory, inclusion: { in: SPORTS_CARDS }, if: -> { category == 'SPORTS_CARDS' }
+    not_draft.validates :subcategory, inclusion: { in: TRADING_CARDS }, if: -> { category == 'TRADING_CARDS' }
+    not_draft.validates :subcategory, inclusion: { in: COLLECTIBLES }, if: -> { category == 'COLLECTIBLES' }
 
-    active.validates :condition, inclusion: { in: (2..10).step(2).to_a },
-                                 if: -> { !draft? && !grading_company.present? }
-    active.validates :condition, inclusion: { in: (1..10).step(0.5).to_a },
-                                 if: -> { !draft? && grading_company.present? }
+    not_draft.validates :condition, inclusion: { in: (2..10).step(2).to_a },
+                                    if: -> { !draft? && !grading_company.present? }
+    not_draft.validates :condition, inclusion: { in: (1..10).step(0.5).to_a },
+                                    if: -> { !draft? && grading_company.present? }
 
-    active.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
-                                                 allow_blank: false
-    active.validates :price, numericality: {
+    not_draft.validates :price, :domestic_shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
+                                                    allow_blank: false
+    not_draft.validates :price, numericality: {
       greater_than_or_equal_to: 1,
       less_than: 100_000_000
     }
-    active.validates :domestic_shipping, numericality: {
+    not_draft.validates :domestic_shipping, numericality: {
       greater_than_or_equal_to: 0,
       less_than: 100_000_000
     }

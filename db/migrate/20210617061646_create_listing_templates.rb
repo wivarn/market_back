@@ -14,6 +14,7 @@ class CreateListingTemplates < ActiveRecord::Migration[6.1]
       t.numeric :price, precision: 12, scale: 4, default: nil
       t.numeric :domestic_shipping, precision: 12, scale: 4, default: nil
       t.numeric :international_shipping, precision: 12, scale: 4, default: nil
+      t.numeric :combined_shipping, precision: 12, scale: 4, default: nil
 
       t.timestamps
     end

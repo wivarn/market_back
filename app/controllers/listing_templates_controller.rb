@@ -32,6 +32,6 @@ class ListingTemplatesController < ApplicationController
 
   def listing_template_params
     params.permit(:category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :international_shipping)
+                  :domestic_shipping, :international_shipping, :combined_shipping)
   end
 end

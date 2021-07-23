@@ -27,7 +27,7 @@ class ListingTemplate < ApplicationRecord
     greater_than_or_equal_to: 0,
     less_than: 100_000_000
   }, allow_nil: true, allow_blank: false
-  validates :international_shipping,
+  validates :international_shipping, :combined_shipping,
             numericality: {
               greater_than_or_equal_to: 0,
               less_than: 100_000_000

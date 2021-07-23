@@ -31,25 +31,27 @@ class CartsController < ApplicationController
   end
 
   def checkout
-    shipping_rate = shipping_rate_by_country(cart.seller.address.country)
-    listings = cart.listings.to_a
+    shipping_rate = shipping_rate_by_country(@cart.seller.address.country)
+    listings = @cart.listings.to_a
     max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
+    total_price = total(shipping_rate, max, listings)
+    application_fee_amount = total_price * 0.05 * 100
+    stripe_account = listings.first.account.stripe_connection.stripe_account
 
-    line_items = []
-    listings.each do |listing|
-      amount = subtotal(shipping_rate, listing)
-      line_items << {
-        name: listing.title,
-        amount: amount.to_i,
-        currency: listing.currency.downcase,
+    line_items = listings.append(max).each_with_object([]) do |listing, items|
+      items << {
+        price_data: {
+          currency: listing.currency.downcase,
+          unit_amount: stripe_subtotal(shipping_rate, listing),
+          product_data: {
+            name: listing.title
+            # description:
+            # images:
+          }
+        },
         quantity: 1
       }
     end
-
-    total_price = total(shipping_rate, max, listings)
-    application_fee_amount = total_price * 0.05
-
-    stripe_account = listings.first.account.stripe_connection.stripe_account
 
     session = Stripe::Checkout::Session
               .create({
@@ -79,14 +81,9 @@ class CartsController < ApplicationController
     current_account.address.country == seller_country ? :domestic_shipping : :international_shipping
   end
 
-  def subtotal(shipping_rate, listing)
-    (listing.price + listing[shipping_rate]) * 100
+  def stripe_subtotal(shipping_rate, listing)
+    ((listing.price + listing[shipping_rate]) * 100).to_i
   end
-
-  # def subtotal(seller_address, listing)
-  #   shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
-  #   (listing.price + listing.public_send(shipping)) * 100
-  # end
 
   def total(shipping_rate, max_shipping_listing, listings)
     total_shipping = listings.inject(max_shipping_listing[shipping_rate]) do |sum, listing|

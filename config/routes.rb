@@ -14,7 +14,7 @@ Jets.application.routes.draw do
       get :listings, on: :member
     end
 
-    resources :carts, only: %i[show index], param: :seller_id do
+    resources :carts, only: %i[index], param: :seller_id do
       post :add_item, on: :member
       post :checkout, on: :member
     end

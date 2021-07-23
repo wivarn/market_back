@@ -3,7 +3,6 @@
 class CartsController < ApplicationController
   before_action :authenticate!
   before_action :validate_address_set!
-  before_action :validate_listing_active, only: %i[validate_listing_active]
   before_action :load_cart_through_seller_id, only: %i[add_item checkout]
 
   def index
@@ -16,12 +15,6 @@ class CartsController < ApplicationController
     end
 
     render json: response
-  end
-
-  def show
-    listings = @cart.listings
-
-    render json: listings
   end
 
   def add_item
@@ -86,12 +79,6 @@ class CartsController < ApplicationController
     listing_prices = listings.map(&:price)
     shipping_prices = listings.map(&shipping)
     (listing_prices + shipping_prices).inject(0) { |sum, price| sum + price }
-  end
-
-  def validate_listing_active
-    listing = Listing.find(listing_params[:listing_id])
-
-    render json: { error: 'Listing is no longer availbile' }, status: :unprocessable_entity unless listing.active?
   end
 
   def load_cart_through_seller_id

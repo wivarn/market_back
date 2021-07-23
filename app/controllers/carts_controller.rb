@@ -9,8 +9,12 @@ class CartsController < ApplicationController
     carts = current_account.carts.includes(:listings, seller: :address)
 
     response = carts.map do |cart|
+      shipping_rate = shipping_rate_by_country(cart.seller.address.country)
+      listings = cart.listings.to_a
+      max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
+
       cart.serializable_hash.merge(cart.seller.slice(:given_name, :family_name),
-                                   total: total(cart.seller.address, cart.listings),
+                                   total: total(shipping_rate, max, listings),
                                    listings: cart.listings)
     end
 
@@ -27,12 +31,13 @@ class CartsController < ApplicationController
   end
 
   def checkout
-    listings = @cart.listings
-    seller_address = listings.first.account.address
-    total_price = total(seller_address, listings)
+    shipping_rate = shipping_rate_by_country(cart.seller.address.country)
+    listings = cart.listings.to_a
+    max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
+
     line_items = []
     listings.each do |listing|
-      amount = subtotal(seller_address, listing)
+      amount = subtotal(shipping_rate, listing)
       line_items << {
         name: listing.title,
         amount: amount.to_i,
@@ -41,6 +46,7 @@ class CartsController < ApplicationController
       }
     end
 
+    total_price = total(shipping_rate, max, listings)
     application_fee_amount = total_price * 0.05
 
     stripe_account = listings.first.account.stripe_connection.stripe_account
@@ -69,16 +75,26 @@ class CartsController < ApplicationController
            status: :unprocessable_entity
   end
 
-  def subtotal(seller_address, listing)
-    shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
-    (listing.price + listing.public_send(shipping)) * 100
+  def shipping_rate_by_country(seller_country)
+    current_account.address.country == seller_country ? :domestic_shipping : :international_shipping
   end
 
-  def total(seller_address, listings)
-    shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
-    listing_prices = listings.map(&:price)
-    shipping_prices = listings.map(&shipping)
-    (listing_prices + shipping_prices).inject(0) { |sum, price| sum + price }
+  def subtotal(shipping_rate, listing)
+    (listing.price + listing[shipping_rate]) * 100
+  end
+
+  # def subtotal(seller_address, listing)
+  #   shipping = current_account.address.country == seller_address.country ? :domestic_shipping : :international_shipping
+  #   (listing.price + listing.public_send(shipping)) * 100
+  # end
+
+  def total(shipping_rate, max_shipping_listing, listings)
+    total_shipping = listings.inject(max_shipping_listing[shipping_rate]) do |sum, listing|
+      sum + (listing.combined_shipping || listing[shipping_rate])
+    end
+    total_listing_price = listings.inject(max_shipping_listing.price) { |sum, listing| sum + listing.price }
+
+    total_shipping + total_listing_price
   end
 
   def load_cart_through_seller_id

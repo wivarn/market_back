@@ -32,11 +32,11 @@ class CartsController < ApplicationController
 
   def checkout
     shipping_rate = shipping_rate_by_country(@cart.seller.address.country)
+    seller_stripe_account = @cart.seller.stripe_connection.stripe_account
     listings = @cart.listings.to_a
     max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
     total_price = total(shipping_rate, max, listings)
     application_fee_amount = total_price * 0.05 * 100
-    stripe_account = listings.first.account.stripe_connection.stripe_account
 
     order = current_account.purchases.create(seller: @cart.seller, total: total_price)
     order.listings = @cart.listings
@@ -67,7 +67,7 @@ class CartsController < ApplicationController
                         mode: 'payment',
                         success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchaseHistory",
                         cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
-                      }, { stripe_account: stripe_account })
+                      }, { stripe_account: seller_stripe_account })
 
     render json: session
   end

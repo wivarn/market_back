@@ -16,11 +16,13 @@ class Account < ApplicationRecord
   has_one :account_password_reset_key, foreign_key: :id
   has_one :account_verification_key, foreign_key: :id
 
+  has_many :listings
   has_many :carts
+  has_many :purchases, class_name: 'Order', foreign_key: :account_id
+  has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_one :listing_template
   has_one :stripe_connection
   has_one :address
-  has_many :listings
 
   validates :currency, inclusion: { in: %w[USD CAD] }, presence: true
 end

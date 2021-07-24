@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_103603) do
+ActiveRecord::Schema.define(version: 2021_07_24_030527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -118,7 +118,6 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
   create_table "cart_items", force: :cascade do |t|
     t.bigint "cart_id", null: false
     t.bigint "listing_id", null: false
-    t.integer "quantity", default: 1, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["cart_id", "listing_id"], name: "index_cart_items_on_cart_id_and_listing_id", unique: true
@@ -181,6 +180,27 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
     t.index ["title"], name: "index_listings_on_title"
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "listing_id", null: false
+    t.decimal "shipping", precision: 12, scale: 4, default: "0.0", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id", "listing_id"], name: "index_order_items_on_order_id_and_listing_id", unique: true
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "seller_id", null: false
+    t.string "aasm_state", default: "reserved", null: false
+    t.string "tracking"
+    t.decimal "total", precision: 12, scale: 4, default: "0.0", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_orders_on_account_id"
+    t.index ["seller_id"], name: "index_orders_on_seller_id"
+  end
+
   create_table "stripe_connections", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "stripe_account", null: false
@@ -208,5 +228,9 @@ ActiveRecord::Schema.define(version: 2021_06_29_103603) do
   add_foreign_key "carts", "accounts", column: "seller_id"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
+  add_foreign_key "order_items", "listings"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "orders", "accounts"
+  add_foreign_key "orders", "accounts", column: "seller_id"
   add_foreign_key "stripe_connections", "accounts"
 end

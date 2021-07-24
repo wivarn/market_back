@@ -14,7 +14,6 @@ class CreateCarts < ActiveRecord::Migration[6.1]
     create_table :cart_items do |t|
       t.bigint :cart_id, null: false
       t.bigint :listing_id, null: false
-      t.integer :quantity, null: false, default: 1
 
       t.timestamps
     end

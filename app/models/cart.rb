@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Cart < ApplicationRecord
-  belongs_to :account
-  belongs_to :seller, class_name: 'Account'
+  belongs_to :account, dependent: :destroy
+  belongs_to :seller, class_name: 'Account', dependent: :destroy
   has_many :cart_items
   has_many :listings, through: :cart_items
 

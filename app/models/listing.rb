@@ -77,7 +77,7 @@ class Listing < ApplicationRecord
     }, allow_blank: true, allow_nil: true
   end
 
-  belongs_to :account
+  belongs_to :account, dependent: :destroy
 
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 

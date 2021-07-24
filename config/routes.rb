@@ -19,6 +19,8 @@ Jets.application.routes.draw do
       post :checkout, on: :member
     end
 
+    resources :orders, only: %i[index show update]
+
     prefix :account do
       resource :profile, only: %i[show update]
       resource :address, only: %i[show update]

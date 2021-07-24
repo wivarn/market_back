@@ -40,6 +40,8 @@ class Order < ApplicationRecord
     end
   end
 
+  scope :not_reserved, -> { where('aasm_state != ?', :reserved) }
+
   def buyer_cannot_be_seller
     errors.add(:account, "buyer can't be the same as seller") if account_id == seller_id
   end

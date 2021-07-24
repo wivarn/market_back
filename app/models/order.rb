@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Order < ApplicationRecord
-  belongs_to :account, dependent: :destroy
-  belongs_to :seller, class_name: 'Account', dependent: :destroy
-  has_many :order_items
-  has_many :listings, through: :order_items
+  belongs_to :account
+  belongs_to :seller, class_name: 'Account'
+  has_many :order_items, dependent: :destroy
+  has_many :listings, through: :order_items, dependent: :destroy
 
   validates :account, :seller, :aasm_state, :total, presence: true
   validates_length_of :order_items, maximum: 100

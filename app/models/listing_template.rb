@@ -34,5 +34,5 @@ class ListingTemplate < ApplicationRecord
             }, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ },
             allow_nil: true, allow_blank: false
 
-  belongs_to :account, dependent: :destroy
+  belongs_to :account
 end

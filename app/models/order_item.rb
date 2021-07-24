@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OrderItem < ApplicationRecord
-  belongs_to :order, dependent: :destroy
-  belongs_to :listing, dependent: :destroy
+  belongs_to :order
+  belongs_to :listing
 
   validates_uniqueness_of :listing, scope: :order
 

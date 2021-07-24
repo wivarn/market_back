@@ -28,6 +28,10 @@ Jets.application.routes.draw do
       end
     end
 
+    prefix :webhooks do
+      post :stripe, to: 'webhooks#stripe'
+    end
+
     mount Auth, at: 'auth'
   end
 end

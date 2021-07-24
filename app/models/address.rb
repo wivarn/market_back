@@ -6,7 +6,7 @@ class Address < ApplicationRecord
 
   PROVINCE_CODES = %w[AB BC MB NB NL NT NS NU ON PE QC SK YT].freeze
 
-  belongs_to :account
+  belongs_to :addressable, polymorphic: true
 
   validates :street1, :city, :state, :zip, :country, presence: true
   validates :street1, :city, length: { in: 1..100 }

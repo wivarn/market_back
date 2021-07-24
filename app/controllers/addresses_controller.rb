@@ -8,7 +8,7 @@ class AddressesController < ApplicationController
   end
 
   def update
-    address = Address.where(account: current_account).first_or_initialize
+    address = Address.where(addressable: current_account).first_or_initialize
 
     if address.update(address_params)
       render json: address

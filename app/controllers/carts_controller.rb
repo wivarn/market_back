@@ -38,6 +38,9 @@ class CartsController < ApplicationController
     application_fee_amount = total_price * 0.05 * 100
     stripe_account = listings.first.account.stripe_connection.stripe_account
 
+    order = current_account.purchases.create(seller: @cart.seller, total: total_price)
+    order.listings = @cart.listings
+
     line_items = listings.append(max).each_with_object([]) do |listing, items|
       items << {
         price_data: {
@@ -55,6 +58,7 @@ class CartsController < ApplicationController
 
     session = Stripe::Checkout::Session
               .create({
+                        client_reference_id: order.id,
                         payment_method_types: ['card'],
                         line_items: line_items,
                         payment_intent_data: {

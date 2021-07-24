@@ -109,10 +109,11 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.string "state", null: false
     t.string "zip", null: false
     t.string "country", null: false
-    t.bigint "account_id", null: false
+    t.string "addressable_type"
+    t.bigint "addressable_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_addresses_on_account_id"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
   end
 
   create_table "cart_items", force: :cascade do |t|
@@ -221,7 +222,6 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   add_foreign_key "account_previous_password_hashes", "accounts"
   add_foreign_key "account_recovery_codes", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
-  add_foreign_key "addresses", "accounts"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "listings"
   add_foreign_key "carts", "accounts"

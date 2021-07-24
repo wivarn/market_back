@@ -14,10 +14,13 @@ class OrdersController < ApplicationController
   private
 
   def set_orders
-    @orders = if params[:view] == 'purchases'
+    @orders = case params[:view]
+              when 'purchases'
                 current_account.purchases.not_reserved
-              else
+              when 'sales'
                 current_account.sales.not_reserved
+              else
+                {}
               end
   end
 end

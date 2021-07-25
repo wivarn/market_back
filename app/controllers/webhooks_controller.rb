@@ -5,7 +5,7 @@ class WebhooksController < ApplicationController
   def stripe
     order = Order.find @event.data.object.client_reference_id
     order.paid
-    order.address = order.account.address.dup
+    order.address = order.buyer.address.dup
     order.save
 
     render nothing: true, status: :no_content

@@ -18,7 +18,7 @@ class Account < ApplicationRecord
 
   has_many :listings
   has_many :carts
-  has_many :purchases, class_name: 'Order', foreign_key: :account_id
+  has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_one :listing_template
   has_one :stripe_connection

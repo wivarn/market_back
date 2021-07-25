@@ -3,13 +3,13 @@
 class Order < ApplicationRecord
   include AASM
 
-  belongs_to :account
+  belongs_to :buyer, class_name: 'Account'
   belongs_to :seller, class_name: 'Account'
   has_many :order_items, dependent: :destroy
   has_many :listings, through: :order_items, dependent: :destroy
   has_one :address, as: :addressable
 
-  validates :account, :seller, :aasm_state, :total, presence: true
+  validates :buyer, :seller, :aasm_state, :total, presence: true
   validates_length_of :order_items, maximum: 100
 
   validates :total, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }
@@ -43,6 +43,6 @@ class Order < ApplicationRecord
   scope :not_reserved, -> { where('aasm_state != ?', :reserved) }
 
   def buyer_cannot_be_seller
-    errors.add(:account, "buyer can't be the same as seller") if account_id == seller_id
+    errors.add(:buyer_id, "buyer can't be the same as seller") if buyer_id == seller_id
   end
 end

@@ -270,3 +270,13 @@ kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_al
 draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], aasm_state: :draft,
                                    combined_shipping: 2.86)
 kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
+
+test1 = Account.create(email: 'test1@skwirl.io', status: 'verified', given_name: 'Test1', family_name: 'User',
+                       currency: 'CAD')
+AccountPasswordHash.create(id: test1.id, password_hash: BCrypt::Password.create('Password!').to_s)
+test1.create_address(street1: '123 Test St', city: 'Fakecity', state: 'BC', zip: 'V0X0X0', country: 'CAN')
+
+test2 = Account.create(email: 'test2@skwirl.io', status: 'verified', given_name: 'Test2', family_name: 'User',
+                       currency: 'USD')
+AccountPasswordHash.create(id: test2.id, password_hash: BCrypt::Password.create('Password!').to_s)
+test2.create_address(street1: '777 Test Ave', city: 'Fakevillage', state: 'AB', zip: 'C1X1X1', country: 'CAN')

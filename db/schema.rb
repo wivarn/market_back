@@ -191,14 +191,15 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.bigint "account_id", null: false
+    t.bigint "buyer_id", null: false
     t.bigint "seller_id", null: false
     t.string "aasm_state", default: "reserved", null: false
+    t.datetime "reserved_at"
     t.string "tracking"
     t.decimal "total", precision: 12, scale: 4, default: "0.0", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_orders_on_account_id"
+    t.index ["buyer_id"], name: "index_orders_on_buyer_id"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end
 
@@ -230,7 +231,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   add_foreign_key "listings", "accounts"
   add_foreign_key "order_items", "listings"
   add_foreign_key "order_items", "orders"
-  add_foreign_key "orders", "accounts"
+  add_foreign_key "orders", "accounts", column: "buyer_id"
   add_foreign_key "orders", "accounts", column: "seller_id"
   add_foreign_key "stripe_connections", "accounts"
 end

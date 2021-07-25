@@ -7,20 +7,13 @@ class OrdersController < ApplicationController
     render json: @orders
   end
 
-  def show; end
-
   def update; end
 
   private
 
   def set_orders
-    @orders = case params[:view]
-              when 'purchases'
-                current_account.purchases.not_reserved
-              when 'sales'
-                current_account.sales.not_reserved
-              else
-                {}
-              end
+    render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(params[:view])
+
+    @orders = current_account.public_send(params[:view]).not_reserved.includes(:listings, :address, :seller)
   end
 end

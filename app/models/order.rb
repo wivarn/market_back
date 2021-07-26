@@ -21,28 +21,38 @@ class Order < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :reserved, initial: true
-    state :pending_shipment, :shipped, :refunded, :received
+    state :paid, :shipped, :refunded, :received
 
     event :paid do
-      transitions from: :reserved, to: :pending_shipment
+      transitions from: :reserved, to: :paid
     end
 
     event :ship do
-      transitions from: :pending_shipment, to: :shipped
+      transitions from: :paid, to: :shipped, guard: :seller?
     end
 
     event :refund do
-      transitions from: %i[pending_shipment shipped], to: :refunded
+      transitions from: %i[paid shipped], to: :refunded
     end
 
     event :receive do
-      transitions from: :shipped, to: :received
+      transitions from: :shipped, to: :received, guard: :buyer?
     end
   end
 
   scope :not_reserved, -> { where('aasm_state != ?', :reserved) }
 
+  private
+
   def buyer_cannot_be_seller
     errors.add(:buyer_id, "buyer can't be the same as seller") if buyer_id == seller_id
+  end
+
+  def buyer?(account)
+    account == buyer
+  end
+
+  def seller?(account)
+    account == seller
   end
 end

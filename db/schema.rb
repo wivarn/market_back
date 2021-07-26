@@ -195,6 +195,10 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.bigint "seller_id", null: false
     t.string "aasm_state", default: "reserved", null: false
     t.datetime "reserved_at"
+    t.datetime "paid_at"
+    t.datetime "shipped_at"
+    t.datetime "refunded_at"
+    t.datetime "received_at"
     t.string "tracking"
     t.decimal "total", precision: 12, scale: 4, default: "0.0", null: false
     t.datetime "created_at", precision: 6, null: false

@@ -48,11 +48,11 @@ class Order < ApplicationRecord
     errors.add(:buyer_id, "buyer can't be the same as seller") if buyer_id == seller_id
   end
 
-  def buyer?(account)
-    account == buyer
+  def buyer?(account_id)
+    account_id == buyer_id
   end
 
-  def seller?(account)
-    account == seller
+  def seller?(account_id)
+    account_id == seller_id
   end
 end

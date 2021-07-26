@@ -5,6 +5,10 @@ class CreateOrders < ActiveRecord::Migration[6.1]
       t.bigint :seller_id, null: false
       t.string :aasm_state, null: false, default: 'reserved'
       t.datetime :reserved_at
+      t.datetime :paid_at
+      t.datetime :shipped_at
+      t.datetime :refunded_at
+      t.datetime :received_at
       t.string :tracking
       t.numeric :total, precision: 12, scale: 4, default: 0, null: false
 

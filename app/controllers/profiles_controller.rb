@@ -3,7 +3,7 @@
 class ProfilesController < ApplicationController
   before_action :authenticate!
   def show
-    render json: current_account.serializable_hash.merge({ picture: { url: current_account.picture.path } })
+    render json: current_account
   end
 
   def update

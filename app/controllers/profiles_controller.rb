@@ -3,7 +3,7 @@
 class ProfilesController < ApplicationController
   before_action :authenticate!
   def show
-    render json: current_account
+    render json: current_account.serializable_hash.merge({ picture: { url: current_account.picture.path } })
   end
 
   def update
@@ -19,6 +19,6 @@ class ProfilesController < ApplicationController
   private
 
   def account_params
-    params.permit(:given_name, :family_name, :currency)
+    params.permit(:given_name, :family_name, :currency, :picture)
   end
 end

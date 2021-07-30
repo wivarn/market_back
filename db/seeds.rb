@@ -248,28 +248,28 @@ AccountPasswordHash.create(id: ivan.id, password_hash: BCrypt::Password.create('
 ivan.create_address(street1: '604-1003 Burnaby Street', street2: 'Buzzer 1007', city: 'Vancouver', state: 'BC',
                     zip: 'V6E4R7', country: 'CAN')
 
-active_listings = generate_listings(subcategories: %w[TOYS STAMPS ART RANDOM_COLLECTIBLES POKEMON DRAGON_BALL_SUPER],
-                                    aasm_state: :active)
-ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], aasm_state: :draft,
-                                   shipping_country: 'USA')
-ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
+# active_listings = generate_listings(subcategories: %w[TOYS STAMPS ART RANDOM_COLLECTIBLES POKEMON DRAGON_BALL_SUPER],
+#                                     aasm_state: :active)
+# ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
+# draft_listings = generate_listings(subcategories: %w[ART RANDOM_COLLECTIBLES], aasm_state: :draft,
+#                                    shipping_country: 'USA')
+# ivan.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
 
 kevin = Account.create(email: 'kevin@skwirl.io', status: 'verified', given_name: 'Kevin', family_name: 'Legere',
                        currency: 'USD', role: 'admin')
 AccountPasswordHash.create(id: kevin.id, password_hash: BCrypt::Password.create('Password!').to_s)
 kevin.create_address(street1: '930 Lodge', city: 'Victoria', state: 'BC', zip: 'V8X3A8', country: 'CAN')
 
-active_listings = generate_listings(currency: 'USD',
-                                    subcategories: %w[BASKETBALL FOOTBALL HOCKEY RANDOM_SPORTS POKEMON
-                                                      STAR_WARS_DESTINY],
-                                    aasm_state: :active,
-                                    shipping_country: 'USA',
-                                    combined_shipping: 2.04)
-kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
-draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], aasm_state: :draft,
-                                   combined_shipping: 2.86)
-kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
+# active_listings = generate_listings(currency: 'USD',
+#                                     subcategories: %w[BASKETBALL FOOTBALL HOCKEY RANDOM_SPORTS POKEMON
+#                                                       STAR_WARS_DESTINY],
+#                                     aasm_state: :active,
+#                                     shipping_country: 'USA',
+#                                     combined_shipping: 2.04)
+# kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(active_listings)
+# draft_listings = generate_listings(subcategories: %w[HOCKEY RANDOM_SPORTS RANDOM_TRADING], aasm_state: :draft,
+#                                    combined_shipping: 2.86)
+# kevin.listings.create_with(created_at: Time.now, updated_at: Time.now).insert_all(draft_listings)
 
 test1 = Account.create(email: 'test1@skwirl.io', status: 'verified', given_name: 'Test1', family_name: 'User',
                        currency: 'CAD')

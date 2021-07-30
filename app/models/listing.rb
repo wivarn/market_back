@@ -11,6 +11,8 @@ class Listing < ApplicationRecord
   COLLECTIBLES = %w[COMICS GAMES TOYS OTHER].freeze
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
+  mount_uploaders :photos, ImageUploader
+
   validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }

@@ -152,7 +152,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
 
   create_table "listings", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "photos", default: [], null: false, array: true
+    t.jsonb "photos"
     t.string "category", null: false
     t.string "subcategory", null: false
     t.string "tags", default: [], array: true

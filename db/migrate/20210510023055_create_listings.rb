@@ -3,7 +3,7 @@ class CreateListings < ActiveRecord::Migration[6.1]
     create_table :listings do |t|
       t.references :account, null: false, foreign_key: true
 
-      t.string :photos, array: true, null: false, default: []
+      t.jsonb :photos
 
       t.string :category, null: false
       t.string :subcategory, null: false

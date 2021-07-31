@@ -1,5 +1,5 @@
 class ImageUploader < CarrierWave::Uploader::Base
-  include CarrierWaveDirect::Uploader
+  include CarrierWaveDirect::Uploader unless Jets.env.development? || Jets.env.test?
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
   # include CarrierWave::MiniMagick
@@ -25,7 +25,8 @@ class ImageUploader < CarrierWave::Uploader::Base
     if ENV['PUBLIC_ASSETS_URL']
       "#{ENV['PUBLIC_ASSETS_URL']}/#{path}"
     else
-      super.gsub(ENV['FRONT_END_PUBLIC_PATH'], '')
+      # need to add the slash in the front for nextjs
+      "/#{super.gsub(ENV['FRONT_END_PUBLIC_PATH'], '')}"
     end
   end
 

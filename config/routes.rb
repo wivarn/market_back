@@ -24,7 +24,10 @@ Jets.application.routes.draw do
     end
 
     prefix :account do
-      resource :profile, only: %i[show update]
+      resource :profile, only: %i[show update] do
+        get :upload_picture_credentials, to: 'profiles#upload_picture_credentials'
+        put :update_picture_key, to: 'profiles#update_picture_key'
+      end
       resource :address, only: %i[show update]
       resource :listing_template, only: %i[show update]
       resource :payments, only: %i[show] do

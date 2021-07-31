@@ -1,4 +1,5 @@
 class ImageUploader < CarrierWave::Uploader::Base
+  include CarrierWaveDirect::Uploader
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
   # include CarrierWave::MiniMagick
@@ -7,10 +8,9 @@ class ImageUploader < CarrierWave::Uploader::Base
   # storage :file
   # storage :fog
 
-  # Override the directory where uploaded files will be stored.
-  # This is a sensible default for uploaders that are meant to be mounted:
+  # ENV['FRONT_END_PUBLIC_PATH'] should be set only in local envs
   def store_dir
-    "#{ENV['FRONT_END_PUBLIC_PATH']}/uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    "#{ENV['FRONT_END_PUBLIC_PATH']}uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
@@ -21,8 +21,10 @@ class ImageUploader < CarrierWave::Uploader::Base
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
   # end
 
-  if Jets.env.development?
-    def url
+  def url
+    if ENV['PUBLIC_ASSETS_BUCKET']
+      "https://#{ENV['PUBLIC_ASSETS_BUCKET']}/#{path}"
+    else
       super.gsub(ENV['FRONT_END_PUBLIC_PATH'], '')
     end
   end

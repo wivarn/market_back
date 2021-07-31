@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
-  before_action :authenticate!, only: %i[index create bulk_create edit update delete]
+  before_action :authenticate!,
+                only: %i[index create bulk_create edit update update_state upload_photos_credentials update_photo_keys
+                         delete]
   before_action :set_listing, only: %i[show]
-  before_action :set_listing_through_account, only: %i[edit update update_state delete]
+  before_action :set_listing_through_account,
+                only: %i[edit update update_state upload_photos_credentials update_photo_keys delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
   before_action :enfore_editable!, only: %i[update]
   before_action :enfore_destroyable!, only: %i[destroy]
+  before_action :set_number_of_photos!, only: %i[upload_photos_credentials]
 
   def index
     scope = params[:state] || :active
@@ -82,6 +86,35 @@ class ListingsController < ApplicationController
     end
   end
 
+  def upload_photos_credentials
+    @listing.photos = []
+    @number_of_photos.times do
+      uploader = ImageUploader.new(@listing, :photos)
+      uploader.success_action_redirect = "#{ENV['FRONT_END_BASE_URL']}/listings"
+      @listing.photos << uploader
+    end
+    response = @listing.photos.map do |photo|
+      photo.direct_fog_hash.merge(success_action_redirect: photo.success_action_redirect)
+    end
+
+    render json: response
+  end
+
+  def update_photo_keys
+    @listing.photos = []
+    params['keys'].each do |key|
+      uploader = ImageUploader.new(@listing, :photos)
+      uploader.key = key
+      @listing.photos << uploader
+    end
+
+    if @listing.save
+      render json: @listing
+    else
+      render json: @listing.errors, status: :unprocessable_entity
+    end
+  end
+
   def delete
     @listing.destroy
     render json: { deleted: true }
@@ -113,6 +146,13 @@ class ListingsController < ApplicationController
     return unless @listing.draft?
 
     render json: { error: 'Only drafts can be deleted' }, status: :unprocessable_entity
+  end
+
+  def set_number_of_photos!
+    @number_of_photos = params[:number_of_photos].to_i
+    return if @number_of_photos >= 1 || @number_of_photos <= 10
+
+    render json: { error: 'Can only have between 1 and 10 photos' }, status: :bad_request
   end
 
   def listing_params

@@ -6,6 +6,8 @@ Jets.application.routes.draw do
       get :search, on: :collection
       post :bulk_create, on: :collection
       get :edit, on: :member
+      get :upload_photos_credentials, on: :member
+      put :update_photo_keys, on: :member
       post :update_state, on: :member
       get :recent_by_category, on: :collection
     end

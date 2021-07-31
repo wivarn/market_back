@@ -22,8 +22,8 @@ class ImageUploader < CarrierWave::Uploader::Base
   # end
 
   def url
-    if ENV['PUBLIC_ASSETS_BUCKET']
-      "https://#{ENV['PUBLIC_ASSETS_BUCKET']}/#{path}"
+    if ENV['PUBLIC_ASSETS_URL']
+      "#{ENV['PUBLIC_ASSETS_URL']}/#{path}"
     else
       super.gsub(ENV['FRONT_END_PUBLIC_PATH'], '')
     end
@@ -44,7 +44,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   # Add an allowlist of extensions which are allowed to be uploaded.
   # For images you might use something like this:
   def extension_allowlist
-    %w[jpg jpeg png webp]
+    %w[jpg jpeg png webp heic]
   end
 
   def content_type_allowlist

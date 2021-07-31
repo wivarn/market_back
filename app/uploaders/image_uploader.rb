@@ -26,6 +26,8 @@ class ImageUploader < CarrierWave::Uploader::Base
       "#{ENV['PUBLIC_ASSETS_URL']}/#{path}"
     else
       # need to add the slash in the front for nextjs
+      return unless present?
+
       "/#{super.gsub(ENV['FRONT_END_PUBLIC_PATH'], '')}"
     end
   end

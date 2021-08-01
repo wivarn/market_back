@@ -5,10 +5,9 @@ CarrierWave.configure do |config|
     config.fog_credentials = {
       provider: 'AWS',
       region: 'us-east-1',
-      use_iam_profile: true
-      # these values should only be set for local testing staging/prod will use IAM roles
-      # aws_access_key_id: '',
-      # aws_secret_access_key: '',
+      # need to replaces these
+      aws_access_key_id: ENV['PUBLIC_ASSETS_ACCESS_ID'],
+      aws_secret_access_key: ENV['PUBLIC_ASSETS_SECRET_ACCESS_KEY']
     }
     config.fog_directory = ENV['PUBLIC_ASSETS_BUCKET']
   end

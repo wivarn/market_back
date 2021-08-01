@@ -16,11 +16,6 @@ class ProfilesController < ApplicationController
     end
   end
 
-  iam_policy('s3', {
-               action: %w[s3:ListBucket s3:PutObject s3:GetObject s3:DeleteObject s3:PutObjectAcl],
-               effect: 'Allow',
-               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/*"
-             })
   def upload_picture_credentials
     current_account.picture = nil
     uploader = current_account.picture

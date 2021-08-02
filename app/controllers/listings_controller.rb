@@ -35,8 +35,9 @@ class ListingsController < ApplicationController
   end
 
   def show
-    listing_with_name = @listing.serializable_hash.merge(@listing.account.slice(:given_name, :family_name))
-    render json: listing_with_name
+    render json: @listing.serializable_hash(
+      include: { account: { only: %i[given_name family_name picture] } }
+    )
   end
 
   def create

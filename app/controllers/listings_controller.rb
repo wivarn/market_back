@@ -220,17 +220,17 @@ class ListingsController < ApplicationController
   def sort(listings, order)
     case order
     when 'priceLow'
-      listings.order(price: :asc)
+      listings.reorder(price: :asc, id: :asc)
     when 'priceHigh'
-      listings.order(price: :desc)
+      listings.reorder(price: :desc, id: :asc)
     when 'priceShipLow'
-      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
+      listings.select('*, (price + domestic_shipping) AS total_price').reorder(total_price: :asc, id: :asc)
     when 'priceShipHigh'
-      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
+      listings.select('*, (price + domestic_shipping) AS total_price').reorder(total_price: :desc, id: :asc)
     when 'newest'
-      listings.order(created_at: :desc)
+      listings.reorder(created_at: :desc, id: :asc)
     when 'oldest'
-      listings.order(created_at: :asc)
+      listings.reorder(created_at: :asc, id: :asc)
     else
       listings
     end

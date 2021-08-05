@@ -85,7 +85,7 @@ class Auth < Roda
       RodauthMailer.password_changed(email_to)
     end
     create_unlock_account_email do
-      RodauthMailer.unlock_account(email_to, "#{account_id}#{token_separator}#{compute_hmac(unlock_account_key)}")
+      RodauthMailer.unlock_account(email_to, "#{account_id}#{token_separator}#{compute_hmac(get_unlock_account_key)}")
     end
   end
 

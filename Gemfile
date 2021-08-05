@@ -11,6 +11,7 @@ gem 'fog-aws', '~> 3.10'
 gem 'jets', '~> 3.0'
 gem 'kaminari-activerecord', '~> 1.2'
 gem 'pg', '~> 1.2.3'
+gem 'pg_search', '~> 2.3'
 gem 'stripe', '~> 5.34'
 
 # seems to be a dependancy for ActionMailer::Base.add_delivery_method to work

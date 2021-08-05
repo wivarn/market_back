@@ -2,6 +2,7 @@
 
 class Listing < ApplicationRecord
   include AASM
+  include PgSearch::Model
 
   RESERVE_TIME = 15.minutes
 
@@ -12,6 +13,13 @@ class Listing < ApplicationRecord
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
   mount_uploaders :photos, ImageUploader
+
+  pg_search_scope :search, against: {
+    title: 'A',
+    description: 'B'
+  }, using: {
+    tsearch: { dictionary: 'english' }
+  }, order_within_rank: 'listings.updated_at DESC'
 
   validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }

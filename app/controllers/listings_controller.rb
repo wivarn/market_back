@@ -178,7 +178,7 @@ class ListingsController < ApplicationController
   end
 
   def filter(listings, filters)
-    listings = listings.where('title ilike :title', title: "%#{params[:title]}%") if filters[:title].present?
+    listings = listings.search(filters[:query]) if filters[:query].present?
     listings = filter_price(listings, filters)
     listings = filter_category(listings, filters)
     listings = filter_condition(listings, filters)

@@ -8,6 +8,7 @@ class Cart < ApplicationRecord
 
   validates_length_of :cart_items, maximum: 100
   validate :buyer_cannot_be_seller
+  validates_uniqueness_of :account, scope: :seller
 
   def buyer_cannot_be_seller
     errors.add(:account, "buyer can't be the same as seller") if account_id == seller_id

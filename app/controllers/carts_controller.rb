@@ -3,7 +3,7 @@
 class CartsController < ApplicationController
   before_action :authenticate!
   before_action :validate_address_set!
-  before_action :load_cart_through_seller_id, only: %i[add_item checkout]
+  before_action :load_cart_through_seller_id, only: %i[add_item checkout delete]
 
   def index
     carts = current_account.carts.includes(:listings, seller: :address)
@@ -70,6 +70,16 @@ class CartsController < ApplicationController
                       }, { stripe_account: seller_stripe_account })
 
     render json: session
+  end
+
+  def delete
+    @cart.destroy
+    render json: { deleted: true }
+  end
+
+  def empty_all
+    current_account.carts.destroy_all
+    render json: { deleted: true }
   end
 
   private

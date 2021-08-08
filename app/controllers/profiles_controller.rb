@@ -34,9 +34,29 @@ class ProfilesController < ApplicationController
     end
   end
 
+  def settings
+    render json: {
+      currency: current_account.currency,
+      country: current_account.address.country,
+      stripe_linked: stripe_linked?,
+      listing_template: ListingTemplate.find_or_create_by(account: current_account)
+    }
+  end
+
   private
 
   def account_params
     params.permit(:given_name, :family_name, :currency, :picture)
+  end
+
+  def stripe_linked?
+    stripe_connection = StripeConnection.where(account: current_account).first_or_initialize
+    if stripe_connection.stripe_account
+      Stripe::Account.retrieve(stripe_connection.stripe_account).charges_enabled
+    else
+      false
+    end
+  rescue Stripe::PermissionError
+    false
   end
 end

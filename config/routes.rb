@@ -30,6 +30,7 @@ Jets.application.routes.draw do
       resource :profile, only: %i[show update] do
         get :upload_picture_credentials, to: 'profiles#upload_picture_credentials'
         put :update_picture_key, to: 'profiles#update_picture_key'
+        get :settings, to: 'profiles#settings'
       end
       resource :address, only: %i[show update]
       resource :listing_template, only: %i[show update]

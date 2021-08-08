@@ -37,7 +37,8 @@ class ProfilesController < ApplicationController
   def settings
     render json: {
       currency: current_account.currency,
-      country: current_account.address.country,
+      country: current_account.address&.country,
+      address_set: !current_account.address.nil?,
       stripe_linked: stripe_linked?,
       listing_template: ListingTemplate.find_or_create_by(account: current_account)
     }

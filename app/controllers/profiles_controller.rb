@@ -3,14 +3,14 @@
 class ProfilesController < ApplicationController
   before_action :authenticate!
   def show
-    render json: current_account
+    render json: AccountBlueprint.render(current_account, view: :full)
   end
 
   def update
     current_account.update(account_params)
 
     if current_account.save
-      render json: current_account
+      render json: AccountBlueprint.render(current_account, view: :full)
     else
       render json: current_account.errors, status: :unprocessable_entity
     end

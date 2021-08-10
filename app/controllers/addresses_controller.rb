@@ -4,14 +4,14 @@ class AddressesController < ApplicationController
   before_action :authenticate!
 
   def show
-    render json: current_account.address || {}
+    render json: AddressBlueprint.render(current_account.address || {})
   end
 
   def update
     address = Address.where(addressable: current_account).first_or_initialize
 
     if address.update(address_params)
-      render json: address
+      render json: AddressBlueprint.render(address)
     else
       render json: address.errors, status: :unprocessable_entity
     end

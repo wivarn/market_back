@@ -3,9 +3,7 @@
 class UsersController < ApplicationController
   before_action :set_user
   def show
-    listings = @user.listings.active.ships_to(params[:ships_to] || 'USA').order(created_at: :desc).limit(4)
-    response = @user.slice(:given_name, :family_name, :picture).merge(listings: listings)
-    render json: response
+    render json: AccountBlueprint.render(@user, view: :with_recent_listings, ships_to: params[:ships_to])
   end
 
   def listings
@@ -13,7 +11,8 @@ class UsersController < ApplicationController
     listings = sort(listings, params[:sort])
     listings = listings.page(params[:page].to_i + 1)
 
-    render json: { listings: listings, total_pages: listings.total_pages }
+    render json: { listings: ListingBlueprint.render_as_json(listings, view: :preview),
+                   total_pages: listings.total_pages }
   end
 
   private

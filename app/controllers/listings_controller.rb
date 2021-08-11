@@ -31,9 +31,9 @@ class ListingsController < ApplicationController
     trading_cards = Listing.active.trading_cards.order(created_at: :desc).limit(4)
     collectibles = Listing.active.collectibles.order(created_at: :desc).limit(4)
 
-    render json: { sports_cards: ListingBlueprint.render_as_hash(sports_cards, view: :preview),
-                   trading_cards: ListingBlueprint.render_as_hash(trading_cards, view: :preview),
-                   collectibles: ListingBlueprint.render_as_hash(collectibles, view: :preview) }
+    render json: { sports_cards: ListingBlueprint.render_as_json(sports_cards, view: :preview),
+                   trading_cards: ListingBlueprint.render_as_json(trading_cards, view: :preview),
+                   collectibles: ListingBlueprint.render_as_json(collectibles, view: :preview) }
   end
 
   def show

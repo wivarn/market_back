@@ -6,6 +6,7 @@ class CartsController < ApplicationController
   before_action :load_cart_through_seller_id, only: %i[add_item checkout delete]
 
   def index
+    # TODO: add some logic here to check for empty or stale carts
     carts = current_account.carts.includes(:listings, seller: :address)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end

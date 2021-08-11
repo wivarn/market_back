@@ -2,7 +2,7 @@
 
 class CartBlueprint < ApplicationBlueprint
   association :seller, blueprint: AccountBlueprint
-  association :listings, blueprint: ListingBlueprint, view: :preview do |cart, options|
+  association :listings, blueprint: ListingBlueprint do |cart, options|
     destination = options[:destination_country]
     listings = cart.listings.to_a
     max_shipping_listing =

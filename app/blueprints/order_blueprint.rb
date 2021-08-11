@@ -5,4 +5,5 @@ class OrderBlueprint < ApplicationBlueprint
   association :buyer, blueprint: AccountBlueprint
   association :seller, blueprint: AccountBlueprint
   association :address, blueprint: AddressBlueprint
+  association :listings, blueprint: ListingBlueprint
 end

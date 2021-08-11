@@ -7,18 +7,7 @@ class CartsController < ApplicationController
 
   def index
     carts = current_account.carts.includes(:listings, seller: :address)
-
-    response = carts.map do |cart|
-      shipping_rate = shipping_rate_by_country(cart.seller.address.country)
-      listings = cart.listings.to_a
-      max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
-
-      cart.serializable_hash.merge(cart.seller.slice(:given_name, :family_name),
-                                   total: total(shipping_rate, max, listings),
-                                   listings: cart.listings)
-    end
-
-    render json: response
+    render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
   def add_item
@@ -31,25 +20,22 @@ class CartsController < ApplicationController
   end
 
   def checkout
-    shipping_rate = shipping_rate_by_country(@cart.seller.address.country)
+    cart_json = CartBlueprint.render_as_json(@cart, destination_country: current_account.address.country)
     seller_stripe_account = @cart.seller.stripe_connection.stripe_account
-    listings = @cart.listings.to_a
-    max = listings.delete(listings.max_by { |listing| listing[shipping_rate] })
-    total_price = total(shipping_rate, max, listings)
+    total_price = cart_json['total']
     application_fee_amount = total_price * 0.05 * 100
 
     order = current_account.purchases.create(seller: @cart.seller, total: total_price)
     order.listings = @cart.listings
 
-    line_items = listings.append(max).each_with_object([]) do |listing, items|
+    line_items = cart_json['listings'].each_with_object([]) do |listing, items|
       items << {
         price_data: {
-          currency: listing.currency.downcase,
-          unit_amount: stripe_subtotal(shipping_rate, listing),
+          currency: listing['currency'].downcase,
+          unit_amount: stripe_subtotal(listing),
           product_data: {
-            name: listing.title
-            # description:
-            # images:
+            name: listing['title'],
+            images: stripe_images(listing)
           }
         },
         quantity: 1
@@ -91,25 +77,18 @@ class CartsController < ApplicationController
            status: :unprocessable_entity
   end
 
-  def shipping_rate_by_country(seller_country)
-    current_account.address.country == seller_country ? :domestic_shipping : :international_shipping
-  end
-
-  def stripe_subtotal(shipping_rate, listing)
-    ((listing.price + listing[shipping_rate]) * 100).to_i
-  end
-
-  def total(shipping_rate, max_shipping_listing, listings)
-    total_shipping = listings.inject(max_shipping_listing[shipping_rate]) do |sum, listing|
-      sum + (listing.combined_shipping || listing[shipping_rate])
-    end
-    total_listing_price = listings.inject(max_shipping_listing.price) { |sum, listing| sum + listing.price }
-
-    total_shipping + total_listing_price
-  end
-
   def load_cart_through_seller_id
     @cart = Cart.where(account: current_account, seller_id: listing_params[:seller_id]).first_or_create
+  end
+
+  def stripe_subtotal(listing)
+    ((listing['price'].to_f + listing['shipping'].to_f) * 100).to_i
+  end
+
+  def stripe_images(listing)
+    return [] if Jets.env.development? || Jets.env.test?
+
+    listing['photos'].take(8).map { |photo| photo['url'] }
   end
 
   def listing_params

@@ -8,12 +8,7 @@ class ListingBlueprint < ApplicationBlueprint
 
   view :preview do
     field :shipping do |listing, options|
-      destination_country = options[:destination_country] || 'USA'
-      if destination_country == listing.shipping_country
-        listing.domestic_shipping
-      else
-        listing.international_shipping
-      end
+      listing.shipping(destination_country: options[:destination_country], combined: options[:combined])
     end
   end
 

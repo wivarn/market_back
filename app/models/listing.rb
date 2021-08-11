@@ -4,8 +4,9 @@ class Listing < ApplicationRecord
   include AASM
   include PgSearch::Model
 
-  RESERVE_TIME = 15.minutes
+  attr_writer :combined
 
+  RESERVE_TIME = 15.minutes
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[BASEBALL BASKETBALL FOOTBALL HOCKEY OTHER].freeze
   TRADING_CARDS = %w[MAGIC POKEMON OTHER].freeze
@@ -144,5 +145,15 @@ class Listing < ApplicationRecord
 
   def editable?
     draft? || active? || removed?
+  end
+
+  def shipping(destination_country: 'USA', combined: false)
+    @combined ||= combined
+    dest_shipping = if destination_country == shipping_country
+                      domestic_shipping
+                    else
+                      international_shipping
+                    end
+    @combined ? [combined_shipping, dest_shipping].compact.min : dest_shipping
   end
 end

@@ -17,12 +17,15 @@ class ListingsController < ApplicationController
     listings = current_account.listings.send(scope)
     listings = filter_and_sort(listings, params)
 
-    render json: { listings: listings, total_pages: listings.total_pages }
+    render json:
+      { listings: ListingBlueprint.render_as_json(listings, destination_country: current_account.address.country),
+        total_pages: listings.total_pages }
   end
 
   def search
     listings = filter_and_sort(Listing.active, params)
-    render json: { listings: listings, total_pages: listings.total_pages }
+    render json: { listings: ListingBlueprint.render_as_json(listings),
+                   total_pages: listings.total_pages }
   end
 
   # used in the home page
@@ -31,15 +34,13 @@ class ListingsController < ApplicationController
     trading_cards = Listing.active.trading_cards.order(created_at: :desc).limit(4)
     collectibles = Listing.active.collectibles.order(created_at: :desc).limit(4)
 
-    render json: { sports_cards: ListingBlueprint.render_as_json(sports_cards, view: :preview),
-                   trading_cards: ListingBlueprint.render_as_json(trading_cards, view: :preview),
-                   collectibles: ListingBlueprint.render_as_json(collectibles, view: :preview) }
+    render json: { sports_cards: ListingBlueprint.render_as_json(sports_cards),
+                   trading_cards: ListingBlueprint.render_as_json(trading_cards),
+                   collectibles: ListingBlueprint.render_as_json(collectibles) }
   end
 
   def show
-    render json: @listing.serializable_hash(
-      include: { account: { only: %i[given_name family_name picture] } }
-    )
+    render json: ListingBlueprint.render(@listing, view: :buyer)
   end
 
   def create

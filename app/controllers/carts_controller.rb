@@ -13,7 +13,7 @@ class CartsController < ApplicationController
   def add_item
     cart_item = @cart.cart_items.new(listing_id: listing_params[:listing_id])
     if cart_item.save
-      render json: ListingBlueprint.render(cart_item, view: :preview)
+      render json: ListingBlueprint.render(cart_item, destination_country: current_account.address.country)
     else
       render json: cart_item.errors, status: :unprocessable_entity
     end

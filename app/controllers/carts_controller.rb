@@ -12,6 +12,7 @@ class CartsController < ApplicationController
   end
 
   def add_item
+    # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
     cart_item = @cart.cart_items.new(listing_id: listing_params[:listing_id])
     if cart_item.save
       render json: cart_item

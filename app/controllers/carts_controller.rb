@@ -13,7 +13,7 @@ class CartsController < ApplicationController
   def add_item
     cart_item = @cart.cart_items.new(listing_id: listing_params[:listing_id])
     if cart_item.save
-      render json: ListingBlueprint.render(cart_item, destination_country: current_account.address.country)
+      render json: cart_item
     else
       render json: cart_item.errors, status: :unprocessable_entity
     end
@@ -34,8 +34,9 @@ class CartsController < ApplicationController
           currency: listing['currency'].downcase,
           unit_amount: stripe_subtotal(listing),
           product_data: {
-            name: listing['title'],
-            images: stripe_images(listing)
+            name: listing['title']
+            # TODO
+            # images: stripe_images(listing)
           }
         },
         quantity: 1
@@ -85,11 +86,12 @@ class CartsController < ApplicationController
     ((listing['price'].to_f + listing['shipping'].to_f) * 100).to_i
   end
 
-  def stripe_images(listing)
-    return [] if Jets.env.development? || Jets.env.test?
+  # TODO
+  # def stripe_images(listing)
+  #   return [] if Jets.env.development? || Jets.env.test?
 
-    listing['photos'].take(8).map { |photo| photo['url'] }
-  end
+  #   listing['photos'].take(8).map { |photo| photo['url'] }
+  # end
 
   def listing_params
     params.permit(:seller_id, :listing_id)

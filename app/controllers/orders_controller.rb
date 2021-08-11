@@ -6,14 +6,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: %i[update update_state]
 
   def index
-    response = @orders.map do |order|
-      order.serializable_hash(include: [:address, :listings, {
-                                buyer: { only: %i[given_name family_name] },
-                                seller: { only: %i[given_name family_name] }
-                              }])
-    end
-
-    render json: response
+    render json: OrderBlueprint.render(@orders)
   end
 
   def update
@@ -21,7 +14,7 @@ class OrdersController < ApplicationController
       render json: { error: 'Only the seller can update tracking' },
              status: :unauthorized
     elsif @order.update(order_params)
-      render json: @order
+      render json: OrderBlueprint.render(@order)
     else
       render json: @order.errors, status: :unprocessable_entity
     end
@@ -35,7 +28,7 @@ class OrdersController < ApplicationController
 
     @order.aasm.fire(params[:state_transition], current_account.id)
     if @order.save
-      render json: @order
+      render json: OrderBlueprint.render(@order)
     else
       render json: @order.errors, status: :unprocessable_entity
     end

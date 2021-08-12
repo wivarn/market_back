@@ -14,7 +14,7 @@ class ListingBlueprint < ApplicationBlueprint
   end
 
   view :buyer do
-    fields :category, :subcategory, :combined_shipping
+    fields :description, :category, :subcategory, :combined_shipping
     association :account, name: :seller, blueprint: AccountBlueprint
   end
 end

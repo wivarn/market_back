@@ -11,7 +11,7 @@ class PaymentsController < ApplicationController
 
   def show
     if stripe_connection.stripe_account
-      render json: Stripe::Account.retrieve(stripe_connection.stripe_account)
+      render json: { id: Stripe::Account.retrieve(stripe_connection.stripe_account).id }
     else
       render json: {}, status: :no_content
     end

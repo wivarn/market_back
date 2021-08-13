@@ -31,9 +31,9 @@ class ListingsController < ApplicationController
 
   # used in the home page
   def recent_by_category
-    sports_cards = Listing.active.sports_cards.order(created_at: :desc).limit(4)
-    trading_cards = Listing.active.trading_cards.order(created_at: :desc).limit(4)
-    collectibles = Listing.active.collectibles.order(created_at: :desc).limit(4)
+    sports_cards = Listing.active.ships_to(params[:destination_country]).sports_cards.order(created_at: :desc).limit(4)
+    trading_cards = Listing.active.ships_to(params[:destination_country]).trading_cards.order(created_at: :desc).limit(4)
+    collectibles = Listing.active.ships_to(params[:destination_country]).collectibles.order(created_at: :desc).limit(4)
 
     render json: { sports_cards: ListingBlueprint.render_as_json(sports_cards),
                    trading_cards: ListingBlueprint.render_as_json(trading_cards),
@@ -50,7 +50,7 @@ class ListingsController < ApplicationController
     listing.aasm.fire(state_transition) if state_transition
 
     if listing.save
-      render json: listing, status: :created
+      render json: ListingBlueprint.render(listing, view: :seller), status: :created
     else
       render json: listing.errors, status: :unprocessable_entity
     end
@@ -66,17 +66,17 @@ class ListingsController < ApplicationController
                    currency: currency, shipping_country: country)
       .insert_all(bulk_create_params[:listings])
 
-    render json: listings, status: :created
+    render json: ListingBlueprint.render(listings, view: :seller), status: :created
   end
 
   def edit
-    render json: @listing
+    render json: ListingBlueprint.render(@listing, view: :seller)
   end
 
   def update
     @listing.aasm.fire(state_transition) if state_transition
     if @listing.update(listing_params)
-      render json: @listing
+      render json: ListingBlueprint.render(@listing, view: :seller)
     else
       render json: @listing.errors, status: :unprocessable_entity
     end
@@ -85,7 +85,7 @@ class ListingsController < ApplicationController
   def update_state
     @listing.aasm.fire(state_transition)
     if @listing.save
-      render json: @listing
+      render json: ListingBlueprint.render(@listing, view: :seller)
     else
       render json: @listing.errors, status: :unprocessable_entity
     end
@@ -114,7 +114,7 @@ class ListingsController < ApplicationController
     end
 
     if @listing.save
-      render json: @listing
+      render json: ListingBlueprint.render(@listing, view: :seller)
     else
       render json: @listing.errors, status: :unprocessable_entity
     end

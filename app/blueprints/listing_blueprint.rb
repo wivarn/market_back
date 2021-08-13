@@ -6,11 +6,9 @@ class ListingBlueprint < ApplicationBlueprint
     listing.shipping(destination_country: options[:destination_country], combined: options[:combined])
   end
 
-  # fields  :category, :subcategory, :tags, :title,:description,
-  #        :combined_shipping, :shipping_country, :reserved_at
-
   view :seller do
-    fields :category, :subcategory, :tags, :description, :domestic_shipping, :international_shipping, :combined_shipping
+    fields :category, :subcategory, :tags, :description, :domestic_shipping, :international_shipping,
+           :combined_shipping, :shipping_country, :reserved_at
   end
 
   view :buyer do

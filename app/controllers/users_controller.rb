@@ -3,17 +3,18 @@
 class UsersController < ApplicationController
   before_action :set_user
   def show
-    render json: AccountBlueprint.render(@user, view: :with_recent_listings, ships_to: params[:ships_to],
-                                                destination_country: params[:ships_to])
+    render json: AccountBlueprint.render(@user, view: :with_recent_listings,
+                                                destination_country: params[:destination_country])
   end
 
   def listings
-    listings = @user.listings.active.ships_to(params[:ships_to] || 'USA')
+    listings = @user.listings.active.ships_to(params[:destination_country] || 'USA')
     listings = sort(listings, params[:sort])
     listings = listings.page(params[:page].to_i + 1)
 
-    render json: { listings: ListingBlueprint.render_as_json(listings, destination_country: params[:ships_to]),
-                   total_pages: listings.total_pages }
+    render json:
+      { listings: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country]),
+        total_pages: listings.total_pages }
   end
 
   private

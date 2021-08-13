@@ -24,8 +24,9 @@ class ListingsController < ApplicationController
 
   def search
     listings = filter_and_sort(Listing.active, params)
-    render json: { listings: ListingBlueprint.render_as_json(listings),
-                   total_pages: listings.total_pages }
+    render json:
+      { listings: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country]),
+        total_pages: listings.total_pages }
   end
 
   # used in the home page
@@ -214,10 +215,10 @@ class ListingsController < ApplicationController
   end
 
   def filter_country(listings, filters)
-    return listings unless filters[:shipping_country].present?
+    return listings unless filters[:destination_country].present?
 
     listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
-                   country: filters[:shipping_country])
+                   country: filters[:destination_country])
   end
 
   def sort(listings, order)

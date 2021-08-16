@@ -2,6 +2,7 @@
 
 class ProfilesController < ApplicationController
   before_action :authenticate!
+
   def show
     render json: AccountBlueprint.render(current_account, view: :full)
   end

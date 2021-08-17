@@ -66,7 +66,7 @@ class ListingsController < ApplicationController
                    currency: currency, shipping_country: country)
       .insert_all(bulk_create_params[:listings])
 
-    render json: ListingBlueprint.render(listings, view: :seller), status: :created
+    render json: listings, status: :created
   end
 
   def edit

@@ -13,6 +13,6 @@ class ListingBlueprint < ApplicationBlueprint
 
   view :buyer do
     fields :description, :category, :subcategory, :combined_shipping
-    association :account, name: :seller, blueprint: AccountBlueprint
+    association :account, name: :seller, blueprint: AccountBlueprint, view: :with_location
   end
 end

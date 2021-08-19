@@ -204,7 +204,7 @@ class ListingsController < ApplicationController
   end
 
   def filter_condition(listings, filters)
-    listings = listings.where.not(grading_company: nil) if filters[:graded] == 'true'
+    listings = listings.where.not(grading_company: '') if filters[:graded] == 'true'
     if filters[:grading_company].present?
       listings = listings.where('grading_company = :grading_company', grading_company: filters[:grading_company])
     end

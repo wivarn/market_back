@@ -10,5 +10,6 @@ CarrierWave.configure do |config|
       aws_secret_access_key: ENV['PUBLIC_ASSETS_SECRET_ACCESS_KEY']
     }
     config.fog_directory = ENV['PUBLIC_ASSETS_BUCKET']
+    config.max_file_size = 50.megabytes
   end
 end

@@ -3,7 +3,7 @@
 class CartsController < ApplicationController
   before_action :authenticate!
   before_action :validate_address_set!
-  before_action :load_cart_through_seller_id, only: %i[add_item checkout delete]
+  before_action :load_cart_through_seller_id, only: %i[add_item checkout remove_item delete]
 
   def index
     # TODO: add some logic here to check for empty or stale carts
@@ -62,6 +62,12 @@ class CartsController < ApplicationController
 
       render json: session
     end
+  end
+
+  def remove_item
+    # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
+    @cart.cart_items.delete_by(listing_id: listing_params[:listing_id])
+    render json: { deleted: true }
   end
 
   def delete

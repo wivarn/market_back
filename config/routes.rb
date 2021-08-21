@@ -19,6 +19,7 @@ Jets.application.routes.draw do
     resources :carts, only: %i[index delete], param: :seller_id do
       post :add_item, on: :member
       post :checkout, on: :member
+      delete :remove_item, on: :member
       delete :empty_all, on: :collection
     end
 

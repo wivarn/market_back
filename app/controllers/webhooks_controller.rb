@@ -8,6 +8,7 @@ class WebhooksController < ApplicationController
       order.pay!
       order.address = order.buyer.address.dup
       order.save
+      Cart.destroy_by(account: order.buyer, seller: order.seller)
     end
 
     render nothing: true, status: :no_content

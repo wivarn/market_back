@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class ListingBlueprint < ApplicationBlueprint
+class ListingBlueprint < Blueprinter::Base
+  identifier :id
   fields :photos, :title, :grading_company, :condition, :currency, :price, :aasm_state
   field :shipping do |listing, options|
     listing.shipping(destination_country: options[:destination_country], combined: options[:combined])

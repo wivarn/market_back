@@ -9,7 +9,6 @@ class ListingTemplatesController < ApplicationController
     render json: @listing_template
   end
 
-  # PATCH/PUT /listings/1
   def update
     if @listing_template.update(listing_template_params)
       render json: @listing_template
@@ -18,7 +17,6 @@ class ListingTemplatesController < ApplicationController
     end
   end
 
-  # DELETE /listings/1
   def delete
     @listing_template.destroy
     render json: { deleted: true }

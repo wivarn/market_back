@@ -4,9 +4,11 @@ class WebhooksController < ApplicationController
   before_action :filter_stripe_event, only: %i[stripe]
   def stripe
     order = Order.find @event.data.object.client_reference_id
-    order.paid
-    order.address = order.buyer.address.dup
-    order.save
+    ActiveRecord::Base.transaction do
+      order.pay!
+      order.address = order.buyer.address.dup
+      order.save
+    end
 
     render nothing: true, status: :no_content
   end

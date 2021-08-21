@@ -27,38 +27,41 @@ class CartsController < ApplicationController
     total_price = cart_json['total']
     application_fee_amount = total_price * 0.05 * 100
 
-    order = current_account.purchases.create(seller: @cart.seller, total: total_price)
-    order.listings = @cart.listings
+    ActiveRecord::Base.transaction do
+      order = current_account.purchases.create(seller: @cart.seller, total: total_price)
+      order.listings = @cart.listings
+      order.reserve!
 
-    line_items = cart_json['listings'].each_with_object([]) do |listing, items|
-      items << {
-        price_data: {
-          currency: listing['currency'].downcase,
-          unit_amount: stripe_subtotal(listing),
-          product_data: {
-            name: listing['title']
-            # TODO
-            # images: stripe_images(listing)
-          }
-        },
-        quantity: 1
-      }
+      line_items = cart_json['listings'].each_with_object([]) do |listing, items|
+        items << {
+          price_data: {
+            currency: listing['currency'].downcase,
+            unit_amount: stripe_subtotal(listing),
+            product_data: {
+              name: listing['title']
+              # TODO
+              # images: stripe_images(listing)
+            }
+          },
+          quantity: 1
+        }
+      end
+
+      session = Stripe::Checkout::Session
+                .create({
+                          client_reference_id: order.id,
+                          payment_method_types: ['card'],
+                          line_items: line_items,
+                          payment_intent_data: {
+                            application_fee_amount: application_fee_amount.to_i
+                          },
+                          mode: 'payment',
+                          success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchaseHistory",
+                          cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
+                        }, { stripe_account: seller_stripe_account })
+
+      render json: session
     end
-
-    session = Stripe::Checkout::Session
-              .create({
-                        client_reference_id: order.id,
-                        payment_method_types: ['card'],
-                        line_items: line_items,
-                        payment_intent_data: {
-                          application_fee_amount: application_fee_amount.to_i
-                        },
-                        mode: 'payment',
-                        success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchaseHistory",
-                        cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
-                      }, { stripe_account: seller_stripe_account })
-
-    render json: session
   end
 
   def delete

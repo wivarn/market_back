@@ -101,7 +101,7 @@ class Listing < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
-    state :active, :removed, :reserved, :pending_shipment, :shipped, :sold, :refunded
+    state :active, :removed, :reserved, :sold, :refunded
 
     event :publish do
       transitions from: %i[draft removed], to: :active
@@ -116,15 +116,11 @@ class Listing < ApplicationRecord
     end
 
     event :paid do
-      transitions to: :pending_shipment, guard: :reserved?
-    end
-
-    event :ship do
-      transitions from: :pending_shipment, to: :shipped
+      transitions to: :sold, guard: :reserved?
     end
 
     event :refund do
-      transitions from: %i[pending_shipment shipped], to: :refunded
+      transitions from: :sold, to: :refunded
     end
   end
 

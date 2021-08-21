@@ -21,18 +21,18 @@ class Order < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :reserved, initial: true
-    state :paid, :shipped, :refunded, :received
+    state :pending_shipment, :shipped, :refunded, :received
 
     event :paid do
-      transitions from: :reserved, to: :paid
+      transitions from: :reserved, to: :pending_shipment
     end
 
     event :ship do
-      transitions from: :paid, to: :shipped, guard: :seller?
+      transitions from: :pending_shipment, to: :shipped, guard: :seller?
     end
 
     event :refund do
-      transitions from: %i[paid shipped], to: :refunded
+      transitions from: %i[pending_shipment shipped], to: :refunded
     end
 
     event :receive do
@@ -41,6 +41,15 @@ class Order < ApplicationRecord
   end
 
   scope :not_reserved, -> { where('aasm_state != ?', :reserved) }
+
+  def reserve!
+    listings.each(&:reserve!)
+  end
+
+  def pay!
+    paid!
+    listings.each(&:paid!)
+  end
 
   private
 

@@ -52,9 +52,9 @@ class OrdersController < ApplicationController
   def send_email
     case params[:state_transition]
     when 'ship'
-      OrderMailer.shipped(@order)
+      OrderMailer.shipped(@order).deliver
     when 'receive'
-      OrderMailer.received(@order)
+      OrderMailer.received(@order).deliver
     end
   end
 

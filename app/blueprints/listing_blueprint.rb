@@ -2,7 +2,10 @@
 
 class ListingBlueprint < Blueprinter::Base
   identifier :id
-  fields :photos, :title, :grading_company, :condition, :currency, :price, :aasm_state
+  fields :photos, :title, :grading_company, :condition, :currency, :price
+  field :aasm_state do |listing|
+    listing.aasm_state == 'reserved' && listing.active? ? 'active' : listing.aasm_state
+  end
   field :shipping do |listing, options|
     listing.shipping(destination_country: options[:destination_country], combined: options[:combined])
   end

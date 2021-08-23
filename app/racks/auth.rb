@@ -66,9 +66,12 @@ class Auth < Roda
     jwt_access_token_period 1800 # 30 min
     allow_refresh_with_expired_jwt_access_token? true
 
+    # session config
+    session_inactivity_deadline days: 14
+    session_lifetime_deadline nil
+
     # account lockout
     max_invalid_logins 5
-    account_lockouts_deadline_interval years: 99
 
     # email configs
     create_verify_account_email do

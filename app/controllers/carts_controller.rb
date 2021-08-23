@@ -56,7 +56,7 @@ class CartsController < ApplicationController
                             application_fee_amount: application_fee_amount.to_i
                           },
                           mode: 'payment',
-                          success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchaseHistory",
+                          success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchases",
                           cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
                         }, { stripe_account: seller_stripe_account })
 

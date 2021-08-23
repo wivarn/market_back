@@ -55,19 +55,18 @@ class Auth < Roda
     password_hash_cost 12
     password_pepper ENV['PASSWORD_PEPPER']
     change_password_requires_password? true
-    reset_password_deadline_interval days: 1
-    reset_password_skip_resend_email_within 60
+    reset_password_skip_resend_email_within 1.minute
     reset_password_autologin? true
 
     # jwt config
     jwt_secret ENV['JWT_SECRET']
     jwt_cors_allow_origin true
     expired_jwt_access_token_status 401
-    jwt_access_token_period 1800 # 30 min
+    jwt_access_token_period 30.minutes
     allow_refresh_with_expired_jwt_access_token? true
 
     # session config
-    session_inactivity_deadline days: 14
+    session_inactivity_deadline 14.days
     session_lifetime_deadline nil
 
     # account lockout

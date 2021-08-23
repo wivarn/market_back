@@ -28,6 +28,7 @@ class OrdersController < ApplicationController
 
     @order.aasm.fire(params[:state_transition], current_account.id)
     if @order.save
+      send_email
       render json: OrderBlueprint.render(@order)
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -46,6 +47,15 @@ class OrdersController < ApplicationController
     render json: { error: 'invalid relation' }, status: 400 unless %w[purchases sales].include?(params[:relation])
 
     @order = current_account.public_send(params[:relation]).find(params[:id])
+  end
+
+  def send_email
+    case params[:state_transition]
+    when 'ship'
+      OrderMailer.shipped(@order)
+    when 'receive'
+      OrderMailer.received(@order)
+    end
   end
 
   def order_params

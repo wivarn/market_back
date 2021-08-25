@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'aasm', '~> 5.2'
 gem 'after_commit_everywhere', '~> 1.0.0'
+gem 'aws-sdk-s3', '~> 1.99'
 gem 'aws-sdk-sesv2', '~> 1.17'
 gem 'blueprinter', '~> 0.25.3'
 gem 'carrierwave', '~> 2.2'

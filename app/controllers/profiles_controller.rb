@@ -2,6 +2,7 @@
 
 class ProfilesController < ApplicationController
   before_action :authenticate!
+  before_action :ensure_key_present!, only: [:update_picture_key]
 
   def show
     render json: AccountBlueprint.render(current_account, view: :full)
@@ -25,10 +26,15 @@ class ProfilesController < ApplicationController
     render json: uploader.direct_fog_hash.merge(success_action_redirect: uploader.success_action_redirect)
   end
 
+  def presigned_put_url
+    render json: ImageUploader.new(current_account, 'picture').presigned_put_url(params[:filename])
+  end
+
   def update_picture_key
-    current_account.picture = nil
-    current_account.picture.key = params['key']
-    if current_account.save
+    current_account.update_attribute(:picture, nil)
+    current_account.update_column(:picture, params[:key])
+    current_account.reload
+    if current_account.valid?
       render json: current_account
     else
       render json: current_account.errors, status: :unprocessable_entity
@@ -60,5 +66,9 @@ class ProfilesController < ApplicationController
     end
   rescue Stripe::PermissionError
     false
+  end
+
+  def ensure_key_present!
+    render json: { error: '"key" is a required param' }, status: :unprocessable_entity unless params[:key]
   end
 end

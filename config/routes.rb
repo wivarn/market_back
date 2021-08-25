@@ -29,7 +29,7 @@ Jets.application.routes.draw do
 
     prefix :account do
       resource :profile, only: %i[show update] do
-        get :upload_picture_credentials, to: 'profiles#upload_picture_credentials'
+        get :presigned_put_url, to: 'profiles#presigned_put_url'
         put :update_picture_key, to: 'profiles#update_picture_key'
         get :settings, to: 'profiles#settings'
       end

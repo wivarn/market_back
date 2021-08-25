@@ -27,6 +27,10 @@ class ImageUploader < CarrierWave::Uploader::Base
     { url: object.presigned_url(:put, acl: 'public-read'), key: key }
   end
 
+  def presigned_put_urls(filenames)
+    filenames.map { |filename| presigned_put_url(filename) }
+  end
+
   def remove_from_s3(key)
     BUCKET.object("#{store_dir}#{key}").delete
   end

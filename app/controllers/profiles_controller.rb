@@ -18,17 +18,9 @@ class ProfilesController < ApplicationController
     end
   end
 
-  def upload_picture_credentials
-    current_account.picture = nil
-    uploader = current_account.picture
-    uploader.key = nil
-    uploader.success_action_redirect = "#{ENV['FRONT_END_BASE_URL']}/account/profile"
-    render json: uploader.direct_fog_hash.merge(success_action_redirect: uploader.success_action_redirect)
-  end
-
   iam_policy({
                action: ['s3:PutObject', 's3:PutObjectAcl'],
-               effect: 'allow',
+               effect: 'Allow',
                resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/account/picture/*"
              })
   def presigned_put_url
@@ -37,7 +29,7 @@ class ProfilesController < ApplicationController
 
   iam_policy({
                action: ['s3:DeleteObject'],
-               effect: 'allow',
+               effect: 'Allow',
                resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/account/picture/*"
              })
   def update_picture_key

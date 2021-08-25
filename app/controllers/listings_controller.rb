@@ -2,15 +2,14 @@
 
 class ListingsController < ApplicationController
   before_action :authenticate!,
-                only: %i[index create bulk_create edit update update_state upload_photos_credentials update_photo_keys
+                only: %i[index create bulk_create edit update update_state presigned_put_urls update_photo_keys
                          delete]
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account,
-                only: %i[edit update update_state upload_photos_credentials update_photo_keys delete]
+                only: %i[edit update update_state presigned_put_urls update_photo_keys delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
   before_action :enfore_editable!, only: %i[update]
   before_action :enfore_destroyable!, only: %i[destroy]
-  before_action :set_number_of_photos!, only: %i[upload_photos_credentials]
 
   def index
     scope = params[:state] || :active
@@ -105,6 +104,20 @@ class ListingsController < ApplicationController
     render json: response
   end
 
+  iam_policy({
+               action: ['s3:PutObject', 's3:PutObjectAcl'],
+               effect: 'Allow',
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/listing/picture/*"
+             })
+  def presigned_put_urls
+    render json: ImageUploader.new(current_account, 'picture').presigned_put_urls(params[:filenames])
+  end
+
+  iam_policy({
+               action: ['s3:DeleteObject'],
+               effect: 'Allow',
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/listing/picture/*"
+             })
   def update_photo_keys
     @listing.photos = []
     params['keys'].each do |key|

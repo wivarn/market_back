@@ -26,15 +26,26 @@ class ProfilesController < ApplicationController
     render json: uploader.direct_fog_hash.merge(success_action_redirect: uploader.success_action_redirect)
   end
 
+  iam_policy({
+               action: ['s3:PutObject', 's3:PutObjectAcl'],
+               effect: 'allow',
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/account/picture/*"
+             })
   def presigned_put_url
     render json: ImageUploader.new(current_account, 'picture').presigned_put_url(params[:filename])
   end
 
+  iam_policy({
+               action: ['s3:DeleteObject'],
+               effect: 'allow',
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/account/picture/*"
+             })
   def update_picture_key
-    current_account.update_attribute(:picture, nil)
+    old_key = current_account.picture.key
     current_account.update_column(:picture, params[:key])
     current_account.reload
     if current_account.valid?
+      current_account.picture.remove_from_s3(old_key)
       render json: current_account
     else
       render json: current_account.errors, status: :unprocessable_entity

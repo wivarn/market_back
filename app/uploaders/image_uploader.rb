@@ -6,6 +6,10 @@ class ImageUploader < CarrierWave::Uploader::Base
     "#{ENV['FRONT_END_PUBLIC_PATH']}uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
+  def key
+    path.delete_prefix(store_dir)
+  end
+
   def url
     return unless present?
 
@@ -21,6 +25,10 @@ class ImageUploader < CarrierWave::Uploader::Base
     key = "#{SecureRandom.uuid}/#{filename}"
     object = BUCKET.object("#{store_dir}/#{key}")
     { url: object.presigned_url(:put, acl: 'public-read'), key: key }
+  end
+
+  def remove_from_s3(key)
+    BUCKET.object("#{store_dir}#{key}").delete
   end
 
   # Add an allowlist of extensions which are allowed to be uploaded.

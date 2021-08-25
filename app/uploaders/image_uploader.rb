@@ -1,5 +1,4 @@
 class ImageUploader < CarrierWave::Uploader::Base
-  include CarrierWaveDirect::Uploader unless Jets.env.development? || Jets.env.test?
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
   # include CarrierWave::MiniMagick

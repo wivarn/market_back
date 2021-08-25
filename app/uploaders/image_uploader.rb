@@ -1,5 +1,5 @@
 class ImageUploader < CarrierWave::Uploader::Base
-  BUCKET = Aws::S3::Resource.new.bucket(ENV['PUBLIC_ASSETS_BUCKET']) unless Jets.env.development? || Jets.env.test?
+  BUCKET = Aws::S3::Resource.new.bucket(ENV['PUBLIC_ASSETS_BUCKET']) if ENV['PUBLIC_ASSETS_BUCKET']
 
   # ENV['FRONT_END_PUBLIC_PATH'] should be set only in local envs
   def store_dir
@@ -22,9 +22,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   end
 
   def presigned_put_url(filename)
-    key = "#{SecureRandom.uuid}/#{filename}"
-    object = BUCKET.object("#{store_dir}/#{key}")
-    { url: object.presigned_url(:put, acl: 'public-read'), key: key }
+    existing_url(filename) || local_url(filename) || s3_url(filename)
   end
 
   def presigned_put_urls(filenames)
@@ -43,5 +41,29 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   def content_type_allowlist
     %r{image/}
+  end
+
+  private
+
+  def existing_url(filename)
+    return unless filename.start_with?(ENV['PUBLIC_ASSETS_URL'])
+
+    existing_key = filename.split(store_dir).last
+    { url: nil, key: existing_key }
+  end
+
+  def local_url(filename)
+    return if ENV['PUBLIC_ASSETS_BUCKET']
+
+    key = "#{SecureRandom.uuid}/#{filename}"
+    { url: "#{store_dir}/#{key}", key: key }
+  end
+
+  def s3_url(filename)
+    return unless ENV['PUBLIC_ASSETS_BUCKET']
+
+    key = "#{SecureRandom.uuid}/#{filename}"
+    object = BUCKET.object("#{store_dir}/#{key}")
+    { url: object.presigned_url(:put, acl: 'public-read'), key: key }
   end
 end

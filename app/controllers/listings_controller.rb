@@ -115,6 +115,11 @@ class ListingsController < ApplicationController
     end
   end
 
+  iam_policy({
+               action: ['s3:DeleteObject'],
+               effect: 'Allow',
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/listing/photos/*"
+             })
   def delete
     @listing.destroy
     render json: { deleted: true }

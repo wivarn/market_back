@@ -8,7 +8,8 @@ CarrierWave.configure do |config|
       # use_iam_profile: true
       # need to replaces these
       aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+      aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+      aws_session_token: ENV['AWS_SESSION_TOKEN']
     }
     config.fog_directory = ENV['PUBLIC_ASSETS_BUCKET']
     config.storage = :fog

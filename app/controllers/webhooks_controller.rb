@@ -11,7 +11,7 @@ class WebhooksController < ApplicationController
       Cart.destroy_by(account: order.buyer, seller: order.seller)
     end
     OrderMailer.pending_shipment(order).deliver
-    OrderMailer.puchased(order).deliver
+    OrderMailer.purchased(order).deliver
 
     render nothing: true, status: :no_content
   end

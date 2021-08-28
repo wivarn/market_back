@@ -7,7 +7,7 @@ Jets.application.routes.draw do
       post :bulk_create, on: :collection
       get :edit, on: :member
       post :presigned_put_urls, on: :member
-      put :update_photo_keys, on: :member
+      put :update_photo_identifiers, on: :member
       post :update_state, on: :member
       get :recent_by_category, on: :collection
     end
@@ -30,7 +30,7 @@ Jets.application.routes.draw do
     prefix :account do
       resource :profile, only: %i[show update] do
         get :presigned_put_url, to: 'profiles#presigned_put_url'
-        put :update_picture_key, to: 'profiles#update_picture_key'
+        put :update_picture_identifier, to: 'profiles#update_picture_identifier'
         get :settings, to: 'profiles#settings'
       end
       resource :address, only: %i[show update]

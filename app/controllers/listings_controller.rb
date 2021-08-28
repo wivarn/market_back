@@ -2,15 +2,16 @@
 
 class ListingsController < ApplicationController
   before_action :authenticate!,
-                only: %i[index create bulk_create edit update update_state presigned_put_urls update_photo_keys
+                only: %i[index create bulk_create edit update update_state presigned_put_urls update_photo_identifiers
                          delete]
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account,
-                only: %i[edit update update_state presigned_put_urls update_photo_keys delete]
+                only: %i[edit update update_state presigned_put_urls update_photo_identifiers delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
   before_action :enfore_editable!, only: %i[update]
   before_action :enfore_destroyable!, only: %i[destroy]
   before_action :enforce_number_of_photos!, only: %i[presigned_put_urls]
+  before_action :ensure_identifiers_present!, only: %i[update_photo_identifiers]
 
   def index
     scope = params[:state] || :active
@@ -105,10 +106,9 @@ class ListingsController < ApplicationController
                effect: 'Allow',
                resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/listing/photos/*"
              })
-  def update_photo_keys
-    @listing.update_column(:photos, params[:keys])
-    @listing.reload
-    if @listing.valid?
+  def update_photo_identifiers
+    @listing.write_attribute(:photos, params[:identifiers])
+    if @listing.save
       render json: ListingBlueprint.render(@listing, view: :seller)
     else
       render json: @listing.errors, status: :unprocessable_entity
@@ -158,6 +158,13 @@ class ListingsController < ApplicationController
     return if count >= 1 || count <= 10
 
     render json: { error: 'Can only have between 1 and 10 photos' }, status: :bad_request
+  end
+
+  def ensure_identifiers_present!
+    unless params[:identifiers]
+      render json: { error: '"identifiers" is a required param' },
+             status: :unprocessable_entity
+    end
   end
 
   def listing_params

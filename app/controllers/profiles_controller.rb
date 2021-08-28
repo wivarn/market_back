@@ -2,7 +2,7 @@
 
 class ProfilesController < ApplicationController
   before_action :authenticate!
-  before_action :ensure_key_present!, only: [:update_picture_key]
+  before_action :ensure_identifier_present!, only: [:update_picture_identifier]
 
   def show
     render json: AccountBlueprint.render(current_account, view: :full)
@@ -32,12 +32,9 @@ class ProfilesController < ApplicationController
                effect: 'Allow',
                resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/uploads/account/picture/*"
              })
-  def update_picture_key
-    old_key = current_account.picture.key
-    current_account.update_column(:picture, params[:key])
-    current_account.reload
-    if current_account.valid?
-      current_account.picture.remove_from_s3(old_key)
+  def update_picture_identifier
+    current_account.write_attribute(:picture, params[:identifier])
+    if current_account.save
       render json: current_account
     else
       render json: current_account.errors, status: :unprocessable_entity
@@ -71,7 +68,7 @@ class ProfilesController < ApplicationController
     false
   end
 
-  def ensure_key_present!
-    render json: { error: '"key" is a required param' }, status: :unprocessable_entity unless params[:key]
+  def ensure_identifier_present!
+    render json: { error: '"identifier" is a required param' }, status: :unprocessable_entity unless params[:identifier]
   end
 end

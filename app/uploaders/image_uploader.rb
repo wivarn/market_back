@@ -10,10 +10,6 @@ class ImageUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
-  def key
-    path.delete_prefix(store_dir)
-  end
-
   def url
     return unless present?
 
@@ -49,28 +45,30 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   private
 
+  # returns nil unless 'filename' is a url to an existing file on disk or S3
   def existing_url(filename)
     if ENV['PUBLIC_ASSETS_URL']
       return unless filename.start_with?(ENV['PUBLIC_ASSETS_URL'])
     else
-      return unless filename.start_with?('/uploads')
+      return unless filename.start_with?("/#{store_prefix}")
     end
 
-    existing_key = filename.split(store_prefix).last
-    { url: nil, key: existing_key }
+    { url: nil, identifier: filename.split(store_prefix).last }
   end
 
+  # returns a path inside the frontend's /public directory if using local storage
   def local_url(filename)
     return if ENV['PUBLIC_ASSETS_BUCKET']
 
-    { url: "#{store_prefix}/#{filename}", key: filename }
+    { url: "#{store_prefix}/#{filename}", identifier: filename }
   end
 
+  # returns a presigned s3 url for uploading an object
   def s3_url(filename)
     return unless ENV['PUBLIC_ASSETS_BUCKET']
 
-    key = "#{SecureRandom.uuid}/#{filename}"
-    object = BUCKET.object("#{store_dir}/#{key}")
-    { url: object.presigned_url(:put, acl: 'public-read'), key: key }
+    new_identifier = "#{SecureRandom.uuid}/#{filename}"
+    object = BUCKET.object("#{store_dir}/#{new_identifier}")
+    { url: object.presigned_url(:put, acl: 'public-read'), identifier: new_identifier }
   end
 end

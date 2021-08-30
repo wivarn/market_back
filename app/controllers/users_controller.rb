@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   end
 
   def listings
-    listings = @user.listings.active.ships_to(params[:destination_country] || 'USA')
+    listings = @user.listings.active.ships_to(params[:destination_country] || 'USA').order(updated_at: :desc, id: :asc)
     listings = sort(listings, params[:sort])
     listings = listings.page(params[:page].to_i + 1)
 
@@ -26,17 +26,17 @@ class UsersController < ApplicationController
   def sort(listings, order)
     case order
     when 'priceLow'
-      listings.order(price: :asc)
+      listings.order(price: :asc, id: :asc)
     when 'priceHigh'
-      listings.order(price: :desc)
+      listings.order(price: :desc, id: :asc)
     when 'priceShipLow'
-      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc)
+      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :asc, id: :asc)
     when 'priceShipHigh'
-      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc)
+      listings.select('*, (price + domestic_shipping) AS total_price').order(total_price: :desc, id: :asc)
     when 'newest'
-      listings.order(created_at: :desc)
+      listings.order(updated_at: :desc, id: :asc)
     when 'oldest'
-      listings.order(created_at: :asc)
+      listings.order(updated_at: :asc, id: :asc)
     else
       listings
     end

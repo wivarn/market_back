@@ -15,7 +15,7 @@ class ListingsController < ApplicationController
 
   def index
     scope = params[:state] || :active
-    listings = current_account.listings.send(scope)
+    listings = current_account.listings.send(scope).order(updated_at: :desc, id: :asc)
     listings = filter_and_sort(listings, params)
 
     render json:
@@ -239,9 +239,9 @@ class ListingsController < ApplicationController
     when 'priceShipHigh'
       listings.select('*, (price + domestic_shipping) AS total_price').reorder(total_price: :desc, id: :asc)
     when 'newest'
-      listings.reorder(created_at: :desc, id: :asc)
+      listings.reorder(updated_at: :desc, id: :asc)
     when 'oldest'
-      listings.reorder(created_at: :asc, id: :asc)
+      listings.reorder(updated_at: :asc, id: :asc)
     else
       listings
     end

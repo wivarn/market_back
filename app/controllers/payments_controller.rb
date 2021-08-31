@@ -36,6 +36,8 @@ class PaymentsController < ApplicationController
 
       render json: { url: account_link.url }
     end
+  rescue Stripe::InvalidRequestError => e
+    render json: { error: e.message }, status: e.http_status
   end
 
   private

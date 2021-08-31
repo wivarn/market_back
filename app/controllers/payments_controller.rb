@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 class PaymentsController < ApplicationController
-  COUNTRY_CODE_2 = {
-    'CAD' => 'CA',
-    'USA' => 'US'
-  }.freeze
-
   DEFAULT_STRIPE_SETTINGS = {
     card_payments: { statement_descriptor_prefix: 'SKWIRL' },
     payments: { statement_descriptor: 'SKWIRL.IO' }
@@ -84,14 +79,7 @@ class PaymentsController < ApplicationController
 
   def map_stripe_address
     {
-      address: {
-        country: COUNTRY_CODE_2[address.country],
-        city: address.city,
-        line1: address.street1,
-        line2: address.street2,
-        postal_code: address.zip,
-        state: address.state
-      }
+      address: AddressBlueprint.render_as_hash(address, view: :for_stripe)
     }
   end
 

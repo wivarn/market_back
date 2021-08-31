@@ -38,9 +38,8 @@ class CartsController < ApplicationController
             currency: listing['currency'].downcase,
             unit_amount: stripe_subtotal(listing),
             product_data: {
-              name: listing['title']
-              # TODO
-              # images: stripe_images(listing)
+              name: listing['title'],
+              images: stripe_images(listing)
             }
           },
           quantity: 1
@@ -53,9 +52,13 @@ class CartsController < ApplicationController
                           payment_method_types: ['card'],
                           line_items: line_items,
                           payment_intent_data: {
-                            application_fee_amount: application_fee_amount.to_i
+                            application_fee_amount: application_fee_amount.to_i,
+                            receipt_email: current_account.email
+                            # shipping: AccountBlueprint.render_as_hash(current_account, view: :stripe_shipping),
+                            # description: 'Items in your cart have been reserved for 15 minutes.'
                           },
                           mode: 'payment',
+                          customer_email: current_account.email,
                           success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchases",
                           cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
                         }, { stripe_account: seller_stripe_account })
@@ -97,12 +100,11 @@ class CartsController < ApplicationController
     ((listing['price'].to_f + listing['shipping'].to_f) * 100).to_i
   end
 
-  # TODO
-  # def stripe_images(listing)
-  #   return [] if Jets.env.development? || Jets.env.test?
+  def stripe_images(listing)
+    return [] if Jets.env.development? || Jets.env.test?
 
-  #   listing['photos'].take(8).map { |photo| photo['url'] }
-  # end
+    listing['photos'].take(8).map { |photo| photo['url'] }
+  end
 
   def listing_params
     params.permit(:seller_id, :listing_id)

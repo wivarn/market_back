@@ -23,4 +23,12 @@ class AccountBlueprint < Blueprinter::Base
                                                                                      id: :asc).limit(4)
     end
   end
+
+  view :stripe_shipping do
+    excludes :id, :picture, :full_name
+    field :name do |account|
+      "#{account.given_name} #{account.family_name}"
+    end
+    association :address, blueprint: AddressBlueprint, view: :for_stripe
+  end
 end

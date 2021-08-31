@@ -96,10 +96,11 @@ class PaymentsController < ApplicationController
   end
 
   def map_business_profile
+    base_url = Jets.env.development? ? 'https://skwirlhouse1.ca' : ENV['FRONT_END_BASE_URL']
     {
-      # mcc is merchant code. 5399 is Retail/Other.
+      # mcc is merchant category code. 5399 is 'Miscellaneous General Merchandise'.
       mcc: '5399',
-      url: "#{ENV['FRONT_END_BASE_URL']}/users/#{current_account.id}",
+      url: "#{base_url}/users/#{current_account.id}",
       product_description: 'Sports cards, trading cards and collectibles'
       # support_phone: TODO
     }

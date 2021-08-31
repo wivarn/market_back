@@ -6,6 +6,11 @@ class PaymentsController < ApplicationController
     payments: { statement_descriptor: 'SKWIRL.IO' }
   }.freeze
 
+  COUNTRY_CODE_2 = {
+    'CAN' => 'CA',
+    'USA' => 'US'
+  }.freeze
+
   before_action :authenticate!
   before_action :enforce_address_set!
 

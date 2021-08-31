@@ -6,6 +6,11 @@ class PaymentsController < ApplicationController
     'USA' => 'US'
   }.freeze
 
+  DEFAULT_STRIPE_SETTINGS = {
+    card_payments: { statement_descriptor_prefix: 'SKWIRL' },
+    payments: { statement_descriptor: 'SKWIRL.IO' }
+  }.freeze
+
   before_action :authenticate!
   before_action :enforce_address_set!
 
@@ -70,19 +75,33 @@ class PaymentsController < ApplicationController
       default_currency: current_account.currency.downcase,
       country: COUNTRY_CODE_2[address.country],
       business_type: 'individual',
-      company: { address: map_stripe_address },
-      individual: map_stripe_individual
+      company: map_stripe_address,
+      business_profile: map_business_profile,
+      individual: map_stripe_individual,
+      settings: DEFAULT_STRIPE_SETTINGS
     )
   end
 
   def map_stripe_address
     {
-      country: COUNTRY_CODE_2[address.country],
-      city: address.city,
-      line1: address.street1,
-      line2: address.street2,
-      postal_code: address.zip,
-      state: address.state
+      address: {
+        country: COUNTRY_CODE_2[address.country],
+        city: address.city,
+        line1: address.street1,
+        line2: address.street2,
+        postal_code: address.zip,
+        state: address.state
+      }
+    }
+  end
+
+  def map_business_profile
+    {
+      # mcc is merchant code. 5399 is Retail/Other.
+      mcc: '5399',
+      url: "#{ENV['FRONT_END_BASE_URL']}/users/#{current_account.id}",
+      product_description: 'Sports cards, trading cards and collectibles'
+      # support_phone: TODO
     }
   end
 

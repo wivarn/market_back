@@ -21,7 +21,7 @@ class Account < ApplicationRecord
   has_one :account_verification_key, foreign_key: :id
 
   has_many :listings
-  has_many :carts
+  has_many :carts, class_name: 'Cart', foreign_key: :buyer_id
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_one :listing_template

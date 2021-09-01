@@ -8,7 +8,7 @@ class WebhooksController < ApplicationController
       order.pay!
       order.address = order.buyer.address.dup
       order.save
-      Cart.destroy_by(account: order.buyer, seller: order.seller)
+      Cart.destroy_by(buyer: order.buyer, seller: order.seller)
     end
     OrderMailer.pending_shipment(order).deliver
     OrderMailer.purchased(order).deliver

@@ -90,7 +90,7 @@ class CartsController < ApplicationController
   end
 
   def load_cart_through_seller_id
-    @cart = Cart.where(account: current_account, seller_id: listing_params[:seller_id]).first_or_create
+    @cart = Cart.where(buyer: current_account, seller_id: listing_params[:seller_id]).first_or_create
   end
 
   def stripe_subtotal(listing)

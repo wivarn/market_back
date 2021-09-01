@@ -25,7 +25,7 @@ class CartsController < ApplicationController
     cart_json = CartBlueprint.render_as_json(@cart, destination_country: current_account.address.country)
     seller_stripe_account = @cart.seller.stripe_connection.stripe_account
     total_price = cart_json['total']
-    application_fee_amount = total_price * 0.05 * 100
+    application_fee_amount = total_price * @cart.seller.fee * 100
 
     ActiveRecord::Base.transaction do
       order = current_account.purchases.create(seller: @cart.seller, total: total_price)

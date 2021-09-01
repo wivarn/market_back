@@ -4,10 +4,9 @@ class OrderItem < ApplicationRecord
   belongs_to :order
   belongs_to :listing
 
-  validates_uniqueness_of :listing, scope: :order
+  validates_uniqueness_of :listing
 
-  # validates :order, :listing, :shipping, presence: true
-  validates :order, :listing, presence: true
+  validates :order, :listing, :shipping, presence: true
   validates :shipping, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }
   validates :shipping, numericality: {
     greater_than_or_equal_to: 0,

@@ -29,6 +29,7 @@ class CartsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       order = current_account.purchases.create(seller: @cart.seller, total: total_price)
+      # TODO: adding shipping to order_items
       order.listings = @cart.listings
       order.reserve!
 

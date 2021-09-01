@@ -30,6 +30,6 @@ class CreateOrders < ActiveRecord::Migration[6.1]
 
     add_foreign_key :order_items, :orders
     add_foreign_key :order_items, :listings
-    add_index :order_items, %i[order_id listing_id], unique: true
+    add_index :order_items, :listing_id, unique: true
   end
 end

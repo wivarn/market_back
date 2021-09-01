@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
-  before_action :authenticate!,
+  before_action :authenticate_and_enforce_seller!,
                 only: %i[index create bulk_create edit update update_state presigned_put_urls update_photo_identifiers
                          delete]
   before_action :set_listing, only: %i[show]
   before_action :set_listing_through_account,
                 only: %i[edit update update_state presigned_put_urls update_photo_identifiers delete]
   before_action :enforce_listing_prerequisites!, only: %i[create bulk_create update]
-  before_action :enfore_editable!, only: %i[update]
-  before_action :enfore_destroyable!, only: %i[destroy]
+  before_action :enforce_editable!, only: %i[update]
+  before_action :enforce_destroyable!, only: %i[destroy]
   before_action :enforce_number_of_photos!, only: %i[presigned_put_urls]
   before_action :ensure_identifiers_present!, only: %i[update_photo_identifiers]
 
@@ -135,13 +135,20 @@ class ListingsController < ApplicationController
     @listing = current_account.listings.find(params[:id])
   end
 
+  def authenticate_and_enforce_seller!
+    authenticate!
+    return if current_account.seller?
+
+    render json: { error: 'Selling has not been enabled for you' }, status: :forbidden
+  end
+
   def enforce_listing_prerequisites!
     return unless current_account.address && !current_account.stripe_connection
 
     render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
   end
 
-  def enfore_editable!
+  def enforce_editable!
     return if @listing.editable?
 
     render json: { error: 'Only draft, active and removed listings can be updated' }, status: :unprocessable_entity

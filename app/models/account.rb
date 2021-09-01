@@ -2,6 +2,8 @@
 
 class Account < ApplicationRecord
   ROLES = %w[admin partner seller user].freeze
+  SELLERS = %w[admin partner seller].freeze
+  INTERNAL = %w[admin partner].freeze
 
   # rodauth models
   has_many :account_active_session_keys
@@ -30,4 +32,18 @@ class Account < ApplicationRecord
   validates :role, inclusion: { in: ROLES }, presence: true
 
   mount_uploader :picture, ImageUploader
+
+  def seller?
+    SELLERS.include?(role)
+  end
+
+  def fee
+    internal? ? 0 : 0.02
+  end
+
+  private
+
+  def internal?
+    INTERNAL.include?(role)
+  end
 end

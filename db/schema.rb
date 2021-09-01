@@ -97,7 +97,6 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.string "given_name", null: false
     t.string "family_name", null: false
     t.string "picture"
-    t.string "currency", limit: 3, default: "USD", null: false
     t.string "role", default: "user", null: false
     t.index ["email"], name: "index_accounts_on_email", unique: true, where: "((status)::text = ANY ((ARRAY['unverified'::character varying, 'verified'::character varying])::text[]))"
   end
@@ -125,11 +124,12 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   end
 
   create_table "carts", force: :cascade do |t|
-    t.bigint "account_id", null: false
+    t.bigint "buyer_id", null: false
     t.bigint "seller_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_carts_on_account_id"
+    t.index ["buyer_id", "seller_id"], name: "index_carts_on_buyer_id_and_seller_id", unique: true
+    t.index ["buyer_id"], name: "index_carts_on_buyer_id"
   end
 
   create_table "listing_templates", force: :cascade do |t|
@@ -187,7 +187,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.decimal "shipping", precision: 12, scale: 4, default: "0.0", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["order_id", "listing_id"], name: "index_order_items_on_order_id_and_listing_id", unique: true
+    t.index ["listing_id"], name: "index_order_items_on_listing_id", unique: true
   end
 
   create_table "orders", force: :cascade do |t|
@@ -207,12 +207,13 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end
 
-  create_table "stripe_connections", force: :cascade do |t|
+  create_table "payments", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "stripe_account", null: false
+    t.string "stripe_id"
+    t.string "currency", limit: 3, default: "USD", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_stripe_connections_on_account_id", unique: true
+    t.index ["account_id"], name: "index_payments_on_account_id", unique: true
   end
 
   add_foreign_key "account_active_session_keys", "accounts"
@@ -229,7 +230,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "listings"
-  add_foreign_key "carts", "accounts"
+  add_foreign_key "carts", "accounts", column: "buyer_id"
   add_foreign_key "carts", "accounts", column: "seller_id"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
@@ -237,5 +238,5 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "accounts", column: "buyer_id"
   add_foreign_key "orders", "accounts", column: "seller_id"
-  add_foreign_key "stripe_connections", "accounts"
+  add_foreign_key "payments", "accounts"
 end

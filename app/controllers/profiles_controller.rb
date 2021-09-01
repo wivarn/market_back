@@ -43,7 +43,7 @@ class ProfilesController < ApplicationController
 
   def settings
     render json: {
-      currency: current_account.payment.currency,
+      currency: current_account.payment&.currency || 'USD',
       country: current_account.address&.country || 'USA',
       address_set: !current_account.address.nil?,
       stripe_linked: stripe_linked?,

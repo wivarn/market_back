@@ -143,8 +143,10 @@ class Listing < ApplicationRecord
     draft? || active? || removed?
   end
 
-  def shipping(destination_country: 'USA', combined: false)
+  # Blueprint can pass destination_country in as nil
+  def shipping(destination_country: nil, combined: false)
     @combined ||= combined
+    destination_country ||= 'USA'
     dest_shipping = if destination_country == shipping_country
                       domestic_shipping
                     else

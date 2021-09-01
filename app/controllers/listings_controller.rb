@@ -42,7 +42,7 @@ class ListingsController < ApplicationController
   end
 
   def show
-    render json: ListingBlueprint.render(@listing, view: :buyer)
+    render json: ListingBlueprint.render(@listing, view: :buyer, destination_country: params[:destination_country])
   end
 
   def create

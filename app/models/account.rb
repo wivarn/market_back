@@ -33,6 +33,10 @@ class Account < ApplicationRecord
 
   mount_uploader :picture, ImageUploader
 
+  def admin?
+    role == 'admin'
+  end
+
   def seller?
     SELLERS.include?(role)
   end

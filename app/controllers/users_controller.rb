@@ -2,6 +2,8 @@
 
 class UsersController < ApplicationController
   before_action :set_user
+  before_action :enforce_admin!, only: %i[update_role]
+
   def show
     render json: AccountBlueprint.render(@user, view: :with_recent_listings,
                                                 destination_country: params[:destination_country])
@@ -17,10 +19,27 @@ class UsersController < ApplicationController
         total_pages: listings.total_pages }
   end
 
+  def update_role
+    if params[:role] == 'admin'
+      render json: {}, status: :forbidden
+    elsif @user.update_attribute(:role, params[:role])
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_user
     @user = Account.find(params[:user_id])
+  end
+
+  def enforce_admin!
+    authenticate!
+    return if current_account.admin?
+
+    render json: {}, status: :forbidden
   end
 
   def sort(listings, order)

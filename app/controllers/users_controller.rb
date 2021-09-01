@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :set_user
+  before_action :set_user, except: %i[update_role]
   before_action :enforce_admin!, only: %i[update_role]
+  before_action :set_user_by_email, only: %i[update_role]
 
   def show
     render json: AccountBlueprint.render(@user, view: :with_recent_listings,
@@ -40,6 +41,10 @@ class UsersController < ApplicationController
     return if current_account.admin?
 
     render json: {}, status: :forbidden
+  end
+
+  def set_user_by_email
+    @user = Account.find_by_email(params[:email])
   end
 
   def sort(listings, order)

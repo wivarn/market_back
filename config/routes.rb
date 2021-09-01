@@ -14,7 +14,7 @@ Jets.application.routes.draw do
 
     resources :users, only: %i[show] do
       get :listings, on: :member
-      put :update_role, on: :member
+      put :update_role, on: :collection
     end
 
     resources :carts, only: %i[index delete], param: :seller_id do

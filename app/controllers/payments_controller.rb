@@ -15,13 +15,13 @@ class PaymentsController < ApplicationController
   before_action :enforce_address_set!
 
   def show
-    if stripe_connection.stripe_account
-      render json: { id: Stripe::Account.retrieve(stripe_connection.stripe_account).id }
+    if payment.stripe_id
+      render json: { id: Stripe::Account.retrieve(payment.stripe_id).id }
     else
       render json: {}, status: :no_content
     end
   rescue Stripe::PermissionError => e
-    stripe_connection.destroy
+    payment.destroy
     if e.code == 'account_invalid'
       render json: { error: 'Account not found. Stripe connection may have been revoked' },
              status: :not_found
@@ -51,8 +51,8 @@ class PaymentsController < ApplicationController
     @address ||= current_account.address
   end
 
-  def stripe_connection
-    @stripe_connection ||= StripeConnection.where(account: current_account).first_or_initialize
+  def payment
+    @payment ||= Payment.where(account: current_account).first_or_initialize
   end
 
   def stripe_account
@@ -60,11 +60,11 @@ class PaymentsController < ApplicationController
   end
 
   def create_or_load_stripe_account
-    if stripe_connection.stripe_account
-      Stripe::Account.retrieve(stripe_connection.stripe_account)
+    if payment.stripe_id
+      Stripe::Account.retrieve(payment.stripe_id)
     else
       stripe_account = create_stripe_account
-      stripe_connection.update(stripe_account: stripe_account.id)
+      payment.update(stripe_account: stripe_account.id)
       stripe_account
     end
   end

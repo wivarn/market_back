@@ -8,7 +8,6 @@ class CreateRodauth < ActiveRecord::Migration[6.1]
       t.string :given_name, null: false
       t.string :family_name, null: false
       t.string :picture
-      t.string :currency, null: false, limit: 3, default: 'USD'
       t.string :role, null: false, default: 'user'
     end
 

@@ -61,9 +61,9 @@ class ProfilesController < ApplicationController
   end
 
   def stripe_linked?
-    stripe_connection = StripeConnection.where(account: current_account).first_or_initialize
-    if stripe_connection.stripe_account
-      Stripe::Account.retrieve(stripe_connection.stripe_account).charges_enabled
+    payment = Payment.where(account: current_account).first_or_initialize
+    if payment.stripe_id
+      Stripe::Account.retrieve(payment.stripe_id).charges_enabled
     else
       false
     end

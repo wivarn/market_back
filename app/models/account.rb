@@ -25,10 +25,9 @@ class Account < ApplicationRecord
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_one :listing_template
-  has_one :stripe_connection
+  has_one :payment
   has_one :address, as: :addressable
 
-  validates :currency, inclusion: { in: %w[USD CAD] }, presence: true
   validates :role, inclusion: { in: ROLES }, presence: true
 
   mount_uploader :picture, ImageUploader

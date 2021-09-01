@@ -23,7 +23,7 @@ class CartsController < ApplicationController
 
   def checkout
     cart_json = CartBlueprint.render_as_json(@cart, destination_country: current_account.address.country)
-    seller_stripe_account = @cart.seller.stripe_connection.stripe_account
+    seller_stripe_account = @cart.seller.payment.stripe_id
     total_price = cart_json['total']
     application_fee_amount = total_price * @cart.seller.fee * 100
 

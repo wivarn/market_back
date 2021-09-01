@@ -143,7 +143,7 @@ class ListingsController < ApplicationController
   end
 
   def enforce_listing_prerequisites!
-    return unless current_account.address && !current_account.stripe_connection
+    return if current_account.address && current_account.payment
 
     render json: { error: 'Address and Stripe connection must be set before creating listings' }, status: :forbidden
   end

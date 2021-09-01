@@ -23,7 +23,7 @@ class UsersController < ApplicationController
   def update_role
     if params[:role] == 'admin'
       render json: {}, status: :forbidden
-    elsif @user.update_attribute(:role, params[:role])
+    elsif @user.update(role: params[:role])
       render json: @user
     else
       render json: @user.errors, status: :unprocessable_entity
@@ -45,6 +45,10 @@ class UsersController < ApplicationController
 
   def set_user_by_email
     @user = Account.find_by_email(params[:email])
+
+    return if @user
+
+    render json: {}, status: :not_found
   end
 
   def sort(listings, order)

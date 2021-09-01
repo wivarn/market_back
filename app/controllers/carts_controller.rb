@@ -70,6 +70,7 @@ class CartsController < ApplicationController
   def remove_item
     # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
     @cart.cart_items.delete_by(listing_id: listing_params[:listing_id])
+    @cart.destroy if @cart.cart_items.empty?
     render json: { deleted: true }
   end
 

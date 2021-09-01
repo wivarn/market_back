@@ -30,6 +30,7 @@ class Auth < Roda
     # login/email config
     require_login_confirmation? false
     verify_account_set_password? false
+    change_login_requires_password? true
 
     # account verification config
     account_status_column :status

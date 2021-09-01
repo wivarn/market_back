@@ -47,7 +47,9 @@ class ProfilesController < ApplicationController
       country: current_account.address&.country || 'USA',
       address_set: !current_account.address.nil?,
       stripe_linked: stripe_linked?,
-      listing_template: ListingTemplate.find_or_create_by(account: current_account)
+      listing_template: ListingTemplate.find_or_create_by(account: current_account),
+      has_cart: current_account.carts.any?,
+      has_pending_shipment: current_account.sales.pending_shipment.any?
     }
   end
 

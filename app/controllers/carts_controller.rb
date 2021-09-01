@@ -54,8 +54,6 @@ class CartsController < ApplicationController
                           payment_intent_data: {
                             application_fee_amount: application_fee_amount.to_i,
                             receipt_email: current_account.email
-                            # shipping: AccountBlueprint.render_as_hash(current_account, view: :stripe_shipping),
-                            # description: 'Items in your cart have been reserved for 15 minutes.'
                           },
                           mode: 'payment',
                           customer_email: current_account.email,
@@ -71,17 +69,14 @@ class CartsController < ApplicationController
     # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
     @cart.cart_items.delete_by(listing_id: listing_params[:listing_id])
     @cart.destroy if @cart.cart_items.empty?
-    render json: { deleted: true }
+    carts = current_account.carts.includes(:listings, seller: :address)
+    render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
   def delete
     @cart.destroy
-    render json: { deleted: true }
-  end
-
-  def empty_all
-    current_account.carts.destroy_all
-    render json: { deleted: true }
+    carts = current_account.carts.includes(:listings, seller: :address)
+    render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
   private

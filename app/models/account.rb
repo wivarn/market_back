@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Account < ApplicationRecord
+  ROLES = %w[admin partner seller user].freeze
+
   # rodauth models
   has_many :account_active_session_keys
   has_many :account_authentication_audit_logs
@@ -25,6 +27,7 @@ class Account < ApplicationRecord
   has_one :address, as: :addressable
 
   validates :currency, inclusion: { in: %w[USD CAD] }, presence: true
+  validates :role, inclusion: { in: ROLES }, presence: true
 
   mount_uploader :picture, ImageUploader
 end

@@ -37,6 +37,7 @@ Jets.application.routes.draw do
       resource :listing_template, only: %i[show update]
       resource :payments, only: %i[show] do
         post :link_account, on: :collection
+        put :update_currency, on: :collection
       end
     end
 

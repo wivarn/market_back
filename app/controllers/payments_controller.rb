@@ -16,9 +16,9 @@ class PaymentsController < ApplicationController
 
   def show
     if payment.stripe_id
-      render json: { id: Stripe::Account.retrieve(payment.stripe_id).id }
+      render json: { stripe_id: Stripe::Account.retrieve(payment.stripe_id).id, currency: payment.currency }
     else
-      render json: {}, status: :no_content
+      render json: { currency: payment.currency }, status: :no_content
     end
   rescue Stripe::PermissionError => e
     payment.destroy
@@ -43,6 +43,14 @@ class PaymentsController < ApplicationController
     end
   rescue Stripe::InvalidRequestError => e
     render json: { error: e.message }, status: e.http_status
+  end
+
+  def update_currency
+    if payment.update(currency: params[:currency])
+      render json: payment.slice(:currency)
+    else
+      render json: payment.errors, status: :unprocessable_entity
+    end
   end
 
   private

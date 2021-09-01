@@ -43,7 +43,7 @@ class ProfilesController < ApplicationController
 
   def settings
     render json: {
-      currency: current_account.currency,
+      currency: current_account.payment.currency,
       country: current_account.address&.country || 'USA',
       address_set: !current_account.address.nil?,
       stripe_linked: stripe_linked?,
@@ -57,7 +57,7 @@ class ProfilesController < ApplicationController
   private
 
   def account_params
-    params.permit(:given_name, :family_name, :currency, :picture)
+    params.permit(:given_name, :family_name, :picture)
   end
 
   def stripe_linked?

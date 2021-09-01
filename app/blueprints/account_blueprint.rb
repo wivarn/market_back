@@ -13,7 +13,7 @@ class AccountBlueprint < Blueprinter::Base
 
   view :full do
     excludes :full_name
-    fields :email, :status, :given_name, :family_name, :currency, :role
+    fields :email, :status, :given_name, :family_name, :role
   end
 
   view :with_recent_listings do

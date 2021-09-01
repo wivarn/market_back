@@ -46,7 +46,7 @@ class ListingsController < ApplicationController
   end
 
   def create
-    listing = current_account.listings.new(listing_params.merge(currency: current_account.currency,
+    listing = current_account.listings.new(listing_params.merge(currency: current_account.payment.currency,
                                                                 shipping_country: current_account.address.country))
     listing.aasm.fire(state_transition) if state_transition
 
@@ -58,7 +58,7 @@ class ListingsController < ApplicationController
   end
 
   def bulk_create
-    currency = current_account.currency
+    currency = current_account.payment.currency
     country = current_account.address.country
     listings =
       current_account

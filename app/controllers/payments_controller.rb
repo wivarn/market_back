@@ -60,7 +60,7 @@ class PaymentsController < ApplicationController
   end
 
   def payment
-    @payment ||= Payment.where(account: current_account).first_or_initialize
+    @payment ||= Payment.where(account: current_account).first_or_create
   end
 
   def stripe_account
@@ -72,7 +72,7 @@ class PaymentsController < ApplicationController
       Stripe::Account.retrieve(payment.stripe_id)
     else
       stripe_account = create_stripe_account
-      payment.update(stripe_account: stripe_account.id)
+      payment.update(stripe_id: stripe_account.id)
       stripe_account
     end
   end
@@ -80,7 +80,7 @@ class PaymentsController < ApplicationController
   def create_stripe_account
     Stripe::Account.create(
       type: 'standard', email: current_account.email,
-      default_currency: current_account.currency.downcase,
+      default_currency: payment.currency.downcase,
       country: COUNTRY_CODE_2[address.country],
       business_type: 'individual',
       company: map_stripe_address,

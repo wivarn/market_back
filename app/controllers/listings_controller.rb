@@ -235,7 +235,7 @@ class ListingsController < ApplicationController
       listings = listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
                                 country: filters[:destination_country])
     end
-    listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country]
+    listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country].present?
     listings
   end
 

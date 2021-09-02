@@ -12,7 +12,7 @@ class Auth < Roda
   plugin :middleware
 
   plugin :rodauth, json: :only do
-    enable :create_account, :verify_account,
+    enable :create_account, :verify_account, :close_account, :internal_request,
            :login, :logout, :active_sessions,
            :jwt, :jwt_cors, :jwt_refresh,
            :reset_password, :change_password, :update_password_hash, :change_password_notify,
@@ -36,7 +36,11 @@ class Auth < Roda
     account_status_column :status
     account_unverified_status_value 'unverified'
     account_open_status_value 'verified'
+    account_closed_status_value 'closed'
     verify_account_skip_resend_email_within 60
+
+    # close account config
+    delete_account_on_close? false
 
     # custom account fields
     before_create_account do

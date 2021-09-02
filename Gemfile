@@ -22,7 +22,7 @@ gem 'mailgun-ruby', '~> 1.2'
 # rodauth
 gem 'bcrypt', '~> 3.1'
 gem 'jwt', '~> 2.2'
-gem 'rodauth', '~> 2.12'
+gem 'rodauth', '~> 2.16'
 gem 'rotp', '~> 6.2'
 gem 'rqrcode', '~> 2.0'
 gem 'sequel-activerecord_connection', '~> 1.2.3'

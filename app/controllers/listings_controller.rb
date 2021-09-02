@@ -231,10 +231,12 @@ class ListingsController < ApplicationController
   end
 
   def filter_country(listings, filters)
-    return listings unless filters[:destination_country].present?
-
-    listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
-                   country: filters[:destination_country])
+    if filters[:destination_country].present?
+      listings = listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
+                                country: filters[:destination_country])
+    end
+    listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country]
+    listings
   end
 
   def sort(listings, order)

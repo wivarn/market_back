@@ -36,9 +36,11 @@ class ListingsController < ApplicationController
     trading_cards = Listing.active.ships_to(params[:destination_country]).trading_cards.order(created_at: :desc).limit(4)
     collectibles = Listing.active.ships_to(params[:destination_country]).collectibles.order(created_at: :desc).limit(4)
 
-    render json: { sports_cards: ListingBlueprint.render_as_json(sports_cards),
-                   trading_cards: ListingBlueprint.render_as_json(trading_cards),
-                   collectibles: ListingBlueprint.render_as_json(collectibles) }
+    render json: {
+      sports_cards: ListingBlueprint.render_as_json(sports_cards, destination_country: params[:destination_country]),
+      trading_cards: ListingBlueprint.render_as_json(trading_cards, destination_country: params[:destination_country]),
+      collectibles: ListingBlueprint.render_as_json(collectibles, destination_country: params[:destination_country])
+    }
   end
 
   def show

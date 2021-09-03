@@ -130,7 +130,7 @@ class ListingsController < ApplicationController
   private
 
   def set_listing
-    @listing = Listing.active.find(params[:id])
+    @listing = Listing.publically_viewable.find(params[:id])
   end
 
   def set_listing_through_account

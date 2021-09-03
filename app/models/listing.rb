@@ -130,6 +130,7 @@ class Listing < ApplicationRecord
                  }
 
   scope :reserved, -> { where('aasm_state = ? AND reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME) }
+  scope :publically_viewable, -> { where.not(aasm_state: %w[draft removed]) }
 
   def active?
     aasm_state == 'active' || (aasm_state == 'reserved' && reserved_at < Time.now.utc - RESERVE_TIME)

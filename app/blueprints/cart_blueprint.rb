@@ -14,7 +14,7 @@ class CartBlueprint < Blueprinter::Base
 
   field :total do |cart, options|
     destination = options[:destination_country]
-    listings = cart.listings.to_a
+    listings = cart.listings.ships_to(destination).to_a
 
     if listings.empty?
       0

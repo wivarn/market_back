@@ -39,8 +39,8 @@ class CartsController < ApplicationController
             currency: listing['currency'].downcase,
             unit_amount: stripe_subtotal(listing),
             product_data: {
-              name: listing['title'],
-              images: stripe_images(listing)
+              name: listing['title']
+              # images: stripe_images(listing)
             }
           },
           quantity: 1

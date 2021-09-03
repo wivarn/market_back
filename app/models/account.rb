@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 class Account < ApplicationRecord
-  ROLES = %w[admin partner seller user].freeze
-  SELLERS = %w[admin partner seller].freeze
+  ROLES = %w[admin partner promo seller user].freeze
+  SELLERS = %w[admin partner promo seller].freeze
   INTERNAL = %w[admin partner].freeze
+
+  FEE = {
+    'admin' => 0,
+    'partner' => 0,
+    'promo' => 2,
+    'seller' => 5,
+    'user' => 5
+  }
 
   # rodauth models
   has_many :account_active_session_keys
@@ -41,7 +49,7 @@ class Account < ApplicationRecord
   end
 
   def fee
-    internal? ? 0 : 0.02
+    FEE[role] || 5
   end
 
   private

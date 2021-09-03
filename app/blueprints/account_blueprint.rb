@@ -31,4 +31,9 @@ class AccountBlueprint < Blueprinter::Base
     end
     association :address, blueprint: AddressBlueprint, view: :for_stripe
   end
+
+  view :name_email_role do
+    exclude :picture
+    fields :email, :role, :fee
+  end
 end

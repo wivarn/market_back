@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :set_user, except: %i[update_role]
-  before_action :enforce_admin!, only: %i[update_role]
+  before_action :set_user, except: %i[update_role list_roles]
+  before_action :enforce_admin!, only: %i[update_role list_roles]
   before_action :set_user_by_email, only: %i[update_role]
 
   def show
@@ -20,17 +20,25 @@ class UsersController < ApplicationController
         total_pages: listings.total_pages }
   end
 
+  def list_roles
+    render json: AccountBlueprint.render(seller_list, view: :name_email_role)
+  end
+
   def update_role
     if params[:role] == 'admin'
       render json: {}, status: :forbidden
     elsif @user.update(role: params[:role])
-      render json: @user
+      render json: AccountBlueprint.render(seller_list, view: :name_email_role)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
   end
 
   private
+
+  def seller_list
+    Account.where(role: Account::SELLERS)
+  end
 
   def set_user
     @user = Account.find(params[:user_id])

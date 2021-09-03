@@ -18,7 +18,7 @@ class PaymentsController < ApplicationController
     if payment.stripe_id
       render json: { stripe_id: Stripe::Account.retrieve(payment.stripe_id).id, currency: payment.currency }
     else
-      render json: { currency: payment.currency }, status: :no_content
+      render json: { currency: payment.currency }
     end
   rescue Stripe::PermissionError => e
     payment.destroy

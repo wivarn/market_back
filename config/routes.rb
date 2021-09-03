@@ -14,6 +14,7 @@ Jets.application.routes.draw do
 
     resources :users, only: %i[show] do
       get :listings, on: :member
+      get :list_roles, on: :collection
       put :update_role, on: :collection
     end
 

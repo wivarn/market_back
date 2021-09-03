@@ -4,7 +4,7 @@ class Listing < ApplicationRecord
   include AASM
   include PgSearch::Model
 
-  attr_writer :combined
+  attr_writer :combined, :destination_country
 
   RESERVE_TIME = 15.minutes
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
@@ -147,8 +147,8 @@ class Listing < ApplicationRecord
   # Blueprint can pass destination_country in as nil
   def shipping(destination_country: nil, combined: false)
     @combined ||= combined
-    destination_country ||= 'USA'
-    dest_shipping = if destination_country == shipping_country
+    @destination_country ||= destination_country || 'USA'
+    dest_shipping = if @destination_country == shipping_country
                       domestic_shipping
                     else
                       international_shipping

@@ -7,7 +7,7 @@ class CartsController < ApplicationController
 
   def index
     # TODO: add some logic here to check for empty or stale carts
-    carts = current_account.carts.includes(:listings, seller: :address)
+    carts = current_account.carts.includes(:listings, :seller)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
@@ -22,10 +22,10 @@ class CartsController < ApplicationController
   end
 
   def checkout
-    cart_json = CartBlueprint.render_as_json(@cart, destination_country: current_account.address.country)
+    cart_hash = CartBlueprint.render_as_hash(@cart, destination_country: current_account.address.country)
     seller_stripe_account = @cart.seller.payment.stripe_id
-    total_price = cart_json['total']
-    application_fee_amount = total_price * @cart.seller.fee * 100
+    total_price = cart_hash[:total]
+    application_fee_amount = total_price * @cart.seller.fee
 
     ActiveRecord::Base.transaction do
       order = current_account.purchases.create(seller: @cart.seller, total: total_price)
@@ -33,13 +33,13 @@ class CartsController < ApplicationController
       order.listings = @cart.listings
       order.reserve!
 
-      line_items = cart_json['listings'].each_with_object([]) do |listing, items|
+      line_items = cart_hash[:listings].each_with_object([]) do |listing, items|
         items << {
           price_data: {
-            currency: listing['currency'].downcase,
+            currency: listing[:currency].downcase,
             unit_amount: stripe_subtotal(listing),
             product_data: {
-              name: listing['title']
+              name: listing[:title]
               # images: stripe_images(listing)
             }
           },
@@ -61,7 +61,6 @@ class CartsController < ApplicationController
                           success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchases",
                           cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
                         }, { stripe_account: seller_stripe_account })
-
       render json: session
     end
   end
@@ -70,13 +69,13 @@ class CartsController < ApplicationController
     # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
     @cart.cart_items.delete_by(listing_id: listing_params[:listing_id])
     @cart.destroy if @cart.cart_items.empty?
-    carts = current_account.carts.includes(:listings, seller: :address)
+    carts = current_account.carts.includes(:listings, :seller)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
   def delete
     @cart.destroy
-    carts = current_account.carts.includes(:listings, seller: :address)
+    carts = current_account.carts.includes(:listings, :seller)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
@@ -94,13 +93,13 @@ class CartsController < ApplicationController
   end
 
   def stripe_subtotal(listing)
-    ((listing['price'].to_f + listing['shipping'].to_f) * 100).to_i
+    ((listing[:price].to_f + listing[:shipping].to_f) * 100).to_i
   end
 
   def stripe_images(listing)
     return [] if Jets.env.development? || Jets.env.test?
 
-    listing['photos'].take(8).map { |photo| photo['url'] }
+    listing[:photos].take(8).map { |photo| photo['url'] }
   end
 
   def listing_params

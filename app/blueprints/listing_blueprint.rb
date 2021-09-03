@@ -16,7 +16,7 @@ class ListingBlueprint < Blueprinter::Base
   end
 
   view :buyer do
-    fields :description, :category, :subcategory, :combined_shipping
+    fields :description, :category, :subcategory, :combined_shipping, :reserved_at
     association :account, name: :seller, blueprint: AccountBlueprint, view: :with_location
   end
 end

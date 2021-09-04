@@ -6,7 +6,7 @@ class Listing < ApplicationRecord
 
   attr_writer :combined, :destination_country
 
-  RESERVE_TIME = 15.minutes
+  RESERVE_TIME = 1.hour
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[BASEBALL BASKETBALL FOOTBALL HOCKEY OTHER].freeze
   TRADING_CARDS = %w[MAGIC POKEMON OTHER].freeze

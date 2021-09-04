@@ -29,6 +29,7 @@ class CartsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       order = current_account.purchases.create(seller: @cart.seller, total: total_price)
+      order.address = current_account.address.dup
       # TODO: adding shipping to order_items
       order.listings = @cart.listings
       order.reserve!
@@ -59,7 +60,9 @@ class CartsController < ApplicationController
                           mode: 'payment',
                           customer_email: current_account.email,
                           success_url: "#{ENV['FRONT_END_BASE_URL']}/account/purchases",
-                          cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart"
+                          cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart",
+                          # need to give a little time for the request to reach Stripe
+                          expires_at: Listing::RESERVE_TIME.from_now.to_i + 20
                         }, { stripe_account: seller_stripe_account })
       render json: session
     end

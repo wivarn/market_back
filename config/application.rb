@@ -12,6 +12,8 @@ Jets.application.configure do
 
   config.function.timeout = 15 # defaults to 30
   config.function.memory_size = 512
+
+  # must be set globally for rodauth
   config.iam_policy = [
     {
       action: ['ses:SendEmail'],
@@ -19,7 +21,6 @@ Jets.application.configure do
       resource: "arn:aws:ses:#{Jets.aws.region}:#{Jets.aws.account}:identity/*"
     }
   ]
-
   config.middleware.use Auth
 
   config.function.vpc_config = {

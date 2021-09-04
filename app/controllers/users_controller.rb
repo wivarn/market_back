@@ -21,24 +21,20 @@ class UsersController < ApplicationController
   end
 
   def list_roles
-    render json: AccountBlueprint.render(seller_list, view: :name_email_role)
+    render json: AccountBlueprint.render(Account.all, view: :admin)
   end
 
   def update_role
     if params[:role] == 'admin'
       render json: {}, status: :forbidden
     elsif @user.update(role: params[:role])
-      render json: AccountBlueprint.render(seller_list, view: :name_email_role)
+      render json: AccountBlueprint.render(Account.all, view: :admin)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
   end
 
   private
-
-  def seller_list
-    Account.where(role: Account::SELLERS)
-  end
 
   def set_user
     @user = Account.find(params[:user_id])

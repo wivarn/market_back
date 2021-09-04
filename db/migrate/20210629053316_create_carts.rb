@@ -3,6 +3,7 @@ class CreateCarts < ActiveRecord::Migration[6.1]
     create_table :carts do |t|
       t.bigint :buyer_id, null: false
       t.bigint :seller_id, null: false
+      t.string :checkout_session_id
 
       t.timestamps
     end

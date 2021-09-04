@@ -23,12 +23,10 @@ class CartsController < ApplicationController
 
   def checkout
     cart_hash = CartBlueprint.render_as_hash(@cart, destination_country: current_account.address.country)
-    seller_stripe_account = @cart.seller.payment.stripe_id
-    total_price = cart_hash[:total]
-    application_fee_amount = total_price * @cart.seller.fee
+    application_fee_amount = cart_hash[:total] * @cart.seller.fee
 
     ActiveRecord::Base.transaction do
-      order = current_account.purchases.create(seller: @cart.seller, total: total_price)
+      order = current_account.purchases.create(seller: @cart.seller)
       order.address = current_account.address.dup
       # TODO: adding shipping to order_items
       order.listings = @cart.listings
@@ -63,7 +61,7 @@ class CartsController < ApplicationController
                           cancel_url: "#{ENV['FRONT_END_BASE_URL']}/cart",
                           # need to give a little time for the request to reach Stripe
                           expires_at: Listing::RESERVE_TIME.from_now.to_i + 20
-                        }, { stripe_account: seller_stripe_account })
+                        }, { stripe_account: @cart.seller.payment.stripe_id })
       render json: session
     end
   end

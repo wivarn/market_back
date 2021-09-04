@@ -10,7 +10,8 @@ class CreateOrders < ActiveRecord::Migration[6.1]
       t.datetime :refunded_at
       t.datetime :received_at
       t.string :tracking
-      t.numeric :total, precision: 12, scale: 4, default: 0, null: false
+      t.numeric :total, precision: 12, scale: 4, default: nil
+      t.string :currency, limit: 3
 
       t.timestamps
     end

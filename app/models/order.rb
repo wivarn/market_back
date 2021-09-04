@@ -6,18 +6,22 @@ class Order < ApplicationRecord
   belongs_to :buyer, class_name: 'Account'
   belongs_to :seller, class_name: 'Account'
   has_many :order_items, dependent: :destroy
-  has_many :listings, through: :order_items, dependent: :destroy
-  has_one :address, as: :addressable
+  has_many :listings, through: :order_items
+  has_one :address, as: :addressable, dependent: :destroy
 
-  validates :buyer, :seller, :aasm_state, :total, presence: true
+  validates :buyer, :seller, :aasm_state, presence: true
   validates_length_of :order_items, maximum: 100
 
-  validates :total, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }
-  validates :total, numericality: {
-    greater_than_or_equal_to: 1,
-    less_than: 100_000_000
-  }
   validate :buyer_cannot_be_seller
+
+  with_options if: -> { !reserved? } do |not_reserved|
+    not_reserved.validates :total, :currency, presence: true
+    not_reserved.validates :total, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }
+    not_reserved.validates :total, numericality: {
+      greater_than_or_equal_to: 1,
+      less_than: 100_000_000
+    }
+  end
 
   aasm timestamps: true, no_direct_assignment: true do
     state :reserved, initial: true
@@ -46,7 +50,9 @@ class Order < ApplicationRecord
     listings.each(&:reserve!)
   end
 
-  def pay!
+  def pay!(total, currency)
+    self.total = total
+    self.currency = currency
     paid!
     listings.each(&:paid!)
   end

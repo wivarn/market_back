@@ -126,6 +126,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   create_table "carts", force: :cascade do |t|
     t.bigint "buyer_id", null: false
     t.bigint "seller_id", null: false
+    t.string "checkout_session_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["buyer_id", "seller_id"], name: "index_carts_on_buyer_id_and_seller_id", unique: true
@@ -200,7 +201,8 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.datetime "refunded_at"
     t.datetime "received_at"
     t.string "tracking"
-    t.decimal "total", precision: 12, scale: 4, default: "0.0", null: false
+    t.decimal "total", precision: 12, scale: 4
+    t.string "currency", limit: 3
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["buyer_id"], name: "index_orders_on_buyer_id"

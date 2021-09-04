@@ -5,10 +5,10 @@ Jets.application.configure do
   config.mode = 'api'
   config.cors = true
 
-  config.prewarm.enable = true # default is true
-  config.prewarm.rate = '30 minutes' # default is '30 minutes'
-  config.prewarm.concurrency = 1 # default is 2
-  config.prewarm.public_ratio = 0 # default is 3
+  config.prewarm.enable = true
+  config.prewarm.rate = '30 minutes'
+  config.prewarm.concurrency = 2
+  config.prewarm.public_ratio = 0
 
   config.function.timeout = 15 # defaults to 30
   config.function.memory_size = 512

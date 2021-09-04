@@ -9,14 +9,12 @@ class CartsController < ApplicationController
   before_action :continue_checkout, only: %i[checkout]
 
   def index
-    # TODO: add some logic here to check for empty or stale carts
     carts = current_account.carts.includes(:listings, :seller)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
   def add_item
-    # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
-    cart_item = @cart.cart_items.new(listing_id: listing_params[:listing_id])
+    cart_item = @cart.cart_items.new(listing: @cart.seller.listings.active.find(listing_params[:listing_id]))
     if cart_item.save
       render json: cart_item
     else
@@ -58,8 +56,7 @@ class CartsController < ApplicationController
   end
 
   def remove_item
-    # TODO: add guards in here to ensure the listing_id matches the seller and check listing aasm_state
-    @cart.cart_items.delete_by(listing_id: listing_params[:listing_id])
+    @cart.cart_items.delete_by(listing: @cart.seller.listings.find(listing_params[:listing_id]))
     @cart.destroy if @cart.cart_items.empty?
     carts = current_account.carts.includes(:listings, :seller)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)

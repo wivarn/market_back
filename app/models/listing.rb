@@ -115,6 +115,10 @@ class Listing < ApplicationRecord
       transitions to: :reserved, guard: :active?
     end
 
+    event :cancel_reservation do
+      transitions from: :reserved, to: :active
+    end
+
     event :paid do
       transitions to: :sold, guard: :reserved?
     end

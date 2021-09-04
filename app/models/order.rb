@@ -3,6 +3,8 @@
 class Order < ApplicationRecord
   include AASM
 
+  before_destroy :cancel_listing_reservations!, prepend: true
+
   belongs_to :buyer, class_name: 'Account'
   belongs_to :seller, class_name: 'Account'
   has_many :order_items, dependent: :destroy
@@ -58,6 +60,10 @@ class Order < ApplicationRecord
   end
 
   private
+
+  def cancel_listing_reservations!
+    listings.reserved.each(&:cancel_reservation!)
+  end
 
   def buyer_cannot_be_seller
     errors.add(:buyer_id, "buyer can't be the same as seller") if buyer_id == seller_id

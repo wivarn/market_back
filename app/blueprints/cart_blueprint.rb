@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CartBlueprint < Blueprinter::Base
+  field :checkout_session_id
   association :seller, blueprint: AccountBlueprint
   association :listings, blueprint: ListingBlueprint do |cart, options|
     destination = options[:destination_country]

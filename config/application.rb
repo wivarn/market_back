@@ -6,17 +6,11 @@ Jets.application.configure do
   config.cors = true
 
   config.prewarm.enable = true # default is true
-  # config.prewarm.rate = '30 minutes' # default is '30 minutes'
-  # config.prewarm.concurrency = 2 # default is 2
-  # config.prewarm.public_ratio = 3 # default is 3
-
-  # config.env_extra = 2 # can also set this with JETS_ENV_EXTRA
-  # config.autoload_paths = []
-
-  # config.asset_base_url = 'https://cloudfront.domain.com/assets' # example
+  config.prewarm.rate = '30 minutes' # default is '30 minutes'
+  config.prewarm.concurrency = 1 # default is 2
+  config.prewarm.public_ratio = 0 # default is 3
 
   config.function.timeout = 15 # defaults to 30
-  # config.function.role = "arn:aws:iam::#{Jets.aws.account}:role/service-role/pre-created"
   config.function.memory_size = 512
   config.iam_policy = [
     {
@@ -28,14 +22,6 @@ Jets.application.configure do
 
   config.middleware.use Auth
 
-  # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' (https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-create/#endpointConfiguration)
-
-  # config.function.environment = {
-  #   global_app_key1: "global_app_value1",
-  #   global_app_key2: "global_app_value2",
-  # }
-  # More examples:
-  # config.function.dead_letter_config = { target_arn: "arn" }
   config.function.vpc_config = {
     security_group_ids: [ENV['LAMBDA_SG_ID']],
     subnet_ids: ENV['PRIVATE_SUBNET_ID_LIST'].split(',')
@@ -48,24 +34,6 @@ Jets.application.configure do
   # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
   # Underscored format can be used for keys to make it look more ruby-ish.
 
-  # Assets settings
-  # The config.assets.folders are folders within the public folder that will be set
-  # to public-read on s3 and served directly. IE: public/assets public/images public/packs
-  # config.assets.folders = %w[assets images packs]
-  # config.assets.max_age = 3600 # when to expire assets
-  # config.assets.cache_control = nil # IE: "public, max-age=3600" # override max_age for more fine-grain control.
-  # config.assets.base_url = nil # IE: https://cloudfront.com/my/base/path, defaults to the s3 bucket url
-  #                                IE: https://s3-us-west-2.amazonaws.com/demo-dev-s3bucket-1inlzkvujq8zb
-
-  # config.api.endpoint_type = 'PRIVATE' # Default is 'EDGE' https://amzn.to/2r0Iu2L
-  # config.api.authorization_type = "AWS_IAM" # default is 'NONE' https://amzn.to/2qZ7zLh
-
-  # More info: http://rubyonjets.com/docs/routing/custom-domain/
-  config.domain.cert_arn = ENV['API_DOMAIN_CERT_ARN']
-  config.domain.hosted_zone_name = ENV['DOMAIN']
-  config.domain.name = "api.#{ENV['DOMAIN']}"
-  # us-east-1 EDGE endpoint - takes 10-15 minutes
-  # config.domain.cert_arn = "arn:aws:acm:us-east-1:112233445566:certificate/d68472ba-04f8-45ba-b9db-14f839d57123"
   # config.domain.endpoint_type = "EDGE"
 
   # By default logger needs to log to $stderr for CloudWatch to receive Lambda messages, but for

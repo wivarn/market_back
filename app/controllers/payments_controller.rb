@@ -13,6 +13,7 @@ class PaymentsController < ApplicationController
 
   before_action :authenticate!
   before_action :enforce_address_set!
+  before_action :enforce_seller!, only: %i[link_account]
 
   def show
     if payment.stripe_id
@@ -119,5 +120,11 @@ class PaymentsController < ApplicationController
     return if current_account.address
 
     render json: { error: 'Address must be set before linking Stripe account' }, status: :forbidden
+  end
+
+  def enforce_seller!
+    return if current_account.seller?
+
+    render json: { error: 'Selling has not been enabled for you' }, status: :forbidden
   end
 end

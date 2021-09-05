@@ -39,7 +39,8 @@ class CartsController < ApplicationController
                           payment_method_types: ['card'],
                           line_items: stripe_line_items(cart_hash[:listings]),
                           payment_intent_data: {
-                            application_fee_amount: application_fee_amount.to_i
+                            application_fee_amount: application_fee_amount.to_i,
+                            receipt_email: current_account.email
                           },
                           mode: 'payment',
                           customer_email: current_account.email,

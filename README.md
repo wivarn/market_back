@@ -38,7 +38,6 @@ rbenv install
 ## postgresql
 
 ```
-# if on EC2 instance
 sudo yum install -y postgresql10 postgresql-devel
 # may need more if running PSQL server locally
 ```

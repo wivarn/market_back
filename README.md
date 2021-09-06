@@ -10,8 +10,9 @@ Alternatly copy key from another (old) machine
 ssh-keygen -t ed25519 -C EMAIL@skwirl.io
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
-ssh -T git@github.com
 # add your key
+# (OPTIONAL) test connection to github
+ssh -T git@github.com
 # mkdir and cd
 git clone git@github.com:skwirl-io/market_back.git
 ```
@@ -25,18 +26,20 @@ git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 cd ~/.rbenv && src/configure && make -C src
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
 ~/.rbenv/bin/rbenv init
+echo 'eval "$(rbenv init - bash)"' >> ~/.bash_profile
 # reset bash session
 curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
 # if rbenv install isn't availible
 git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+# cd into repo
+rbenv install
 ```
 
 ## postgresql
 
 ```
 # if on EC2 instance
-sudo amazon-linux-extras install postgresql10
-yum install -y postgresql10 postgresql-devel
+sudo yum install -y postgresql10 postgresql-devel
 # may need more if running PSQL server locally
 ```
 

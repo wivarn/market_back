@@ -6,8 +6,8 @@ Jets.application.configure do
   config.cors = true
 
   config.prewarm.enable = true
-  config.prewarm.rate = '30 minutes'
-  config.prewarm.concurrency = 2
+  config.prewarm.rate = '15 minutes'
+  config.prewarm.concurrency = 1
   config.prewarm.public_ratio = 0
 
   config.function.timeout = 15 # defaults to 30

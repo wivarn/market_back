@@ -192,7 +192,7 @@ class ListingsController < ApplicationController
 
   def filter_and_sort(listings, params)
     listings = filter(listings, params)
-    listings = sort(listings, params[:sort])
+    listings = sort_listings(listings, params[:sort])
 
     listings.page(params[:page].to_i + 1)
   end
@@ -237,24 +237,5 @@ class ListingsController < ApplicationController
     end
     listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country].present?
     listings
-  end
-
-  def sort(listings, order)
-    case order
-    when 'priceLow'
-      listings.reorder(price: :asc, id: :asc)
-    when 'priceHigh'
-      listings.reorder(price: :desc, id: :asc)
-    when 'priceShipLow'
-      listings.select('*, (price + domestic_shipping) AS total_price').reorder(total_price: :asc, id: :asc)
-    when 'priceShipHigh'
-      listings.select('*, (price + domestic_shipping) AS total_price').reorder(total_price: :desc, id: :asc)
-    when 'newest'
-      listings.reorder(updated_at: :desc, id: :asc)
-    when 'oldest'
-      listings.reorder(updated_at: :asc, id: :asc)
-    else
-      listings
-    end
   end
 end

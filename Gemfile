@@ -14,7 +14,6 @@ gem 'kaminari-activerecord', '~> 1.2'
 gem 'oj', '~> 3.13'
 gem 'pg', '~> 1.2.3'
 gem 'pg_search', '~> 2.3'
-gem 'rollbar', '~> 3.2'
 gem 'stripe', '~> 5.34'
 
 # seems to be a dependancy for ActionMailer::Base.add_delivery_method to work
@@ -47,4 +46,7 @@ group :test do
   gem 'rspec'
 end
 
-gem "sentry-ruby", "~> 4.7"
+group :staging, :production do
+  gem 'rollbar', '~> 3.2'
+  gem 'sentry-ruby', '~> 4.7'
+end

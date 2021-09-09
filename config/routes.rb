@@ -42,6 +42,8 @@ Jets.application.routes.draw do
       end
     end
 
+    resources :messages, only: %i[index show create], param: :account_id
+
     prefix :webhooks do
       post :stripe, to: 'webhooks#stripe'
     end

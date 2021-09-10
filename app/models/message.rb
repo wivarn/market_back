@@ -14,9 +14,11 @@ class Message < ApplicationRecord
   QUERY
 
   scope :latest_for, lambda { |account_id|
-    select(sanitize_sql_array([SELECT_LATEST, { current_id: account_id }]))
+    select('*').from(
+      select(sanitize_sql_array([SELECT_LATEST, { current_id: account_id }]))
       .where('sender_id = :current_id OR recipient_id = :current_id', current_id: account_id)
       .order(:correspondent_id, created_at: :desc)
+    ).order(created_at: :desc)
   }
 
   private

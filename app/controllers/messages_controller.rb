@@ -15,6 +15,7 @@ class MessagesController < ApplicationController
                       .order(created_at: :asc)
 
     render json: { correspondent: AccountBlueprint.render_as_json(correspondent),
+                   current_account: AccountBlueprint.render_as_json(current_account),
                    messages: MessageBlueprint.render_as_json(messages) }
   end
 

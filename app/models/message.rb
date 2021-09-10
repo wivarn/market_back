@@ -5,6 +5,20 @@ class Message < ApplicationRecord
   validates :sender_id, :recipient_id, :body, presence: true
   validates :body, length: { in: 1..10_000 }
 
+  SELECT_LATEST = <<~QUERY.freeze
+    DISTINCT ON (correspondent_id) *,
+    (CASE WHEN sender_id = :current_id
+      THEN recipient_id
+      ELSE sender_id
+    END) AS correspondent_id
+  QUERY
+
+  scope :latest_for, lambda { |account_id|
+    select(sanitize_sql_array([SELECT_LATEST, { current_id: account_id }]))
+      .where('sender_id = :current_id OR recipient_id = :current_id', current_id: account_id)
+      .order(:correspondent_id, created_at: :desc)
+  }
+
   private
 
   def sender_cannot_be_recipient

@@ -3,7 +3,10 @@
 class MessagesController < ApplicationController
   before_action :authenticate!
 
-  def index; end
+  def index
+    render json: MessageBlueprint.render(Message.latest_for(current_id.id).includes(:sender, :recipient),
+                                         view: :with_correspondents)
+  end
 
   def show
     correspondent = Account.find(params[:account_id])
@@ -16,8 +19,12 @@ class MessagesController < ApplicationController
   end
 
   def create
-    current_account.sent_messages.create(create_message_params)
-    render json: {}
+    message = current_account.sent_messages.new(create_message_params)
+    if message.save
+      render json: MessageBlueprint.render(message)
+    else
+      render json: message.errors, status: :unprocessable_entity
+    end
   end
 
   private

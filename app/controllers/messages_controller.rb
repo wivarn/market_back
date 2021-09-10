@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
   before_action :authenticate!
 
   def index
-    render json: MessageBlueprint.render(Message.latest_for(current_id.id).includes(:sender, :recipient),
+    render json: MessageBlueprint.render(Message.latest_for(current_account.id).includes(:sender, :recipient),
                                          view: :with_correspondents)
   end
 

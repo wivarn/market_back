@@ -54,6 +54,10 @@ class Account < ApplicationRecord
     FEE[role] || 5
   end
 
+  def full_name
+    "#{given_name} #{family_name}"
+  end
+
   private
 
   def internal?

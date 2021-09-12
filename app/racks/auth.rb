@@ -62,6 +62,10 @@ class Auth < Roda
     change_password_requires_password? true
     reset_password_skip_resend_email_within 1.minute
     reset_password_autologin? true
+    password_invalid_pattern nil
+    password_max_repeating_characters 99
+    password_max_length_for_groups_check 99
+    password_min_groups 4
 
     # jwt config
     jwt_secret ENV['JWT_SECRET']

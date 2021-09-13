@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  include ListingsHelper
+
   before_action :set_user, except: %i[update_role list_roles]
   before_action :enforce_admin!, only: %i[update_role list_roles]
   before_action :set_user_by_email, only: %i[update_role]
@@ -11,8 +13,8 @@ class UsersController < ApplicationController
   end
 
   def listings
-    listings = @user.listings.active.ships_to(params[:destination_country] || 'USA').order(updated_at: :desc, id: :asc)
-    listings = sort_listings(listings, params[:sort])
+    listings = @user.listings.active.order(updated_at: :desc, id: :asc)
+    listings = filter_and_sort(listings, params)
     listings = listings.page(params[:page].to_i + 1)
 
     render json:

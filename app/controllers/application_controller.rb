@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < Jets::Controller::Base
-  include ApplicationHelper
-
   private
 
   def rodauth

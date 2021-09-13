@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ListingsController < ApplicationController
+  include ListingsHelper
+
   before_action :authenticate_and_enforce_seller!,
                 only: %i[index create bulk_create edit update update_state presigned_put_urls update_photo_identifiers
                          delete]
@@ -188,54 +190,5 @@ class ListingsController < ApplicationController
   def bulk_create_params
     params.permit(listings: %i[category subcategory title grading_company condition description price
                                domestic_shipping international_shipping combined_shipping])
-  end
-
-  def filter_and_sort(listings, params)
-    listings = filter(listings, params)
-    listings = sort_listings(listings, params[:sort])
-
-    listings.page(params[:page].to_i + 1)
-  end
-
-  def filter(listings, filters)
-    listings = listings.search(filters[:query]) if filters[:query].present?
-    listings = filter_price(listings, filters)
-    listings = filter_category(listings, filters)
-    listings = filter_condition(listings, filters)
-    filter_country(listings, filters)
-  end
-
-  def filter_price(listings, filters)
-    listings = listings.where('price >= :min_price', min_price: filters[:min_price]) if filters[:min_price].present?
-    listings = listings.where('price <= :max_price', max_price: filters[:max_price]) if filters[:max_price].present?
-    listings
-  end
-
-  def filter_category(listings, filters)
-    listings = listings.where('category = :category', category: filters[:category]) if filters[:category].present?
-    if filters[:subcategory].present?
-      listings = listings.where('subcategory = :subcategory', subcategory: filters[:subcategory])
-    end
-    listings
-  end
-
-  def filter_condition(listings, filters)
-    listings = listings.where.not(grading_company: '') if filters[:graded] == 'true'
-    if filters[:grading_company].present?
-      listings = listings.where('grading_company = :grading_company', grading_company: filters[:grading_company])
-    end
-    if filters[:min_condition].present?
-      listings = listings.where('condition >= :condition', condition: filters[:min_condition])
-    end
-    listings
-  end
-
-  def filter_country(listings, filters)
-    if filters[:destination_country].present?
-      listings = listings.where('shipping_country = :country OR international_shipping IS NOT NULL',
-                                country: filters[:destination_country])
-    end
-    listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country].present?
-    listings
   end
 end

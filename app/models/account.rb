@@ -32,6 +32,8 @@ class Account < ApplicationRecord
   has_many :carts, class_name: 'Cart', foreign_key: :buyer_id
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
+  has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
+  has_many :recieved_messages, class_name: 'Message', foreign_key: :recipient_id
   has_one :listing_template
   has_one :payment
   has_one :address, as: :addressable
@@ -50,6 +52,10 @@ class Account < ApplicationRecord
 
   def fee
     FEE[role] || 5
+  end
+
+  def full_name
+    "#{given_name} #{family_name}"
   end
 
   private

@@ -7,7 +7,7 @@ class MessageMailer < ApplicationMailer
     recipient = message.recipient.email
     @sender_full_name = message.sender.full_name
     @body = message.body
-    @reply_link = "#{ENV['FRONT_END_BASE_URL']}/messages/#{message.seller_id}"
+    @reply_link = "#{ENV['FRONT_END_BASE_URL']}/messages/#{message.sender_id}"
 
     mail to: recipient, subject: 'You have a new message'
   end

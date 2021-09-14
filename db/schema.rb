@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_24_030527) do
+ActiveRecord::Schema.define(version: 2021_09_09_060104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -182,6 +182,16 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
     t.index ["title"], name: "index_listings_on_title"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["recipient_id"], name: "index_messages_on_recipient_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "listing_id", null: false
@@ -236,6 +246,8 @@ ActiveRecord::Schema.define(version: 2021_07_24_030527) do
   add_foreign_key "carts", "accounts", column: "seller_id"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
+  add_foreign_key "messages", "accounts", column: "recipient_id"
+  add_foreign_key "messages", "accounts", column: "sender_id"
   add_foreign_key "order_items", "listings"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "accounts", column: "buyer_id"

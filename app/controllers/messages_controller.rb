@@ -23,7 +23,7 @@ class MessagesController < ApplicationController
   def create
     message = current_account.sent_messages.new(create_message_params)
     if message.save
-      # MessageMailer.received(message).deliver
+      MessageMailer.received(message).deliver
       render json: MessageBlueprint.render(message)
     else
       render json: message.errors, status: :unprocessable_entity

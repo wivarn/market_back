@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# seems to be a dependancy for ActionMailer::Base.add_delivery_method to work
-require 'railgun/mailer'
-
 ActionMailer::Base.add_delivery_method :ses, Aws::SESV2::Client
 
 module Aws

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'action_mailer'
 ActionMailer::Base.add_delivery_method :ses, Aws::SESV2::Client
 
 module Aws

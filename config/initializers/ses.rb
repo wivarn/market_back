@@ -7,7 +7,7 @@ module Aws
     module ClientExtentions
       def deliver!(mail)
         response = send_email(
-          from_email_address: mail.from.first,
+          from_email_address: mail.header[:from].formatted.first,
           destination: {
             to_addresses: mail.destinations
           },

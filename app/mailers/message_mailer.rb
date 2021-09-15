@@ -6,9 +6,10 @@ class MessageMailer < ApplicationMailer
   def received(message)
     recipient = message.recipient.email
     @sender_full_name = message.sender.full_name
+    @recipient_full_name = message.recipient.full_name
     @body = message.body
     @reply_link = "#{ENV['FRONT_END_BASE_URL']}/messages/#{message.sender_id}"
 
-    mail to: recipient, subject: 'You have a new message'
+    mail to: recipient, subject: "#{message.sender.full_name} sent you a message"
   end
 end

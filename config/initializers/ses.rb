@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# seems to be a dependancy for ActionMailer::Base.add_delivery_method to work
-require 'railgun/mailer'
-
 ActionMailer::Base.add_delivery_method :ses, Aws::SESV2::Client
 
 module Aws
@@ -10,7 +7,7 @@ module Aws
     module ClientExtentions
       def deliver!(mail)
         response = send_email(
-          from_email_address: mail.from.first,
+          from_email_address: mail.header[:from].formatted.first,
           destination: {
             to_addresses: mail.destinations
           },

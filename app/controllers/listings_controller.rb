@@ -80,7 +80,8 @@ class ListingsController < ApplicationController
 
   def update
     @listing.aasm.fire(state_transition) if state_transition
-    if @listing.update(listing_params)
+    if @listing.update(listing_params.merge(currency: current_account.payment.currency,
+                                            shipping_country: current_account.address.country))
       render json: ListingBlueprint.render(@listing, view: :seller)
     else
       render json: @listing.errors, status: :unprocessable_entity

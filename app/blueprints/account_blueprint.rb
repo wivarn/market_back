@@ -19,8 +19,7 @@ class AccountBlueprint < Blueprinter::Base
   view :with_recent_listings do
     include_view :with_location
     association :listings, blueprint: ListingBlueprint do |account, options|
-      account.listings.active.ships_to(options[:destination_country] || 'USA').order(updated_at: :desc,
-                                                                                     id: :asc).limit(4)
+      account.listings.active.ships_to(options[:destination_country]).order(updated_at: :desc, id: :asc).limit(4)
     end
   end
 

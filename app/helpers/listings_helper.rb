@@ -53,8 +53,8 @@ module ListingsHelper
   end
 
   def filter_country(listings, filters)
-    listings = listings.ships_to(filters[:destination_country] || 'USA')
-    listings = listings.where(shipping_country: params[:shipping_country]) if params[:shipping_country].present?
+    listings = listings.ships_to(filters[:destination_country]) if filters[:destination_country].present?
+    listings = listings.where(shipping_country: filters[:shipping_country]) if filters[:shipping_country].present?
     listings
   end
 

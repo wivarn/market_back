@@ -92,6 +92,8 @@ class Listing < ApplicationRecord
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 
   scope :ships_to, lambda { |country|
+                     return self unless %w[USA CAN].include?(country)
+
                      where('shipping_country = :country OR international_shipping IS NOT NULL',
                            country: country)
                    }
@@ -151,8 +153,8 @@ class Listing < ApplicationRecord
   # Blueprint can pass destination_country in as nil
   def shipping(destination_country: nil, combined: false)
     @combined ||= combined
-    @destination_country ||= destination_country || 'USA'
-    dest_shipping = if @destination_country == shipping_country
+    @destination_country ||= destination_country
+    dest_shipping = if @destination_country == shipping_country || destination_country.blank?
                       domestic_shipping
                     else
                       international_shipping

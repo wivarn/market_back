@@ -13,7 +13,7 @@ class Auth < Roda
 
   plugin :rodauth, json: :only do
     enable :create_account, :verify_account, :close_account, :internal_request,
-           :login, :logout, :active_sessions,
+           :login, :logout, #:active_sessions,
            :jwt, :jwt_cors, :jwt_refresh,
            :reset_password, :change_password, :update_password_hash, :change_password_notify,
            :disallow_password_reuse, :password_complexity, :disallow_common_passwords,
@@ -75,8 +75,8 @@ class Auth < Roda
     allow_refresh_with_expired_jwt_access_token? true
 
     # session config
-    session_inactivity_deadline 14.days
-    session_lifetime_deadline nil
+    # session_inactivity_deadline 14.days
+    # session_lifetime_deadline nil
 
     # account lockout
     max_invalid_logins 5
@@ -103,6 +103,8 @@ class Auth < Roda
   route do |r|
     env['rodauth'] = rodauth
     r.rodauth
-    rodauth.check_active_session
+    # check_active_session can't be turned on until the race condition is fixed in next-auth
+    # https://github.com/nextauthjs/next-auth/issues/2071
+    # rodauth.check_active_session
   end
 end

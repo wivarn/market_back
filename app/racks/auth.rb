@@ -87,7 +87,7 @@ class Auth < Roda
 
     # subscribe to mailchimp if enabled
     after_verify_account do
-      if ENV['MAILCHIMP_API_KEY'] && EmailSetting.find_or_create_by(account: account_id).marketing
+      if ENV['MAILCHIMP_API_KEY'].present? && EmailSetting.find_or_create_by(account: account_id).marketing
         begin
           mailchimp_client = MailchimpMarketing::Client.new(api_key: ENV['MAILCHIMP_API_KEY'],
                                                             server: ENV['MAILCHIMP_API_SERVER'])

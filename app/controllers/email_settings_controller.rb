@@ -35,7 +35,7 @@ class EmailSettingsController < ApplicationController
   end
 
   def update_mailchimp
-    return unless ENV['MAILCHIMP_API_KEY']
+    return unless ENV['MAILCHIMP_API_KEY'].present?
 
     subscriber_hash = Digest::MD5.hexdigest current_account.email.downcase
     status = @email_setting.marketing ? 'subscribed' : 'unsubscribed'

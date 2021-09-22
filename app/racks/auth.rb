@@ -42,20 +42,6 @@ class Auth < Roda
     # close account config
     delete_account_on_close? false
 
-    # custom account fields
-    before_create_account do
-      unless (given_name = param_or_nil('given_name'))
-        throw_error_status(422, 'given_name', 'must be present')
-      end
-
-      unless (family_name = param_or_nil('family_name'))
-        throw_error_status(422, 'family_name', 'must be present')
-      end
-
-      account[:given_name] = given_name
-      account[:family_name] = family_name
-    end
-
     # password config
     password_hash_cost 12
     password_pepper ENV['PASSWORD_PEPPER']
@@ -80,6 +66,45 @@ class Auth < Roda
 
     # account lockout
     max_invalid_logins 5
+
+    # custom account fields
+    before_create_account do
+      unless (given_name = param_or_nil('given_name'))
+        throw_error_status(422, 'given_name', 'must be present')
+      end
+
+      unless (family_name = param_or_nil('family_name'))
+        throw_error_status(422, 'family_name', 'must be present')
+      end
+
+      account[:given_name] = given_name
+      account[:family_name] = family_name
+    end
+
+    after_create_account do
+      EmailSetting.create(account_id: account_id, marketing: param_or_nil('marketing') == 'true')
+    end
+
+    # subscribe to mailchimp if enabled
+    after_verify_account do
+      if ENV['MAILCHIMP_API_KEY'] && EmailSetting.find_or_create_by(account: account_id).marketing
+        begin
+          mailchimp_client = MailchimpMarketing::Client.new(api_key: ENV['MAILCHIMP_API_KEY'],
+                                                            server: ENV['MAILCHIMP_API_SERVER'])
+          subscriber_hash = Digest::MD5.hexdigest account[:email].downcase
+          mailchimp_merge_fields = { FNAME: account[:given_name],
+                                     LNAME: account[:family_name] }
+          mailchimp_client.lists.set_list_member ENV['MAILCHIMP_AUDIENCE_ID'], subscriber_hash,
+                                                 { email_address: account[:email],
+                                                   status: 'subscribed',
+                                                   email_type: 'html',
+                                                   merge_fields: mailchimp_merge_fields }
+        rescue MailchimpMarketing::ApiError => e
+          Rollbar.error(e)
+          Sentry.capture_exception(e)
+        end
+      end
+    end
 
     # email configs
     create_verify_account_email do

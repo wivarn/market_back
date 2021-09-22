@@ -34,6 +34,7 @@ Jets.application.routes.draw do
         put :update_picture_identifier, to: 'profiles#update_picture_identifier'
         get :settings, to: 'profiles#settings'
       end
+      resource :email_settings, only: %i[show update]
       resource :address, only: %i[show update]
       resource :listing_template, only: %i[show update]
       resource :payments, only: %i[show] do

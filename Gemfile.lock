@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    MailchimpMarketing (3.0.66)
+      excon (>= 0.76.0, < 1)
+      json (~> 2.1, >= 2.1.0)
     aasm (5.2.0)
       concurrent-ruby (~> 1.0)
     actionmailer (6.1.4.1)
@@ -219,6 +222,7 @@ GEM
     jets-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
     jmespath (1.4.0)
+    json (2.5.1)
     jwt (2.2.3)
     kaminari-activerecord (1.2.1)
       activerecord
@@ -354,6 +358,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  MailchimpMarketing (~> 3.0)
   aasm (~> 5.2)
   after_commit_everywhere (~> 1.0.0)
   aws-sdk-s3 (~> 1.99)

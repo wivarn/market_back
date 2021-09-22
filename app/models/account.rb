@@ -37,6 +37,7 @@ class Account < ApplicationRecord
   has_one :listing_template
   has_one :payment
   has_one :address, as: :addressable
+  has_one :email_setting
 
   validates :role, inclusion: { in: ROLES }, presence: true
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_09_060104) do
+ActiveRecord::Schema.define(version: 2021_09_22_072608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -133,6 +133,14 @@ ActiveRecord::Schema.define(version: 2021_09_09_060104) do
     t.index ["buyer_id"], name: "index_carts_on_buyer_id"
   end
 
+  create_table "email_settings", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.boolean "marketing", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_email_settings_on_account_id", unique: true
+  end
+
   create_table "listing_templates", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "category"
@@ -244,6 +252,7 @@ ActiveRecord::Schema.define(version: 2021_09_09_060104) do
   add_foreign_key "cart_items", "listings"
   add_foreign_key "carts", "accounts", column: "buyer_id"
   add_foreign_key "carts", "accounts", column: "seller_id"
+  add_foreign_key "email_settings", "accounts"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"
   add_foreign_key "messages", "accounts", column: "recipient_id"

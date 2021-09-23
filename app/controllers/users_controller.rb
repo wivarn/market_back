@@ -15,11 +15,11 @@ class UsersController < ApplicationController
   def listings
     listings = @user.listings.active.order(updated_at: :desc, id: :asc)
     listings = filter_and_sort(listings, params)
-    listings = listings.page(params[:page].to_i + 1)
+    listings = listings.page(params[:page].to_i)
 
-    render json:
-      { listings: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country]),
-        total_pages: listings.total_pages }
+    render json: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country],
+                                                           root: :listings,
+                                                           meta: { total_pages: listings.total_pages })
   end
 
   def list_roles

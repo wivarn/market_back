@@ -6,7 +6,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: %i[update update_state]
 
   def index
-    render json: OrderBlueprint.render(@orders)
+    render json: OrderBlueprint.render(@orders.order(created_at: :desc).page(params[:page].to_i).per(10))
   end
 
   def update

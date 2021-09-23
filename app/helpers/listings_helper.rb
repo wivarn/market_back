@@ -16,7 +16,7 @@ module ListingsHelper
     listings = filter(listings, params)
     listings = sort_listings(listings, params[:sort])
 
-    listings.page(params[:page].to_i + 1)
+    listings.page(params[:page].to_i)
   end
 
   def filter(listings, filters)

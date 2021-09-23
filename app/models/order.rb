@@ -42,7 +42,7 @@ class Order < ApplicationRecord
     end
 
     event :receive do
-      transitions from: :shipped, to: :received, guard: :buyer?
+      transitions from: %i[pending_shipment shipped], to: :received, guard: :buyer?
     end
   end
 

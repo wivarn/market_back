@@ -154,7 +154,7 @@ class Listing < ApplicationRecord
   def shipping(destination_country: nil, combined: false)
     @combined ||= combined
     @destination_country ||= destination_country
-    dest_shipping = if @destination_country == shipping_country || destination_country.blank?
+    dest_shipping = if @destination_country == shipping_country || @destination_country.blank?
                       domestic_shipping
                     else
                       international_shipping

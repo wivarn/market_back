@@ -45,6 +45,7 @@ class EmailSettingsController < ApplicationController
     mailchimp_client.lists.set_list_member ENV['MAILCHIMP_AUDIENCE_ID'], subscriber_hash,
                                            { email_address: current_account.email,
                                              status: status,
+                                             status_if_new: status,
                                              email_type: 'html',
                                              merge_fields: mailchimp_merge_fields }
   end

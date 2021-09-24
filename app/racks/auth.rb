@@ -97,6 +97,7 @@ class Auth < Roda
           mailchimp_client.lists.set_list_member ENV['MAILCHIMP_AUDIENCE_ID'], subscriber_hash,
                                                  { email_address: account[:email],
                                                    status: 'subscribed',
+                                                   status_if_new: 'subscribed',
                                                    email_type: 'html',
                                                    merge_fields: mailchimp_merge_fields }
         rescue MailchimpMarketing::ApiError => e

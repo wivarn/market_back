@@ -20,16 +20,16 @@ class ListingsController < ApplicationController
     listings = current_account.listings.send(scope).order(updated_at: :desc, id: :asc)
     listings = filter_and_sort(listings, params)
 
-    render json:
-      { listings: ListingBlueprint.render_as_json(listings, destination_country: current_account.address.country),
-        total_pages: listings.total_pages }
+    render json: ListingBlueprint.render_as_json(listings, destination_country: current_account.address.country,
+                                                           root: :listings,
+                                                           meta: { total_pages: listings.total_pages })
   end
 
   def search
     listings = filter_and_sort(Listing.active, params)
-    render json:
-      { listings: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country]),
-        total_pages: listings.total_pages }
+    render json: ListingBlueprint.render_as_json(listings, destination_country: params[:destination_country],
+                                                           root: :listings,
+                                                           meta: { total_pages: listings.total_pages })
   end
 
   # used in the home page

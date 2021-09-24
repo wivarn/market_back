@@ -6,7 +6,9 @@ class OrdersController < ApplicationController
   before_action :set_order, only: %i[update update_state]
 
   def index
-    render json: OrderBlueprint.render(@orders)
+    paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
+    render json: OrderBlueprint.render(paginated_orders, root: :orders,
+                                                         meta: { total_pages: paginated_orders.total_pages })
   end
 
   def update

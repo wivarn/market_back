@@ -18,8 +18,10 @@ class EmailSettingsController < ApplicationController
       else
         render json: @email_setting.errors, status: :unprocessable_entity
       end
-    rescue MailchimpMarketing::ApiError
+    rescue MailchimpMarketing::ApiError => e
       @email_setting.update(marketing: !@email_setting.marketing)
+      Sentry.capture_exception(e)
+      Rollbar.error(e)
       render json: { error: 'Unable to update marketing email settings' }, status: :unprocessable_entity
     end
   end

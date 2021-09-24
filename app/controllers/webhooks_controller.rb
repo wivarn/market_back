@@ -38,7 +38,8 @@ class WebhooksController < ApplicationController
 
   def checkout_session_completed
     ActiveRecord::Base.transaction do
-      @order.pay!(@event.data.object.amount_total / 100.0, @event.data.object.currency.upcase)
+      session = @event.data.object
+      @order.pay!(session.amount_total / 100.0, session.currency.upcase, session.payment_intent)
       Cart.destroy_by(buyer: @order.buyer, seller: @order.seller)
     end
     OrderMailer.pending_shipment(@order).deliver

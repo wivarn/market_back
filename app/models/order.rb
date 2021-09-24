@@ -52,9 +52,10 @@ class Order < ApplicationRecord
     listings.each(&:reserve!)
   end
 
-  def pay!(total, currency)
+  def pay!(total, currency, payment_intent)
     self.total = total
     self.currency = currency
+    self.payment_intent_id = payment_intent
     paid!
     listings.each(&:paid!)
   end

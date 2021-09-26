@@ -24,7 +24,7 @@ Jets.application.routes.draw do
       delete :remove_item, on: :member
     end
 
-    resources :orders, only: %i[index update], param: :id do
+    resources :orders, only: %i[index show update], param: :id do
       post :update_state, on: :member
     end
 

@@ -3,12 +3,16 @@
 class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :set_orders, only: %i[index]
-  before_action :set_order, only: %i[update update_state]
+  before_action :set_order, only: %i[update show update_state]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
     render json: OrderBlueprint.render(paginated_orders, root: :orders,
                                                          meta: { total_pages: paginated_orders.total_pages })
+  end
+
+  def show
+    render json: OrderBlueprint.render(@order, view: :with_history)
   end
 
   def update
@@ -40,9 +44,10 @@ class OrdersController < ApplicationController
   private
 
   def set_orders
-    render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(params[:view])
+    relation = params[:relation] || params[:view]
+    render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(relation)
 
-    @orders = current_account.public_send(params[:view]).not_reserved.includes(:listings, :address, :buyer, :seller)
+    @orders = current_account.public_send(relation).not_reserved.includes(:listings, :address, :buyer, :seller)
   end
 
   def set_order

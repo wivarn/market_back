@@ -13,6 +13,6 @@ class OrderBlueprint < Blueprinter::Base
   end
 
   view :with_history do
-    fields :paid_at, :shipped_at, :refunded_at, :received_at
+    fields :pending_shipment_at, :shipped_at, :refunded_at, :received_at
   end
 end

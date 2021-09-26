@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_24_185526) do
+ActiveRecord::Schema.define(version: 2021_09_26_034457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -214,7 +214,6 @@ ActiveRecord::Schema.define(version: 2021_09_24_185526) do
     t.bigint "seller_id", null: false
     t.string "aasm_state", default: "reserved", null: false
     t.datetime "reserved_at"
-    t.datetime "paid_at"
     t.datetime "shipped_at"
     t.datetime "refunded_at"
     t.datetime "received_at"
@@ -224,6 +223,7 @@ ActiveRecord::Schema.define(version: 2021_09_24_185526) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "payment_intent_id"
+    t.datetime "pending_shipment_at"
     t.index ["buyer_id"], name: "index_orders_on_buyer_id"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end

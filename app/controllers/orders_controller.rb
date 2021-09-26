@@ -35,7 +35,7 @@ class OrdersController < ApplicationController
     @order.aasm.fire(params[:state_transition], current_account.id)
     if @order.save
       send_email
-      render json: OrderBlueprint.render(@order)
+      render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: @order.errors, status: :unprocessable_entity
     end

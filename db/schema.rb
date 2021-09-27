@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_27_020544) do
+ActiveRecord::Schema.define(version: 2021_09_27_233337) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_020544) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_refunds_on_order_id"
+    t.index ["refund_id"], name: "index_refunds_on_refund_id"
   end
 
   add_foreign_key "account_active_session_keys", "accounts"

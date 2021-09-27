@@ -26,6 +26,8 @@ Jets.application.routes.draw do
 
     resources :orders, only: %i[index show update], param: :id do
       post :update_state, on: :member
+      post :refund, on: :member
+      post :cancel, on: :member
     end
 
     prefix :account do

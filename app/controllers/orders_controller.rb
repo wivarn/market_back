@@ -4,6 +4,7 @@ class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :set_orders, only: %i[index]
   before_action :set_order, only: %i[update show update_state]
+  before_action :set_order_through_seller, only: %i[refund cancel]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
@@ -41,6 +42,30 @@ class OrdersController < ApplicationController
     end
   end
 
+  def cancel
+    unless @order.pending_shipment?
+      render json: { error: "Only orders that haven't been shipped can be cancalled" },
+             status: :unprocessable_entity
+    end
+
+    stripe_refund = Stripe::Refund.create({
+                                            payment_intent: @order.payment_intent_id,
+                                            reason: param[:reason],
+                                            refund_application_fee: true
+                                          })
+
+    refund = @order.refunds.new(refund_id: stripe_refund.id,
+                                amount: stripe_refund.amount,
+                                status: stripe_refund.status,
+                                reason: stripe_refund.reason,
+                                notes: params[:notes])
+    if refund.save
+      render json: RefundBlueprint.render(refund)
+    else
+      render json: refund.errors
+    end
+  end
+
   private
 
   def set_orders
@@ -54,6 +79,10 @@ class OrdersController < ApplicationController
     render json: { error: 'invalid relation' }, status: 400 unless %w[purchases sales].include?(params[:relation])
 
     @order = current_account.public_send(params[:relation]).find(params[:id])
+  end
+
+  def set_order_through_seller
+    @order = current_account.seller.find(params[:id])
   end
 
   def send_email

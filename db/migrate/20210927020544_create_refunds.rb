@@ -5,7 +5,7 @@ class CreateRefunds < ActiveRecord::Migration[6.1]
       t.string :refund_id, null: false
       t.numeric :amount, precision: 12, scale: 4, null: false
       t.string :status, null: false
-      t.string :reason, null: false
+      t.string :reason, default: nil
       t.string :notes, default: nil
 
       t.timestamps

@@ -50,19 +50,20 @@ class OrdersController < ApplicationController
 
     stripe_refund = Stripe::Refund.create({
                                             payment_intent: @order.payment_intent_id,
-                                            reason: param[:reason],
+                                            reason: params[:reason],
                                             refund_application_fee: true
-                                          })
+                                          }, { stripe_account: @order.seller.payment.stripe_id })
 
     refund = @order.refunds.new(refund_id: stripe_refund.id,
-                                amount: stripe_refund.amount,
+                                amount: stripe_refund.amount / 100,
                                 status: stripe_refund.status,
                                 reason: stripe_refund.reason,
                                 notes: params[:notes])
     if refund.save
+      @order.cancel!(current_account.id)
       render json: RefundBlueprint.render(refund)
     else
-      render json: refund.errors
+      render json: refund.errors, status: :unprocessable_entity
     end
   end
 
@@ -82,7 +83,7 @@ class OrdersController < ApplicationController
   end
 
   def set_order_through_seller
-    @order = current_account.seller.find(params[:id])
+    @order = current_account.sales.find(params[:id])
   end
 
   def send_email

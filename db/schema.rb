@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_26_034457) do
+ActiveRecord::Schema.define(version: 2021_09_27_020544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -224,6 +224,7 @@ ActiveRecord::Schema.define(version: 2021_09_26_034457) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "payment_intent_id"
     t.datetime "pending_shipment_at"
+    t.datetime "cancelled_at"
     t.index ["buyer_id"], name: "index_orders_on_buyer_id"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end
@@ -235,6 +236,18 @@ ActiveRecord::Schema.define(version: 2021_09_26_034457) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_payments_on_account_id", unique: true
+  end
+
+  create_table "refunds", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.string "refund_id", null: false
+    t.decimal "amount", precision: 12, scale: 4, null: false
+    t.string "status", null: false
+    t.string "reason", null: false
+    t.string "notes"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_refunds_on_order_id", unique: true
   end
 
   add_foreign_key "account_active_session_keys", "accounts"
@@ -263,4 +276,5 @@ ActiveRecord::Schema.define(version: 2021_09_26_034457) do
   add_foreign_key "orders", "accounts", column: "buyer_id"
   add_foreign_key "orders", "accounts", column: "seller_id"
   add_foreign_key "payments", "accounts"
+  add_foreign_key "refunds", "orders"
 end

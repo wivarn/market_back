@@ -9,6 +9,7 @@ class Order < ApplicationRecord
   belongs_to :seller, class_name: 'Account'
   has_many :order_items, dependent: :destroy
   has_many :listings, through: :order_items
+  has_many :refunds, dependent: :destroy
   has_one :address, as: :addressable, dependent: :destroy
 
   validates :buyer, :seller, :aasm_state, presence: true

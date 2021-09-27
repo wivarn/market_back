@@ -61,6 +61,7 @@ class OrdersController < ApplicationController
                                 notes: params[:notes])
     if refund.save
       @order.cancel!(current_account.id)
+      OrderMailer.cancalled(@order).deliver
       render json: RefundBlueprint.render(refund)
     else
       render json: refund.errors, status: :unprocessable_entity

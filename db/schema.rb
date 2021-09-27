@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_020544) do
     t.string "refund_id", null: false
     t.decimal "amount", precision: 12, scale: 4, null: false
     t.string "status", null: false
-    t.string "reason"
+    t.string "reason", null: false
     t.string "notes"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

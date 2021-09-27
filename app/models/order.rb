@@ -39,7 +39,7 @@ class Order < ApplicationRecord
     end
 
     event :refund do
-      transitions from: %i[pending_shipment shipped received], to: :refunded, guard: :seller?
+      transitions from: %i[pending_shipment shipped received refunded], to: :refunded, guard: :seller?
     end
 
     event :receive do

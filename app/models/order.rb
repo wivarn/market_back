@@ -28,7 +28,7 @@ class Order < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :reserved, initial: true
-    state :pending_shipment, :shipped, :refunded, :received
+    state :pending_shipment, :shipped, :refunded, :received, :cancelled
 
     event :paid do
       transitions from: :reserved, to: :pending_shipment
@@ -39,11 +39,15 @@ class Order < ApplicationRecord
     end
 
     event :refund do
-      transitions from: %i[pending_shipment shipped], to: :refunded
+      transitions from: %i[pending_shipment shipped received], to: :refunded, guard: :seller?
     end
 
     event :receive do
       transitions from: %i[pending_shipment shipped], to: :received, guard: :buyer?
+    end
+
+    event :cancel do
+      transitions from: :pending_shipment, to: :cancelled, guard: :seller?
     end
   end
 

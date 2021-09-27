@@ -103,7 +103,7 @@ class Listing < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
-    state :active, :removed, :reserved, :sold, :refunded
+    state :active, :removed, :reserved, :sold
 
     event :publish do
       transitions from: %i[draft removed], to: :active
@@ -123,10 +123,6 @@ class Listing < ApplicationRecord
 
     event :paid do
       transitions to: :sold, guard: :reserved?
-    end
-
-    event :refund do
-      transitions from: :sold, to: :refunded
     end
   end
 

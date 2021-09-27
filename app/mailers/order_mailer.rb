@@ -30,4 +30,12 @@ class OrderMailer < ApplicationMailer
 
     mail to: recipient, subject: 'Your shipment was received'
   end
+
+  def cancalled(order)
+    recipient = order.buyer.email
+
+    @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"
+
+    mail to: recipient, subject: 'Your order has been cancelled'
+  end
 end

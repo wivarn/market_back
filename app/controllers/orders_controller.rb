@@ -42,23 +42,30 @@ class OrdersController < ApplicationController
     end
   end
 
+  def refund
+    unless %w[pending_shipment shipped].include?(@order.aasm_state)
+      render json: { error: "This order can't be refunded" },
+             status: :unprocessable_entity
+    end
+
+    refund = create_stripe_refund(params[:amount].to_i * 100)
+    if refund.save
+      OrderMailer.refunded(@order).deliver
+      render json: RefundBlueprint.render(refund)
+    else
+      render json: refund.errors, status: :unprocessable_entity
+    end
+  rescue Stripe::InvalidRequestError => e
+    render json: { error: e.message }, status: e.http_status
+  end
+
   def cancel
     unless @order.pending_shipment?
       render json: { error: "Only orders that haven't been shipped can be cancalled" },
              status: :unprocessable_entity
     end
 
-    stripe_refund = Stripe::Refund.create({
-                                            payment_intent: @order.payment_intent_id,
-                                            reason: params[:reason],
-                                            refund_application_fee: true
-                                          }, { stripe_account: @order.seller.payment.stripe_id })
-
-    refund = @order.refunds.new(refund_id: stripe_refund.id,
-                                amount: stripe_refund.amount / 100,
-                                status: stripe_refund.status,
-                                reason: stripe_refund.reason,
-                                notes: params[:notes])
+    refund = create_stripe_refund
     if refund.save
       @order.cancel!(current_account.id)
       OrderMailer.cancalled(@order).deliver
@@ -66,6 +73,8 @@ class OrdersController < ApplicationController
     else
       render json: refund.errors, status: :unprocessable_entity
     end
+  rescue Stripe::InvalidRequestError => e
+    render json: { error: e.message }, status: e.http_status
   end
 
   private
@@ -98,5 +107,19 @@ class OrdersController < ApplicationController
 
   def order_params
     params.permit(:tracking)
+  end
+
+  def create_stripe_refund(amount = nil)
+    refund_params = { payment_intent: @order.payment_intent_id,
+                      amount: amount,
+                      reason: params[:reason].presence,
+                      refund_application_fee: true }
+    stripe_refund = Stripe::Refund.create(refund_params, { stripe_account: @order.seller.payment.stripe_id })
+
+    @order.refunds.new(refund_id: stripe_refund.id,
+                       amount: stripe_refund.amount / 100.0,
+                       status: stripe_refund.status,
+                       reason: stripe_refund.reason || '',
+                       notes: params[:notes])
   end
 end

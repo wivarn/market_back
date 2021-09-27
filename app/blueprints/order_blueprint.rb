@@ -13,6 +13,7 @@ class OrderBlueprint < Blueprinter::Base
   end
 
   view :with_history do
-    fields :pending_shipment_at, :shipped_at, :refunded_at, :received_at, :cancelled_at
+    fields :pending_shipment_at, :shipped_at, :received_at, :cancelled_at
+    association :refunds, blueprint: RefundBlueprint
   end
 end

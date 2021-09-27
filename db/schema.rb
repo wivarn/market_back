@@ -215,7 +215,6 @@ ActiveRecord::Schema.define(version: 2021_09_27_020544) do
     t.string "aasm_state", default: "reserved", null: false
     t.datetime "reserved_at"
     t.datetime "shipped_at"
-    t.datetime "refunded_at"
     t.datetime "received_at"
     t.string "tracking"
     t.decimal "total", precision: 12, scale: 4
@@ -247,7 +246,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_020544) do
     t.string "notes"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["order_id"], name: "index_refunds_on_order_id", unique: true
+    t.index ["order_id"], name: "index_refunds_on_order_id"
   end
 
   add_foreign_key "account_active_session_keys", "accounts"

@@ -12,7 +12,8 @@ class CreateRefunds < ActiveRecord::Migration[6.1]
     end
 
     add_foreign_key :refunds, :orders
-    add_index :refunds, :order_id, unique: true
+    add_index :refunds, :order_id
     add_column :orders, :cancelled_at, :datetime
+    remove_column :orders, :refunded_at, :datetime
   end
 end

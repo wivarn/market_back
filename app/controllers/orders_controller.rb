@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
     refund = create_stripe_refund(params[:amount].to_i * 100)
     if refund.save
       OrderMailer.refunded(@order).deliver
-      render json: RefundBlueprint.render(refund)
+      render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: refund.errors, status: :unprocessable_entity
     end
@@ -69,7 +69,7 @@ class OrdersController < ApplicationController
     if refund.save
       @order.cancel!(current_account.id)
       OrderMailer.cancalled(@order).deliver
-      render json: RefundBlueprint.render(refund)
+      render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: refund.errors, status: :unprocessable_entity
     end
@@ -83,7 +83,8 @@ class OrdersController < ApplicationController
     relation = params[:relation] || params[:view]
     render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(relation)
 
-    @orders = current_account.public_send(relation).not_reserved.includes(:listings, :address, :buyer, :seller)
+    @orders = current_account.public_send(relation).not_reserved.includes(:listings, :address, :buyer, :seller,
+                                                                          :refunds)
   end
 
   def set_order

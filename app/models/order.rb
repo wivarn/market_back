@@ -9,6 +9,7 @@ class Order < ApplicationRecord
   belongs_to :seller, class_name: 'Account'
   has_many :order_items, dependent: :destroy
   has_many :listings, through: :order_items
+  has_many :refunds, -> { order(:updated_at) }, dependent: :destroy
   has_one :address, as: :addressable, dependent: :destroy
 
   validates :buyer, :seller, :aasm_state, presence: true
@@ -27,7 +28,7 @@ class Order < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :reserved, initial: true
-    state :pending_shipment, :shipped, :refunded, :received
+    state :pending_shipment, :shipped, :received, :cancelled
 
     event :paid do
       transitions from: :reserved, to: :pending_shipment
@@ -37,12 +38,12 @@ class Order < ApplicationRecord
       transitions from: :pending_shipment, to: :shipped, guard: :seller?
     end
 
-    event :refund do
-      transitions from: %i[pending_shipment shipped], to: :refunded
-    end
-
     event :receive do
       transitions from: %i[pending_shipment shipped], to: :received, guard: :buyer?
+    end
+
+    event :cancel do
+      transitions from: :pending_shipment, to: :cancelled, guard: :seller?
     end
   end
 

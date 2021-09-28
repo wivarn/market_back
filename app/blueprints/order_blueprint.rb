@@ -6,6 +6,7 @@ class OrderBlueprint < Blueprinter::Base
   association :buyer, blueprint: AccountBlueprint
   association :seller, blueprint: AccountBlueprint
   association :address, blueprint: AddressBlueprint
+  association :refunds, blueprint: RefundBlueprint
   association :listings, blueprint: ListingBlueprint do |order|
     listings = order.listings.to_a
     listings.each { |listing| listing.destination_country = order.address.country }
@@ -13,6 +14,6 @@ class OrderBlueprint < Blueprinter::Base
   end
 
   view :with_history do
-    fields :pending_shipment_at, :shipped_at, :refunded_at, :received_at
+    fields :pending_shipment_at, :shipped_at, :received_at, :cancelled_at
   end
 end

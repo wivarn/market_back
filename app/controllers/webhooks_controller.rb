@@ -24,7 +24,11 @@ class WebhooksController < ApplicationController
   end
 
   def filter_stripe_event
-    render json: { error: 'event type not accepted' } unless VALID_EVENTS.include?(@event.type)
+    if !VALID_EVENTS.include?(@event.type)
+      render json: { error: 'event type not accepted' }
+    elsif @event.data.object.respond_to?(:success_url) && !@event.data.object.success_url.start_with?(ENV['FRONT_END_BASE_URL'])
+      render nothing: true, status: :no_content
+    end
   end
 
   def find_order

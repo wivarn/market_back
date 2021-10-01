@@ -53,6 +53,8 @@ class WebhooksController < ApplicationController
   def charge_refund_updated
     stripe_refund = @event.data.object
     refund = Refund.find_by_refund_id(stripe_refund.id)
+    return unless refund
+
     refund.update(amount: stripe_refund.amount / 100.0,
                   status: stripe_refund.status)
     return unless refund.status == 'failed'

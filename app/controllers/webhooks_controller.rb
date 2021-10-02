@@ -4,7 +4,7 @@ class WebhooksController < ApplicationController
   before_action :set_stripe_event, only: %i[stripe]
   before_action :filter_stripe_event, only: %i[stripe]
 
-  VALID_EVENTS = %w[checkout.session.completed checkout.session.expired charge.refund.updated].freeze
+  VALID_EVENTS = %w[checkout.session.completed checkout.session.expired charge.refunded charge.refund.updated].freeze
 
   def stripe
     send(@event.type.gsub('.', '_'))
@@ -48,6 +48,17 @@ class WebhooksController < ApplicationController
 
   def checkout_session_expired
     find_order.destroy
+  end
+
+  # this catches cases when sellers manually refund via Stripe
+  def charge_refunded
+    stripe_refund = @event.data.object.refunds.data.first
+    order = Order.find_by_payment_intent_id(stripe_refund.payment_intent)
+    refund = Refund.find_or_create_by(order: order, refund_id: stripe_refund.id)
+
+    refund.update(amount: stripe_refund.amount / 100.0,
+                  status: stripe_refund.status,
+                  reason: stripe_refund.reason)
   end
 
   def charge_refund_updated

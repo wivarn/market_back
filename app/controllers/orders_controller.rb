@@ -48,7 +48,8 @@ class OrdersController < ApplicationController
              status: :unprocessable_entity
     end
 
-    refund = create_stripe_refund(params[:amount].to_i * 100)
+    refund = create_stripe_refund((params[:amount].to_f * 100).to_i)
+
     if refund.save
       OrderMailer.refunded(@order).deliver
       render json: OrderBlueprint.render(@order, view: :with_history)

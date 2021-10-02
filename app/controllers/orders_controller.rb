@@ -5,6 +5,7 @@ class OrdersController < ApplicationController
   before_action :set_orders, only: %i[index]
   before_action :set_order, only: %i[update show update_state]
   before_action :set_order_through_seller, only: %i[refund cancel]
+  before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
@@ -61,16 +62,6 @@ class OrdersController < ApplicationController
   end
 
   def cancel
-    unless @order.pending_shipment?
-      render json: { error: "Only orders that haven't been shipped can be cancelled" },
-             status: :unprocessable_entity
-    end
-
-    if @order.refunds.any?
-      render json: { error: "Partially refunded orders can't be cancelled" },
-             status: :unprocessable_entity
-    end
-
     refund = create_stripe_refund
     if refund.save
       @order.cancel!(current_account.id)
@@ -101,6 +92,18 @@ class OrdersController < ApplicationController
 
   def set_order_through_seller
     @order = current_account.sales.find(params[:id])
+  end
+
+  def filter_orders_that_cannot_be_cancelled
+    unless @order.pending_shipment?
+      render json: { error: "Only orders that haven't been shipped can be cancelled" },
+             status: :unprocessable_entity
+    end
+
+    if @order.refunds.any?
+      render json: { error: "Partially refunded orders can't be cancelled" },
+             status: :unprocessable_entity
+    end
   end
 
   def send_email

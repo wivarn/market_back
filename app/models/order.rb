@@ -43,7 +43,7 @@ class Order < ApplicationRecord
     end
 
     event :cancel do
-      transitions from: :pending_shipment, to: :cancelled, guard: :seller?
+      transitions from: :pending_shipment, to: :cancelled, guards: %i[seller? no_refunds]
     end
   end
 
@@ -77,5 +77,9 @@ class Order < ApplicationRecord
 
   def seller?(account_id)
     account_id == seller_id
+  end
+
+  def no_refunds
+    refunds.none?
   end
 end

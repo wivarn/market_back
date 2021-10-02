@@ -62,7 +62,12 @@ class OrdersController < ApplicationController
 
   def cancel
     unless @order.pending_shipment?
-      render json: { error: "Only orders that haven't been shipped can be cancalled" },
+      render json: { error: "Only orders that haven't been shipped can be cancelled" },
+             status: :unprocessable_entity
+    end
+
+    if @order.refunds.any?
+      render json: { error: "Partially refunded orders can't be cancelled" },
              status: :unprocessable_entity
     end
 

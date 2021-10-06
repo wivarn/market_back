@@ -34,9 +34,9 @@ class ListingsController < ApplicationController
 
   # used in the home page
   def recent_by_category
-    sports_cards = Listing.active.ships_to(params[:destination_country]).sports_cards.order(created_at: :desc).limit(4)
-    trading_cards = Listing.active.ships_to(params[:destination_country]).trading_cards.order(created_at: :desc).limit(4)
-    collectibles = Listing.active.ships_to(params[:destination_country]).collectibles.order(created_at: :desc).limit(4)
+    sports_cards = Listing.active.ships_to(params[:destination_country]).sports_cards.order(updated_at: :desc).limit(4)
+    trading_cards = Listing.active.ships_to(params[:destination_country]).trading_cards.order(updated_at: :desc).limit(4)
+    collectibles = Listing.active.ships_to(params[:destination_country]).collectibles.order(updated_at: :desc).limit(4)
 
     render json: {
       sports_cards: ListingBlueprint.render_as_json(sports_cards, destination_country: params[:destination_country]),

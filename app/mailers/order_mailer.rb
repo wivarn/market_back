@@ -5,14 +5,14 @@ class OrderMailer < ApplicationMailer
 
   def purchased(order)
     recipient = order.buyer.email
-    @purchases_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases"
+    @purchases_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"
 
     mail to: recipient, subject: 'You made a purchase'
   end
 
   def pending_shipment(order)
     recipient = order.seller.email
-    @sales_link = "#{ENV['FRONT_END_BASE_URL']}/account/sales"
+    @sales_link = "#{ENV['FRONT_END_BASE_URL']}/account/sales/#{order.id}"
 
     mail to: recipient, subject: 'You sold some items'
   end

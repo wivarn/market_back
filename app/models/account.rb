@@ -30,6 +30,7 @@ class Account < ApplicationRecord
 
   has_many :listings
   has_many :carts, class_name: 'Cart', foreign_key: :buyer_id
+  has_many :cart_items, through: :carts
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id

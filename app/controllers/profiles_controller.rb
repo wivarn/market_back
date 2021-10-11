@@ -49,7 +49,6 @@ class ProfilesController < ApplicationController
       stripe_linked: stripe_linked?,
       listing_template: ListingTemplate.find_or_create_by(account: current_account),
       cart_items: CartItemBlueprint.render_as_hash(current_account.cart_items),
-      has_cart: current_account.carts.any?,
       has_pending_shipment: current_account.sales.pending_shipment.any?,
       selling_enabled: current_account.seller?
     }

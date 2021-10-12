@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_27_233337) do
+ActiveRecord::Schema.define(version: 2021_10_12_073020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_233337) do
     t.decimal "combined_shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "accept_offers", default: false, null: false
     t.index ["account_id"], name: "index_listing_templates_on_account_id", unique: true
   end
 
@@ -179,6 +180,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_233337) do
     t.datetime "reserved_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "accept_offers", default: false, null: false
     t.index ["aasm_state"], name: "index_listings_on_aasm_state"
     t.index ["account_id"], name: "index_listings_on_account_id"
     t.index ["category"], name: "index_listings_on_category"
@@ -198,6 +200,20 @@ ActiveRecord::Schema.define(version: 2021_09_27_233337) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["recipient_id"], name: "index_messages_on_recipient_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
+  create_table "offers", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "creator_id", null: false
+    t.string "aasm_state", default: "active", null: false
+    t.decimal "amount", precision: 12, scale: 4, default: "0.0"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aasm_state"], name: "index_offers_on_aasm_state"
+    t.index ["buyer_id"], name: "index_offers_on_buyer_id"
+    t.index ["creator_id"], name: "index_offers_on_creator_id"
+    t.index ["listing_id"], name: "index_offers_on_listing_id"
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -271,6 +287,9 @@ ActiveRecord::Schema.define(version: 2021_09_27_233337) do
   add_foreign_key "listings", "accounts"
   add_foreign_key "messages", "accounts", column: "recipient_id"
   add_foreign_key "messages", "accounts", column: "sender_id"
+  add_foreign_key "offers", "accounts", column: "buyer_id"
+  add_foreign_key "offers", "accounts", column: "creator_id"
+  add_foreign_key "offers", "listings"
   add_foreign_key "order_items", "listings"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "accounts", column: "buyer_id"

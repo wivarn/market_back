@@ -22,7 +22,7 @@ class Listing < ApplicationRecord
     tsearch: { dictionary: 'english' }
   }, order_within_rank: 'listings.updated_at DESC'
 
-  validates :account, :title, :currency, :shipping_country, presence: true
+  validates :account, :title, :currency, :shipping_country, :accept_offers, presence: true
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }
   validates :shipping_country, inclusion: { in: %w[USA CAN] }
@@ -88,6 +88,7 @@ class Listing < ApplicationRecord
   end
 
   belongs_to :account
+  has_many :offers, dependent: :destroy
 
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 

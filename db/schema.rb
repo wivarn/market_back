@@ -141,6 +141,9 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.datetime "rejected_at"
     t.datetime "cancelled_at"
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
+    t.string "currency", limit: 3, null: false
+    t.string "destination_country", limit: 3, null: false
+    t.decimal "shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aasm_state"], name: "index_counter_offers_on_aasm_state"
@@ -225,6 +228,9 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.datetime "rejected_at"
     t.datetime "cancelled_at"
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
+    t.string "currency", limit: 3, null: false
+    t.string "destination_country", limit: 3, null: false
+    t.decimal "shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aasm_state"], name: "index_offers_on_aasm_state"

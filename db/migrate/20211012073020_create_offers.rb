@@ -4,6 +4,9 @@ class CreateOffers < ActiveRecord::Migration[6.1]
       t.bigint :listing_id, null: false
       t.bigint :buyer_id, null: false
       t.string :aasm_state, null: false, default: 'active'
+      t.datetime :accepted_at
+      t.datetime :rejected_at
+      t.datetime :cancelled_at
       t.numeric :amount, precision: 12, scale: 4, default: 0
 
       t.timestamps
@@ -19,6 +22,9 @@ class CreateOffers < ActiveRecord::Migration[6.1]
       t.bigint :listing_id, null: false
       t.bigint :buyer_id, null: false
       t.string :aasm_state, null: false, default: 'active'
+      t.datetime :accepted_at
+      t.datetime :rejected_at
+      t.datetime :cancelled_at
       t.numeric :amount, precision: 12, scale: 4, default: 0
 
       t.timestamps

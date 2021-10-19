@@ -90,6 +90,8 @@ class Listing < ApplicationRecord
   belongs_to :account
   has_many :offers, dependent: :destroy
 
+  alias_attribute :seller, :account
+
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 
   scope :ships_to, lambda { |country|

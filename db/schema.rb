@@ -137,6 +137,9 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.bigint "listing_id", null: false
     t.bigint "buyer_id", null: false
     t.string "aasm_state", default: "active", null: false
+    t.datetime "accepted_at"
+    t.datetime "rejected_at"
+    t.datetime "cancelled_at"
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -218,6 +221,9 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.bigint "listing_id", null: false
     t.bigint "buyer_id", null: false
     t.string "aasm_state", default: "active", null: false
+    t.datetime "accepted_at"
+    t.datetime "rejected_at"
+    t.datetime "cancelled_at"
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

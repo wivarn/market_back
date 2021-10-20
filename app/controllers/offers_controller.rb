@@ -3,7 +3,10 @@
 class OffersController < ApplicationController
   before_action :authenticate!
 
-  def index; end
+  def index
+    offers = current_account.purchase_offers.active.includes(:buyer, listing: :account)
+    render json: OfferBlueprint.render(offers)
+  end
 
   def create
     destination_country = current_account.address.country

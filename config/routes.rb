@@ -31,6 +31,7 @@ Jets.application.routes.draw do
     end
 
     resources :offers, only: %i[index create], param: :id do
+      get :sales_offers, on: :collection
     end
 
     prefix :account do

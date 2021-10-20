@@ -34,8 +34,8 @@ class Offer < ApplicationRecord
     end
   end
 
-  scope :active, -> { where('aasm_state = ? AND created_at >= ?', :active, DateTime.now - EXPIRY_TIME) }
-  scope :expired, -> { where('aasm_state = ? AND created_at < ?', :active, DateTime.now - EXPIRY_TIME) }
+  scope :active, -> { where('offers.aasm_state = ? AND offers.created_at >= ?', :active, DateTime.now - EXPIRY_TIME) }
+  scope :expired, -> { where('offers.aasm_state = ? AND offers.created_at < ?', :active, DateTime.now - EXPIRY_TIME) }
 
   def active?
     aasm_state == 'active' && (created_at >= DateTime.now - EXPIRY_TIME)

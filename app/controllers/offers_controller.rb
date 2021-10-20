@@ -8,6 +8,11 @@ class OffersController < ApplicationController
     render json: OfferBlueprint.render(offers)
   end
 
+  def sales_offers
+    offers = current_account.sales_offers.active.includes(:buyer, listing: :account)
+    render json: OfferBlueprint.render(offers)
+  end
+
   def create
     destination_country = current_account.address.country
     listing = Listing.active.ships_to(destination_country).find(params[:listing_id])

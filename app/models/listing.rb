@@ -97,12 +97,12 @@ class Listing < ApplicationRecord
   scope :ships_to, lambda { |country|
                      return self unless %w[USA CAN].include?(country)
 
-                     where('shipping_country = :country OR international_shipping IS NOT NULL',
+                     where('listings.shipping_country = :country OR listings.international_shipping IS NOT NULL',
                            country: country)
                    }
-  scope :sports_cards, -> { where('category = :category', category: 'SPORTS_CARDS') }
-  scope :trading_cards, -> { where('category = :category', category: 'TRADING_CARDS') }
-  scope :collectibles, -> { where('category = :category', category: 'COLLECTIBLES') }
+  scope :sports_cards, -> { where('listings.category = :category', category: 'SPORTS_CARDS') }
+  scope :trading_cards, -> { where('listings.category = :category', category: 'TRADING_CARDS') }
+  scope :collectibles, -> { where('listings.category = :category', category: 'COLLECTIBLES') }
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
@@ -130,12 +130,14 @@ class Listing < ApplicationRecord
   end
 
   scope :active, lambda {
-                   where('aasm_state = ? OR (aasm_state = ? AND reserved_at < ?)', :active, :reserved,
+                   where('listings.aasm_state = ? OR (listings.aasm_state = ? AND listings.reserved_at < ?)', :active, :reserved,
                          Time.now.utc - RESERVE_TIME)
                  }
 
-  scope :reserved, -> { where('aasm_state = ? AND reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME) }
-  scope :publically_viewable, -> { where.not(aasm_state: %w[draft removed]) }
+  scope :reserved, lambda {
+                     where('listings.aasm_state = ? AND listings.reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME)
+                   }
+  scope :publically_viewable, -> { where('listings.aasm_state NOT IN (?)', %w[draft removed]) }
 
   def active?
     aasm_state == 'active' || (aasm_state == 'reserved' && reserved_at < Time.now.utc - RESERVE_TIME)

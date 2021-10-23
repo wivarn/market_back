@@ -30,7 +30,7 @@ class Offer < ApplicationRecord
     end
 
     event :cancel do
-      transitions from: :active, to: :rejected, guards: %i[active? buyer?]
+      transitions from: :active, to: :cancelled, guards: %i[active? buyer?]
     end
   end
 
@@ -43,6 +43,10 @@ class Offer < ApplicationRecord
 
   def expired?
     aasm_state == 'active' && (created_at < DateTime.now - EXPIRY_TIME)
+  end
+
+  def expires_at
+    created_at + EXPIRY_TIME
   end
 
   private

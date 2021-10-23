@@ -30,8 +30,9 @@ Jets.application.routes.draw do
       post :cancel, on: :member
     end
 
-    resources :offers, only: %i[index create], param: :id do
-      get :sales_offers, on: :collection
+    resources :offers, only: %i[create], param: :id do
+      get :purchase_offers, on: :collection
+      get :sale_offers, on: :collection
     end
 
     prefix :account do

@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.datetime "accepted_at"
     t.datetime "rejected_at"
     t.datetime "cancelled_at"
+    t.boolean "counter", default: false, null: false
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
     t.string "currency", limit: 3, null: false
     t.string "destination_country", limit: 3, null: false

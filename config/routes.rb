@@ -33,6 +33,7 @@ Jets.application.routes.draw do
     resources :offers, only: %i[create], param: :id do
       get :purchase_offers, on: :collection
       get :sale_offers, on: :collection
+      post :create_counter, on: :member
     end
 
     prefix :account do

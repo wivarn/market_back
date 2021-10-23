@@ -16,10 +16,9 @@ class OffersController < ApplicationController
   def create
     destination_country = current_account.address.country
     listing = Listing.active.ships_to(destination_country).find(params[:listing_id])
-    counter = !params[:listing_id]
     shipping = listing.shipping(destination_country: destination_country)
-    offer = listing.offers.new(buyer: current_account, amount: params[:amount], counter: counter,
-                               destination_country: destination_country, currency: listing.currency, shipping: shipping)
+    offer = listing.offers.new(buyer: current_account, counter: false, destination_country: destination_country,
+                               currency: listing.currency, shipping: shipping, amount: params[:amount])
     if offer.save
       active_offers = listing.offers.active.where('offers.buyer_id = ? AND offers.id != ?', current_account.id,
                                                   offer.id)
@@ -27,6 +26,23 @@ class OffersController < ApplicationController
       render json: OfferBlueprint.render(offer), status: :created
     else
       render json: offer.errors, status: :unprocessable_entity
+    end
+  end
+
+  def create_counter
+    offer = current_account.sales_offers.active.find(params[:id])
+    listing = offer.listing
+    destination_country = offer.destination_country
+    shipping = listing.shipping(destination_country: destination_country)
+    counter_offer = listing.offers.new(buyer: offer.buyer, counter: true, destination_country: destination_country,
+                                       currency: listing.currency, shipping: shipping, amount: params[:amount])
+    if counter_offer.save
+      active_offers = listing.offers.active.where('offers.buyer_id = ? AND offers.id != ?', offer.buyer_id,
+                                                  counter_offer.id)
+      active_offers.each { |o| o.reject!(current_account.id) }
+      render json: OfferBlueprint.render(counter_offer), status: :created
+    else
+      render json: counter_offer.errors, status: :unprocessable_entity
     end
   end
 end

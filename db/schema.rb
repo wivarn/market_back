@@ -133,24 +133,6 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.index ["buyer_id"], name: "index_carts_on_buyer_id"
   end
 
-  create_table "counter_offers", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.bigint "buyer_id", null: false
-    t.string "aasm_state", default: "active", null: false
-    t.datetime "accepted_at"
-    t.datetime "rejected_at"
-    t.datetime "cancelled_at"
-    t.decimal "amount", precision: 12, scale: 4, default: "0.0"
-    t.string "currency", limit: 3, null: false
-    t.string "destination_country", limit: 3, null: false
-    t.decimal "shipping", precision: 12, scale: 4
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["aasm_state"], name: "index_counter_offers_on_aasm_state"
-    t.index ["buyer_id"], name: "index_counter_offers_on_buyer_id"
-    t.index ["listing_id"], name: "index_counter_offers_on_listing_id"
-  end
-
   create_table "email_settings", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.boolean "marketing", default: false, null: false
@@ -305,8 +287,6 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
   add_foreign_key "cart_items", "listings"
   add_foreign_key "carts", "accounts", column: "buyer_id"
   add_foreign_key "carts", "accounts", column: "seller_id"
-  add_foreign_key "counter_offers", "accounts", column: "buyer_id"
-  add_foreign_key "counter_offers", "listings"
   add_foreign_key "email_settings", "accounts"
   add_foreign_key "listing_templates", "accounts"
   add_foreign_key "listings", "accounts"

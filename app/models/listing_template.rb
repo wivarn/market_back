@@ -5,7 +5,7 @@ class ListingTemplate < ApplicationRecord
   COLLECTIBLES = %w[ANTIQUES ART COINS COMICS STAMPS TOYS WATCHES OTHER].freeze
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
-  validates :account, presence: true
+  validates :account, :accept_offers, presence: true
   validates :title, length: { in: 2..256 }, allow_nil: true, allow_blank: true
 
   validates :category, inclusion: { in: %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES] }, allow_nil: true

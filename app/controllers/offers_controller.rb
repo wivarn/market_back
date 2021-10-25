@@ -2,6 +2,7 @@
 
 class OffersController < ApplicationController
   before_action :authenticate!
+  before_action :set_offer, only: %i[accept reject cancel]
 
   def purchase_offers
     offers = current_account.purchase_offers.active.includes(:buyer, listing: :account)
@@ -44,5 +45,26 @@ class OffersController < ApplicationController
     else
       render json: counter_offer.errors, status: :unprocessable_entity
     end
+  end
+
+  def accept
+    @offer.accept!(current_account.id)
+    render json: OfferBlueprint.render(@offer), status: :accepted
+  end
+
+  def reject
+    @offer.reject!(current_account.id)
+    render json: OfferBlueprint.render(@offer), status: :accepted
+  end
+
+  def cancel
+    @offer.cancel!(current_account.id)
+    render json: OfferBlueprint.render(@offer), status: :accepted
+  end
+
+  private
+
+  def set_offer
+    @offer = Offer.active.find(params[:id])
   end
 end

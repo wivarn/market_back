@@ -34,6 +34,9 @@ Jets.application.routes.draw do
       get :purchase_offers, on: :collection
       get :sale_offers, on: :collection
       post :create_counter, on: :member
+      post :accept, on: :member
+      post :reject, on: :member
+      post :cancel, on: :member
     end
 
     prefix :account do

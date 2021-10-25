@@ -22,15 +22,15 @@ class Offer < ApplicationRecord
     state :accepted, :rejected, :cancelled
 
     event :accept do
-      transitions from: :active, to: :accepted, guards: %i[active? seller?]
+      transitions from: :active, to: :accepted, guards: %i[active? can_accept?]
     end
 
     event :reject do
-      transitions from: :active, to: :rejected, guards: %i[active? seller?]
+      transitions from: :active, to: :rejected, guards: %i[active? can_accept?]
     end
 
     event :cancel do
-      transitions from: :active, to: :cancelled, guards: %i[active? buyer?]
+      transitions from: :active, to: :cancelled, guards: %i[active? can_cancel?]
     end
   end
 
@@ -51,11 +51,11 @@ class Offer < ApplicationRecord
 
   private
 
-  def seller?(account_id)
-    account_id == seller.id
+  def can_accept?(account_id)
+    (counter && account_id == buyer_id) || (!counter && account_id == seller.id)
   end
 
-  def buyer?(account_id)
-    account_id == buyer_id
+  def can_cancel?(account_id)
+    (counter && account_id == seller.id) || (!counter && account_id == buyer_id)
   end
 end

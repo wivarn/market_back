@@ -23,7 +23,8 @@ class Listing < ApplicationRecord
     tsearch: { dictionary: 'english' }
   }, order_within_rank: 'listings.updated_at DESC'
 
-  validates :account, :title, :currency, :shipping_country, :accept_offers, presence: true
+  # TODO: add :accept_offers back in after setting default value for existing listings
+  validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }
   validates :shipping_country, inclusion: { in: %w[USA CAN] }

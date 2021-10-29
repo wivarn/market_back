@@ -25,7 +25,9 @@ class CartBlueprint < Blueprinter::Base
       total_shipping = listings.inject(max_shipping_listing.shipping(destination_country: destination)) do |sum, listing|
         sum + listing.shipping(destination_country: destination, combined: true)
       end
-      total_listing_price = listings.inject(max_shipping_listing.price) { |sum, listing| sum + listing.price }
+      total_listing_price = listings.inject(max_shipping_listing&.accepted_offer&.amount || max_shipping_listing.price) do |sum, listing|
+        sum + (listing&.accepted_offer&.amount || listing.price)
+      end
 
       total_shipping + total_listing_price
     end

@@ -80,8 +80,8 @@ class OrdersController < ApplicationController
     relation = params[:relation] || params[:view]
     render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(relation)
 
-    @orders = current_account.public_send(relation).not_reserved.includes(:listings, :address, :buyer, :seller,
-                                                                          :refunds)
+    @orders = current_account.public_send(relation).not_reserved.includes(:address, :buyer, :seller,
+                                                                          :refunds, listings: :accepted_offer)
   end
 
   def set_order

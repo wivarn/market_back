@@ -3,7 +3,7 @@
 class CartBlueprint < Blueprinter::Base
   field :checkout_session_id
   association :seller, blueprint: AccountBlueprint
-  association :listings, blueprint: ListingBlueprint do |cart, options|
+  association :listings, blueprint: ListingBlueprint, view: :order do |cart, options|
     destination = options[:destination_country]
     listings = cart.listings.to_a
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_12_073020) do
+ActiveRecord::Schema.define(version: 2021_10_29_094141) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -181,6 +181,7 @@ ActiveRecord::Schema.define(version: 2021_10_12_073020) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "accept_offers", default: false, null: false
+    t.datetime "offered_at"
     t.index ["aasm_state"], name: "index_listings_on_aasm_state"
     t.index ["account_id"], name: "index_listings_on_account_id"
     t.index ["category"], name: "index_listings_on_category"

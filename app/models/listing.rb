@@ -7,6 +7,7 @@ class Listing < ApplicationRecord
   attr_writer :combined, :destination_country
 
   RESERVE_TIME = 1.hour
+  OFFER_TIME = 24.hours
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[BASEBALL BASKETBALL FOOTBALL HOCKEY OTHER].freeze
   TRADING_CARDS = %w[MAGIC POKEMON OTHER].freeze
@@ -89,6 +90,7 @@ class Listing < ApplicationRecord
 
   belongs_to :account
   has_many :offers, dependent: :destroy
+  has_one :accepted_offer, -> { accepted }, class_name: 'Offer'
 
   alias_attribute :seller, :account
 
@@ -106,7 +108,7 @@ class Listing < ApplicationRecord
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
-    state :active, :removed, :reserved, :sold
+    state :active, :removed, :reserved, :sold, :offered
 
     event :publish do
       transitions from: %i[draft removed], to: :active
@@ -120,6 +122,10 @@ class Listing < ApplicationRecord
       transitions to: :reserved, guard: :active?
     end
 
+    event :offer do
+      transitions to: :offered, guard: :active?
+    end
+
     event :cancel_reservation do
       transitions from: :reserved, to: :active
     end
@@ -130,13 +136,21 @@ class Listing < ApplicationRecord
   end
 
   scope :active, lambda {
-                   where('listings.aasm_state = ? OR (listings.aasm_state = ? AND listings.reserved_at < ?)', :active, :reserved,
-                         Time.now.utc - RESERVE_TIME)
+                   where('listings.aasm_state = ?
+                    OR (listings.aasm_state = ? AND listings.reserved_at < ?)
+                    OR (listings.aasm_state = ? AND listings.offered_at < ?)',
+                         :active,
+                         :reserved, Time.now.utc - RESERVE_TIME,
+                         :offered, Time.now.utc - OFFER_TIME)
                  }
 
   scope :reserved, lambda {
-                     where('listings.aasm_state = ? AND listings.reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME)
+                     where('listings.aasm_state = ? AND listings.reserved_at >= ?',
+                           :reserved, DateTime.now - RESERVE_TIME)
                    }
+  scope :offered, lambda {
+                    where('listings.aasm_state = ? AND listings.offered_at >= ?', :offered, DateTime.now - OFFER_TIME)
+                  }
   scope :publically_viewable, -> { where('listings.aasm_state NOT IN (?)', %w[draft removed]) }
 
   def active?

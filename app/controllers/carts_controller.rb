@@ -9,7 +9,7 @@ class CartsController < ApplicationController
   before_action :continue_checkout, only: %i[checkout]
 
   def index
-    carts = current_account.carts.includes(:listings, :seller)
+    carts = current_account.carts.includes(:seller, listings: :accepted_offer)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 

@@ -180,8 +180,8 @@ ActiveRecord::Schema.define(version: 2021_10_29_094141) do
     t.datetime "reserved_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "accept_offers", default: false, null: false
     t.datetime "offered_at"
+    t.boolean "accept_offers", default: false, null: false
     t.index ["aasm_state"], name: "index_listings_on_aasm_state"
     t.index ["account_id"], name: "index_listings_on_account_id"
     t.index ["category"], name: "index_listings_on_category"
@@ -212,9 +212,6 @@ ActiveRecord::Schema.define(version: 2021_10_29_094141) do
     t.datetime "cancelled_at"
     t.boolean "counter", default: false, null: false
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
-    t.string "currency", limit: 3, null: false
-    t.string "destination_country", limit: 3, null: false
-    t.decimal "shipping", precision: 12, scale: 4
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aasm_state"], name: "index_offers_on_aasm_state"

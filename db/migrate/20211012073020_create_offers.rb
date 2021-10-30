@@ -9,9 +9,6 @@ class CreateOffers < ActiveRecord::Migration[6.1]
       t.datetime :cancelled_at
       t.boolean :counter, null: false, default: false
       t.numeric :amount, precision: 12, scale: 4, default: 0
-      t.string :currency, null: false, limit: 3
-      t.string :destination_country, null: false, limit: 3
-      t.numeric :shipping, precision: 12, scale: 4
 
       t.timestamps
     end

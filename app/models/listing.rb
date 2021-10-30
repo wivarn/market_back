@@ -131,8 +131,12 @@ class Listing < ApplicationRecord
       transitions from: :reserved, to: :active
     end
 
+    event :cancel_offer do
+      transitions from: :offered, to: :active
+    end
+
     event :paid do
-      transitions to: :sold, guard: :reserved?
+      transitions to: :sold, guard: :reserved_or_offered?
     end
   end
 
@@ -164,6 +168,14 @@ class Listing < ApplicationRecord
 
   def editable?
     draft? || active? || removed?
+  end
+
+  def offered?
+    aasm_state == 'offered' && offered_at >= Time.now.utc - OFFER_TIME
+  end
+
+  def reserved_or_offered?
+    reserved? || offered?
   end
 
   # Blueprint can pass destination_country in as nil

@@ -3,7 +3,10 @@
 class OfferBlueprint < Blueprinter::Base
   identifier :id
   fields :amount, :expires_at, :counter
-  association :buyer, blueprint: AccountBlueprint
-  association :seller, blueprint: AccountBlueprint
-  association :listing, blueprint: ListingBlueprint
+
+  view :detailed do
+    association :buyer, blueprint: AccountBlueprint
+    association :seller, blueprint: AccountBlueprint
+    association :listing, blueprint: ListingBlueprint
+  end
 end

@@ -124,7 +124,7 @@ class CartsController < ApplicationController
   end
 
   def stripe_subtotal(listing)
-    ((listing[:price].to_f + listing[:shipping].to_f) * 100).to_i
+    (((listing.dig(:accepted_offer, :amount) || listing[:price]).to_f + listing[:shipping].to_f) * 100).to_i
   end
 
   def stripe_images(listing)

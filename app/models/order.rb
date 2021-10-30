@@ -50,7 +50,7 @@ class Order < ApplicationRecord
   scope :not_reserved, -> { where('aasm_state != ?', :reserved) }
 
   def reserve!
-    listings.each(&:reserve!)
+    listings.each { |listing| listing.reserve! if listing.active? }
   end
 
   def pay!(total, currency, payment_intent)

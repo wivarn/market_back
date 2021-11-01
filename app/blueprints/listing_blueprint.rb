@@ -2,7 +2,7 @@
 
 class ListingBlueprint < Blueprinter::Base
   identifier :id
-  fields :photos, :title, :grading_company, :condition, :currency, :price, :category
+  fields :photos, :title, :grading_company, :condition, :currency, :price, :category, :accept_offers
   field :aasm_state do |listing|
     listing.aasm_state == 'reserved' && listing.active? ? 'active' : listing.aasm_state
   end

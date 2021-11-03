@@ -16,6 +16,7 @@ class Offer < ApplicationRecord
     greater_than_or_equal_to: 1,
     less_than: 100_000_000
   }
+  validate :buyer_cannot_be_seller
 
   aasm timestamps: true, no_direct_assignment: true do
     state :active, initial: true
@@ -59,6 +60,10 @@ class Offer < ApplicationRecord
 
   def seller_reject_or_cancel!(account_id)
     counter ? cancel!(account_id) : reject!(account_id)
+  end
+
+  def buyer_cannot_be_seller
+    errors.add(:buyer, "buyer can't be the same as seller") if buyer_id == seller.id
   end
 
   private

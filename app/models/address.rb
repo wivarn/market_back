@@ -6,6 +6,8 @@ class Address < ApplicationRecord
 
   PROVINCE_CODES = %w[AB BC MB NB NL NT NS NU ON PE QC SK YT].freeze
 
+  after_update :reset_offers, if: -> { addressable_type == 'Account' }
+
   belongs_to :addressable, polymorphic: true
 
   validates :street1, :city, :state, :zip, :country, presence: true

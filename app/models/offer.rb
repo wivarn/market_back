@@ -10,7 +10,7 @@ class Offer < ApplicationRecord
   delegate :seller, to: :listing
   belongs_to :buyer, class_name: 'Account'
 
-  validates :listing, :buyer, :aasm_state, :amount, :counter, presence: true
+  validates :listing, :buyer, :aasm_state, :amount, presence: true
   validates :amount, format: { with: /\A\d{1,8}(\.\d{0,2})?\z/ }
   validates :amount, numericality: {
     greater_than_or_equal_to: 1,

@@ -17,4 +17,13 @@ class Address < ApplicationRecord
   validates :zip, format: { with: /\A\d{5}\z/, message: 'invalid zip code' }, if: -> { country == 'USA' }
   validates :zip, format: { with: /\A[A-Z]\d[A-Z]\d[A-Z]\d\z/,
                             message: 'invalid postal code' }, if: -> { country == 'CAN' }
+
+  private
+
+  def reset_offers
+    raise 'Not an account address' unless addressable_type == 'Account'
+
+    addressable.sales_offers.active.each { |offer| offer.seller_reject_or_cancel!(addressable_id) }
+    addressable.purchase_offers.active.each { |offer| offer.buyer_reject_or_cancel!(addressable_id) }
+  end
 end

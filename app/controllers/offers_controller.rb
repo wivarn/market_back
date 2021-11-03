@@ -18,9 +18,8 @@ class OffersController < ApplicationController
     listing = Listing.active.ships_to(current_account.address.country).find(params[:listing_id])
     offer = listing.offers.new(buyer: current_account, counter: false, amount: params[:amount])
     if offer.save
-      active_offers = listing.offers.active.where('offers.buyer_id = ? AND offers.id != ?', current_account.id,
-                                                  offer.id)
-      active_offers.each { |o| o.cancel!(current_account.id) }
+      other_active_offers = Offer.active.other_offers(offer)
+      other_active_offers.each { |o| o.buyer_reject_or_cancel!(current_account.id) }
       render json: OfferBlueprint.render(offer, view: :detailed), status: :created
     else
       render json: offer.errors, status: :unprocessable_entity
@@ -32,9 +31,8 @@ class OffersController < ApplicationController
     listing = offer.listing
     counter_offer = listing.offers.new(buyer: offer.buyer, counter: true, amount: params[:amount])
     if counter_offer.save
-      active_offers = listing.offers.active.where('offers.buyer_id = ? AND offers.id != ?', offer.buyer_id,
-                                                  counter_offer.id)
-      active_offers.each { |o| o.reject!(current_account.id) }
+      other_active_offers = Offer.active.other_offers(offer)
+      other_active_offers.each { |o| o.seller_reject_or_cancel!(current_account.id) }
       render json: OfferBlueprint.render(counter_offer, view: :detailed), status: :created
     else
       render json: counter_offer.errors, status: :unprocessable_entity

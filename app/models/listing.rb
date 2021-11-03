@@ -23,6 +23,8 @@ class Listing < ApplicationRecord
     tsearch: { dictionary: 'english' }
   }, order_within_rank: 'listings.updated_at DESC'
 
+  before_update :reset_offers
+
   # TODO: add :accept_offers back in after setting default value for existing listings
   validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }
@@ -188,5 +190,11 @@ class Listing < ApplicationRecord
                       international_shipping
                     end
     @combined ? [combined_shipping, dest_shipping].compact.min : dest_shipping
+  end
+
+  private
+
+  def reset_offers
+    offers.active.each { |offer| offer.seller_reject_or_cancel!(account_id) }
   end
 end

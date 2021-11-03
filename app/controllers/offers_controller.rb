@@ -66,14 +66,14 @@ class OffersController < ApplicationController
 
   def set_listing_and_enforce_buyer
     @listing = Listing.active.ships_to(current_account.address.country).find(params[:listing_id])
-    return if @listing.account != current_account
+    return if @listing.account_id != current_account.id
 
     render json: { error: 'You cannot make an offer on your own listing' }, status: :forbidden
   end
 
   def set_offer_and_enforce_seller
     @offer = current_account.sales_offers.active.find(params[:id])
-    return if @offer.listing.account == current_account
+    return if @offer.listing.account_id == current_account.id
 
     render json: { error: 'You cannot make an offer on your own listing' }, status: :forbidden
   end

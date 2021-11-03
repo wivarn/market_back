@@ -6,7 +6,7 @@ class Address < ApplicationRecord
 
   PROVINCE_CODES = %w[AB BC MB NB NL NT NS NU ON PE QC SK YT].freeze
 
-  after_update :reset_offers, if: -> { addressable_type == 'Account' }
+  after_update :reset_offers, :empty_carts, if: -> { addressable_type == 'Account' }
 
   belongs_to :addressable, polymorphic: true
 
@@ -21,6 +21,12 @@ class Address < ApplicationRecord
                             message: 'invalid postal code' }, if: -> { country == 'CAN' }
 
   private
+
+  def empty_carts
+    raise 'Not an account address' unless addressable_type == 'Account'
+
+    addressable.carts.destroy_all
+  end
 
   def reset_offers
     raise 'Not an account address' unless addressable_type == 'Account'

@@ -5,6 +5,7 @@ class OffersController < ApplicationController
   before_action :set_offer, only: %i[accept reject cancel]
   before_action :set_listing_and_enforce_buyer, only: %i[create]
   before_action :set_offer_and_enforce_seller, only: %i[create_counter]
+  before_action :enforce_accept_offers!, only: %i[create create_counter]
 
   def purchase_offers
     offers = current_account.purchase_offers.active.includes(:buyer, listing: :account)
@@ -73,8 +74,15 @@ class OffersController < ApplicationController
 
   def set_offer_and_enforce_seller
     @offer = current_account.sales_offers.active.find(params[:id])
-    return if @offer.listing.account_id == current_account.id
+    @listing = @offer.listing
+    return if @listing.account_id == current_account.id
 
     render json: { error: 'You cannot make an offer on your own listing' }, status: :forbidden
+  end
+
+  def enforce_accept_offers!
+    return if @listing.accept_offers
+
+    render json: { error: 'This listing does not accept offers' }, status: :forbidden
   end
 end

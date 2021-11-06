@@ -49,6 +49,7 @@ class ProfilesController < ApplicationController
       stripe_linked: stripe_linked?,
       listing_template: ListingTemplate.find_or_create_by(account: current_account),
       cart_items: CartItemBlueprint.render_as_hash(current_account.cart_items),
+      offers: offers,
       has_pending_shipment: current_account.sales.pending_shipment.any?,
       selling_enabled: current_account.seller?
     }
@@ -69,6 +70,16 @@ class ProfilesController < ApplicationController
     end
   rescue Stripe::PermissionError
     false
+  end
+
+  def offers
+    purchase_offers = current_account.purchase_offers.active.includes(:buyer, listing: :account).order(:created_at)
+    sale_offers = current_account.sales_offers.active.includes(:buyer, listing: :account).order(:created_at)
+
+    {
+      purchase_offers: OfferBlueprint.render_as_hash(purchase_offers, view: :detailed),
+      sale_offers: OfferBlueprint.render_as_hash(sale_offers, view: :detailed)
+    }
   end
 
   def ensure_identifier_present!

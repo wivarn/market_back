@@ -7,6 +7,16 @@ class OffersController < ApplicationController
   before_action :set_offer_and_enforce_seller, only: %i[create_counter]
   before_action :enforce_accept_offers!, only: %i[create create_counter]
 
+  def index
+    purchase_offers = current_account.purchase_offers.active.includes(:buyer, listing: :account).order(:created_at)
+    sale_offers = current_account.sales_offers.active.includes(:buyer, listing: :account).order(:created_at)
+
+    render json: {
+      purchase_offers: OfferBlueprint.render_as_json(purchase_offers, view: :detailed),
+      sale_offers: OfferBlueprint.render_as_json(sale_offers, view: :detailed)
+    }
+  end
+
   def purchase_offers
     offers = current_account.purchase_offers.active.includes(:buyer, listing: :account)
     render json: OfferBlueprint.render(offers, view: :detailed)

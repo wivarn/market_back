@@ -17,16 +17,6 @@ class OffersController < ApplicationController
     }
   end
 
-  def purchase_offers
-    offers = current_account.purchase_offers.active.includes(:buyer, listing: :account)
-    render json: OfferBlueprint.render(offers, view: :detailed)
-  end
-
-  def sale_offers
-    offers = current_account.sales_offers.active.includes(:buyer, listing: :account)
-    render json: OfferBlueprint.render(offers, view: :detailed)
-  end
-
   def create
     offer = @listing.offers.new(buyer: current_account, counter: false, amount: params[:amount])
     if offer.save

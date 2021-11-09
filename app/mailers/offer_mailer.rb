@@ -66,4 +66,28 @@ class OfferMailer < ApplicationMailer
 
     mail to: recipient, subject: 'A counter offer has been cancelled'
   end
+
+  def offer_accepted_reminder(offer)
+    recipient = offer.buyer.email
+    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offers.listing.title
+
+    mail to: recipient, subject: '[REMINDER] You have an accepted offer waiting for payment'
+  end
+
+  def offer_reminder(offer)
+    recipient = offer.seller.email
+    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offers.listing.title
+
+    mail to: recipient, subject: '[REMINDER] You have an offer waiting for response'
+  end
+
+  def counter_offer_reminder(offer)
+    recipient = offer.buyer.email
+    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offers.listing.title
+
+    mail to: recipient, subject: '[REMINDER] You have a counter offer waiting for response'
+  end
 end

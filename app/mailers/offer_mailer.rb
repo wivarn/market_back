@@ -6,6 +6,7 @@ class OfferMailer < ApplicationMailer
   def offer_received(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offers.listing.title
 
     mail to: recipient, subject: 'You have received an offer'
   end

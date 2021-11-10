@@ -34,7 +34,7 @@ class OffersController < ApplicationController
     if counter_offer.save
       other_active_offers = Offer.active.other_offers(counter_offer)
       other_active_offers.each { |o| o.seller_reject_or_cancel!(current_account.id) }
-      OfferMailer.counter_offer_received(offer).deliver
+      OfferMailer.counter_offer_received(counter_offer).deliver
       render json: OfferBlueprint.render(counter_offer, view: :detailed), status: :created
     else
       render json: counter_offer.errors, status: :unprocessable_entity

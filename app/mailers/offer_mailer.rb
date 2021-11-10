@@ -6,7 +6,7 @@ class OfferMailer < ApplicationMailer
   def offer_received(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'You have received an offer'
   end
@@ -14,7 +14,7 @@ class OfferMailer < ApplicationMailer
   def offer_accepted(offer)
     recipient = offer.buyer.email
     @cart_link = "#{ENV['FRONT_END_BASE_URL']}/cart"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'Your offer has been accepted'
   end
@@ -22,7 +22,7 @@ class OfferMailer < ApplicationMailer
   def offer_rejected(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'Your offer has been rejected'
   end
@@ -30,7 +30,7 @@ class OfferMailer < ApplicationMailer
   def offer_cancelled(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'An offer has been cancelled'
   end
@@ -38,7 +38,7 @@ class OfferMailer < ApplicationMailer
   def counter_offer_received(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'You have received a counter offer'
   end
@@ -46,7 +46,7 @@ class OfferMailer < ApplicationMailer
   def counter_offer_accepted(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'Your counter offer has been accepted'
   end
@@ -54,7 +54,7 @@ class OfferMailer < ApplicationMailer
   def counter_offer_rejected(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'Your counter offer has been rejected'
   end
@@ -62,7 +62,7 @@ class OfferMailer < ApplicationMailer
   def counter_offer_cancelled(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: 'A counter offer has been cancelled'
   end
@@ -70,7 +70,7 @@ class OfferMailer < ApplicationMailer
   def offer_accepted_reminder(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: '[REMINDER] You have an accepted offer waiting for payment'
   end
@@ -78,7 +78,7 @@ class OfferMailer < ApplicationMailer
   def offer_reminder(offer)
     recipient = offer.seller.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: '[REMINDER] You have an offer waiting for response'
   end
@@ -86,7 +86,7 @@ class OfferMailer < ApplicationMailer
   def counter_offer_reminder(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
-    @listing_title = offers.listing.title
+    @listing_title = offer.listing.title
 
     mail to: recipient, subject: '[REMINDER] You have a counter offer waiting for response'
   end

@@ -22,6 +22,7 @@ class OffersController < ApplicationController
     if offer.save
       other_active_offers = Offer.active.other_offers(offer)
       other_active_offers.each { |o| o.buyer_reject_or_cancel!(current_account.id) }
+      OfferMailer.offer_received(offer).deliver
       render json: OfferBlueprint.render(offer, view: :detailed), status: :created
     else
       render json: offer.errors, status: :unprocessable_entity
@@ -33,6 +34,7 @@ class OffersController < ApplicationController
     if counter_offer.save
       other_active_offers = Offer.active.other_offers(counter_offer)
       other_active_offers.each { |o| o.seller_reject_or_cancel!(current_account.id) }
+      OfferMailer.counter_offer_received(offer).deliver
       render json: OfferBlueprint.render(counter_offer, view: :detailed), status: :created
     else
       render json: counter_offer.errors, status: :unprocessable_entity
@@ -46,16 +48,19 @@ class OffersController < ApplicationController
     cart_item = cart.cart_items.new(listing: listing)
     cart_item.save
     listing.offer!
+    @offer.send_accepted_email
     render json: OfferBlueprint.render(@offer, view: :detailed), status: :accepted
   end
 
   def reject
     @offer.reject!(current_account.id)
+    @offer.send_rejected_email
     render json: OfferBlueprint.render(@offer, view: :detailed), status: :accepted
   end
 
   def cancel
     @offer.cancel!(current_account.id)
+    @offer.send_cancelled_email
     render json: OfferBlueprint.render(@offer, view: :detailed), status: :accepted
   end
 

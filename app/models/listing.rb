@@ -195,6 +195,13 @@ class Listing < ApplicationRecord
   private
 
   def reset_offers
-    offers.active.each { |offer| offer.seller_reject_or_cancel!(account_id) }
+    offers.active.each do |offer|
+      offer.seller_reject_or_cancel!(account_id)
+      if @offer.counter
+        OfferMailer.counter_offer_cancelled(offer).deliver
+      else
+        OfferMailer.offer_cancelled(offer).deliver
+      end
+    end
   end
 end

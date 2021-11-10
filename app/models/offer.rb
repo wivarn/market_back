@@ -66,6 +66,18 @@ class Offer < ApplicationRecord
     errors.add(:buyer, "buyer can't be the same as seller") if buyer_id == seller.id
   end
 
+  def send_accepted_email
+    counter ? OfferMailer.counter_offer_accepted(self).deliver : OfferMailer.offer_accepted(self).deliver
+  end
+
+  def send_cancelled_email
+    counter ? OfferMailer.counter_offer_cancelled(self).deliver : OfferMailer.offer_cancelled(self).deliver
+  end
+
+  def send_rejected_email
+    counter ? OfferMailer.counter_offer_rejected(self).deliver : OfferMailer.offer_rejected(self).deliver
+  end
+
   private
 
   def can_accept?(account_id)

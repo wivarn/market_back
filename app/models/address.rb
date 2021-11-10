@@ -31,7 +31,13 @@ class Address < ApplicationRecord
   def reset_offers
     raise 'Not an account address' unless addressable_type == 'Account'
 
-    addressable.sales_offers.active.each { |offer| offer.seller_reject_or_cancel!(addressable_id) }
-    addressable.purchase_offers.active.each { |offer| offer.buyer_reject_or_cancel!(addressable_id) }
+    addressable.sales_offers.active.each do |offer|
+      offer.seller_reject_or_cancel!(addressable_id)
+      offer.send_cancelled_email
+    end
+    addressable.purchase_offers.active.each do |offer|
+      offer.buyer_reject_or_cancel!(addressable_id)
+      offer.send_cancelled_email
+    end
   end
 end

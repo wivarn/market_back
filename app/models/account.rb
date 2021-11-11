@@ -34,7 +34,6 @@ class Account < ApplicationRecord
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
   has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
-  has_many :recieved_messages, class_name: 'Message', foreign_key: :recipient_id
   has_many :sales_offers, through: :listings, source: :offers
   has_many :purchase_offers, class_name: 'Offer', foreign_key: :buyer_id
   has_one :listing_template

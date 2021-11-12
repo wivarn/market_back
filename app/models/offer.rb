@@ -3,8 +3,7 @@
 class Offer < ApplicationRecord
   include AASM
 
-  # EXPIRY_TIME = 48.hours
-  EXPIRY_TIME = 1.minute
+  EXPIRY_TIME = 48.hours
 
   belongs_to :listing
   # belongs to seller through listing

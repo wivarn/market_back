@@ -5,12 +5,15 @@ class OfferJob < ApplicationJob
   def expire
     Offer.expired_active.includes(:listing).each do |offer|
       offer.expire!
-      # Mail
+      OfferMailer.offer_expired_buyer(offer).deliver
+      OfferMailer.offer_expired_seller(offer).deliver
     end
     Offer.expired_accepted.includes(:listing).each do |offer|
       offer.expire!
       offer.listing.cancel_offer!
-      # Mail
+      OfferMailer.offer_expired_buyer(offer).deliver
+      OfferMailer.offer_expired_seller(offer).deliver
+      OfferMailer.offer_expired_internal(offer).deliver
     end
   end
 end

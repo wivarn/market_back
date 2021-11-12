@@ -3,8 +3,13 @@
 class OfferJob < ApplicationJob
   rate '5 minutes'
   def expire
-    Offer.to_expire.includes(:listing).each do |offer|
+    Offer.expired_active.includes(:listing).each do |offer|
       offer.expire!
+      # Mail
+    end
+    Offer.expired_accepted.includes(:listing).each do |offer|
+      offer.expire!
+      offer.listing.cancel_offer!
       # Mail
     end
   end

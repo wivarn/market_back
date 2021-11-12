@@ -44,12 +44,14 @@ class Offer < ApplicationRecord
     end
   end
 
-  scope :to_expire, lambda {
-                      deadline = DateTime.now - EXPIRY_TIME
-                      where('(offers.aasm_state = ? AND offers.created_at < ?)
-                            OR (offers.aasm_state = ? AND offers.accepted_at < ?)',
-                            :active, deadline, :accepted, deadline)
-                    }
+  scope :expired_active, lambda {
+                           where('offers.aasm_state = ? AND offers.created_at < ?',
+                                 :active, DateTime.now - EXPIRY_TIME)
+                         }
+  scope :expired_accepted, lambda {
+                             where('offers.aasm_state = ? AND offers.accepted_at < ?',
+                                   :accepted, DateTime.now - EXPIRY_TIME)
+                           }
   scope :other_offers, lambda { |offer|
                          where('offers.listing_id = ? AND offers.buyer_id = ? AND offers.id != ?',
                                offer.listing_id, offer.buyer_id, offer.id)

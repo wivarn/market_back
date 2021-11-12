@@ -93,7 +93,7 @@ class Listing < ApplicationRecord
 
   belongs_to :account
   has_many :offers, dependent: :destroy
-  has_one :accepted_offer, -> { accepted }, class_name: 'Offer'
+  has_one :accepted_offer, -> { accepted_or_paid }, class_name: 'Offer'
 
   alias_attribute :seller, :account
 

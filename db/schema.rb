@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_29_094141) do
+ActiveRecord::Schema.define(version: 2021_11_12_063424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -214,6 +214,7 @@ ActiveRecord::Schema.define(version: 2021_10_29_094141) do
     t.decimal "amount", precision: 12, scale: 4, default: "0.0"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "expired_at"
     t.index ["aasm_state"], name: "index_offers_on_aasm_state"
     t.index ["buyer_id"], name: "index_offers_on_buyer_id"
     t.index ["listing_id"], name: "index_offers_on_listing_id"

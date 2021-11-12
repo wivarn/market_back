@@ -215,6 +215,7 @@ ActiveRecord::Schema.define(version: 2021_11_12_063424) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "expired_at"
+    t.datetime "paid_at"
     t.index ["aasm_state"], name: "index_offers_on_aasm_state"
     t.index ["buyer_id"], name: "index_offers_on_buyer_id"
     t.index ["listing_id"], name: "index_offers_on_listing_id"

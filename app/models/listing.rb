@@ -139,6 +139,9 @@ class Listing < ApplicationRecord
 
     event :paid do
       transitions to: :sold, guard: :reserved_or_offered?
+      after_commit do
+        accepted_offer&.pay!
+      end
     end
   end
 

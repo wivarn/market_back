@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OfferJob < ApplicationJob
-  rate '5 minutes'
+  rate '10 minutes'
   def expire
     Offer.expired_active.includes(:listing).each do |offer|
       offer.expire!

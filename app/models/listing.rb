@@ -7,7 +7,6 @@ class Listing < ApplicationRecord
   attr_writer :combined, :destination_country
 
   RESERVE_TIME = 1.hour
-  OFFER_TIME = 24.hours
   CATEGORIES = %w[SPORTS_CARDS TRADING_CARDS COLLECTIBLES].freeze
   SPORTS_CARDS = %w[BASEBALL BASKETBALL FOOTBALL HOCKEY OTHER].freeze
   TRADING_CARDS = %w[MAGIC POKEMON OTHER].freeze
@@ -126,7 +125,7 @@ class Listing < ApplicationRecord
     end
 
     event :offer do
-      transitions to: :offered, guard: :active?
+      transitions from: :active, to: :offered, guard: :active?
     end
 
     event :cancel_reservation do
@@ -147,20 +146,15 @@ class Listing < ApplicationRecord
 
   scope :active, lambda {
                    where('listings.aasm_state = ?
-                    OR (listings.aasm_state = ? AND listings.reserved_at < ?)
-                    OR (listings.aasm_state = ? AND listings.offered_at < ?)',
+                    OR (listings.aasm_state = ? AND listings.reserved_at < ?)',
                          :active,
-                         :reserved, Time.now.utc - RESERVE_TIME,
-                         :offered, Time.now.utc - OFFER_TIME)
+                         :reserved, Time.now.utc - RESERVE_TIME)
                  }
 
   scope :reserved, lambda {
                      where('listings.aasm_state = ? AND listings.reserved_at >= ?',
                            :reserved, DateTime.now - RESERVE_TIME)
                    }
-  scope :offered, lambda {
-                    where('listings.aasm_state = ? AND listings.offered_at >= ?', :offered, DateTime.now - OFFER_TIME)
-                  }
   scope :publically_viewable, -> { where('listings.aasm_state NOT IN (?)', %w[draft removed]) }
 
   def active?
@@ -173,10 +167,6 @@ class Listing < ApplicationRecord
 
   def editable?
     draft? || active? || removed?
-  end
-
-  def offered?
-    aasm_state == 'offered' && offered_at >= Time.now.utc - OFFER_TIME
   end
 
   def reserved_or_offered?
@@ -200,11 +190,7 @@ class Listing < ApplicationRecord
   def reset_offers
     offers.active.each do |offer|
       offer.seller_reject_or_cancel!(account_id)
-      if @offer.counter
-        OfferMailer.counter_offer_cancelled(offer).deliver
-      else
-        OfferMailer.offer_cancelled(offer).deliver
-      end
+      offer.send_cancelled_email
     end
   end
 end

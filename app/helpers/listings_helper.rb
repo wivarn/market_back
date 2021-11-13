@@ -14,7 +14,7 @@ module ListingsHelper
 
   def filter_and_sort(listings, params)
     listings = filter(listings, params)
-    listings = sort_listings(listings, params[:sort])
+    listings = sort_listings(listings, params[:sort], params[:destination_country])
 
     listings.page(params[:page].to_i)
   end

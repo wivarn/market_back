@@ -54,7 +54,7 @@ class OfferMailer < ApplicationMailer
   def offer_expired_internal(offer)
     @offer_id = offer.offer_id
 
-    mail to: 'help@skwirl.io', subject: 'An offer has expired'
+    mail to: ENV['ALERTS_EMAIL'], subject: 'An offer has expired'
   end
 
   def counter_offer_received(offer)

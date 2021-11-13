@@ -140,6 +140,7 @@ class Listing < ApplicationRecord
       transitions to: :sold, guard: :reserved_or_offered?
       after_commit do
         accepted_offer&.pay!
+        offers.active.each { |offer| offer.seller_reject_or_cancel!(account_id) }
       end
     end
   end

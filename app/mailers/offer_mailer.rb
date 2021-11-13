@@ -35,6 +35,28 @@ class OfferMailer < ApplicationMailer
     mail to: recipient, subject: 'An offer has been cancelled'
   end
 
+  def offer_expired_buyer(offer)
+    recipient = offer.buyer.email
+    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offer.listing.title
+
+    mail to: recipient, subject: 'An offer has expired'
+  end
+
+  def offer_expired_seller(offer)
+    recipient = offer.seller.email
+    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @listing_title = offer.listing.title
+
+    mail to: recipient, subject: 'An offer has expired'
+  end
+
+  def offer_expired_internal(offer)
+    @offer_id = offer.offer_id
+
+    mail to: 'help@skwirl.io', subject: 'An offer has expired'
+  end
+
   def counter_offer_received(offer)
     recipient = offer.buyer.email
     @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"

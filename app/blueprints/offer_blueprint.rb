@@ -5,6 +5,7 @@ class OfferBlueprint < Blueprinter::Base
   fields :amount, :expires_at, :counter
 
   view :detailed do
+    field :aasm_state
     association :buyer, blueprint: AccountBlueprint
     association :seller, blueprint: AccountBlueprint
     association :listing, blueprint: ListingBlueprint

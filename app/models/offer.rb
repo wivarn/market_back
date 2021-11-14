@@ -60,7 +60,7 @@ class Offer < ApplicationRecord
                          where('offers.listing_id = ? AND offers.buyer_id = ? AND offers.id != ?',
                                offer.listing_id, offer.buyer_id, offer.id)
                        }
-  scope :accepted_or_paid, -> { where(aasm_state: %i[accepted paid]) }
+  scope :active_or_accepted, -> { where(aasm_state: %i[active accepted]) }
   scope :one_day_reminder, lambda {
     where("(offers.aasm_state = 'active' AND offers.created_at < :time) OR " \
           "(offers.aasm_state = 'accepted' AND offers.accepted_at < :time)",
@@ -77,7 +77,7 @@ class Offer < ApplicationRecord
   before_create :set_last_reminder_at
 
   def expires_at
-    created_at + EXPIRY_TIME
+    (accepted? ? accepted_at : created_at) + EXPIRY_TIME
   end
 
   def buyer_reject_or_cancel!(account_id)

@@ -74,8 +74,6 @@ class Offer < ApplicationRecord
       .where('offers.last_reminder_at < ?', 2.hours.ago)
   }
 
-  before_create :set_last_reminder_at
-
   def expires_at
     (accepted? ? accepted_at : created_at) + EXPIRY_TIME
   end
@@ -120,10 +118,6 @@ class Offer < ApplicationRecord
 
   def can_cancel?(account_id)
     (counter && account_id == seller.id) || (!counter && account_id == buyer_id)
-  end
-
-  def set_last_reminder_at
-    self.last_reminder_at = DateTime.now
   end
 
   def send_active_reminder_email

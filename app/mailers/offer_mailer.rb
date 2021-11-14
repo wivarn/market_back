@@ -52,7 +52,7 @@ class OfferMailer < ApplicationMailer
   end
 
   def offer_expired_internal(offer)
-    @offer_id = offer.offer_id
+    @offer_id = offer.id
 
     mail to: ENV['ALERTS_EMAIL'], subject: 'An offer has expired'
   end
@@ -91,7 +91,7 @@ class OfferMailer < ApplicationMailer
 
   def offer_accepted_reminder(offer)
     recipient = offer.buyer.email
-    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @cart_link = "#{ENV['FRONT_END_BASE_URL']}/cart"
     @listing_title = offer.listing.title
 
     mail to: recipient, subject: '[REMINDER] You have an accepted offer waiting for payment'

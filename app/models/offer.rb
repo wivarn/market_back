@@ -3,7 +3,9 @@
 class Offer < ApplicationRecord
   include AASM
 
-  EXPIRY_TIME = 48.hours
+  EXPIRY_TIME = 2.days
+  ONE_DAY_BEFORE_EXPIRY = EXPIRY_TIME - 1.day
+  TWO_HOURS_BEFORE_EXPIRY = EXPIRY_TIME - 2.hours
 
   belongs_to :listing
   # belongs to seller through listing
@@ -24,6 +26,9 @@ class Offer < ApplicationRecord
 
     event :accept do
       transitions from: :active, to: :accepted, guards: %i[can_accept?]
+      before do
+        self.last_reminder_at = DateTime.now
+      end
     end
 
     event :pay do
@@ -45,17 +50,31 @@ class Offer < ApplicationRecord
 
   scope :expired_active, lambda {
                            where('offers.aasm_state = ? AND offers.created_at < ?',
-                                 :active, DateTime.now - EXPIRY_TIME)
+                                 :active, EXPIRY_TIME.ago)
                          }
   scope :expired_accepted, lambda {
                              where('offers.aasm_state = ? AND offers.accepted_at < ?',
-                                   :accepted, DateTime.now - EXPIRY_TIME)
+                                   :accepted, EXPIRY_TIME.ago)
                            }
   scope :other_offers, lambda { |offer|
                          where('offers.listing_id = ? AND offers.buyer_id = ? AND offers.id != ?',
                                offer.listing_id, offer.buyer_id, offer.id)
                        }
   scope :active_or_accepted, -> { where(aasm_state: %i[active accepted]) }
+  scope :one_day_reminder, lambda {
+    where("(offers.aasm_state = 'active' AND offers.created_at < :time) OR " \
+          "(offers.aasm_state = 'accepted' AND offers.accepted_at < :time)",
+          time: ONE_DAY_BEFORE_EXPIRY.ago)
+      .where('offers.last_reminder_at < ?', 1.day.ago)
+  }
+  scope :two_hour_reminder, lambda {
+    where("(offers.aasm_state = 'active' AND offers.created_at < :time) OR " \
+          "(offers.aasm_state = 'accepted' AND offers.accepted_at < :time)",
+          time: TWO_HOURS_BEFORE_EXPIRY.ago)
+      .where('offers.last_reminder_at < ?', 2.hours.ago)
+  }
+
+  before_create :set_last_reminder_at
 
   def expires_at
     (accepted? ? accepted_at : created_at) + EXPIRY_TIME
@@ -85,6 +104,14 @@ class Offer < ApplicationRecord
     counter ? OfferMailer.counter_offer_rejected(self).deliver : OfferMailer.offer_rejected(self).deliver
   end
 
+  def send_reminder_email
+    if active?
+      counter ? OfferMailer.counter_offer_reminder(self).deliver : OfferMailer.offer_reminder(self).deliver
+    elsif accepted?
+      OfferMailer.offer_accepted_reminder(self).deliver
+    end
+  end
+
   private
 
   def can_accept?(account_id)
@@ -93,5 +120,13 @@ class Offer < ApplicationRecord
 
   def can_cancel?(account_id)
     (counter && account_id == seller.id) || (!counter && account_id == buyer_id)
+  end
+
+  def set_last_reminder_at
+    self.last_reminder_at = DateTime.now
+  end
+
+  def send_active_reminder_email
+    counter ? OfferMailer.counter_offer_reminder(self).deliver : OfferMailer.offer_reminder(self).deliver
   end
 end

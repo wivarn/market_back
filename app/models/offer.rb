@@ -55,7 +55,6 @@ class Offer < ApplicationRecord
                          where('offers.listing_id = ? AND offers.buyer_id = ? AND offers.id != ?',
                                offer.listing_id, offer.buyer_id, offer.id)
                        }
-  scope :accepted_or_paid, -> { where(aasm_state: %i[accepted paid]) }
 
   def expires_at
     created_at + EXPIRY_TIME

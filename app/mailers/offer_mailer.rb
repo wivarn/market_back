@@ -91,7 +91,7 @@ class OfferMailer < ApplicationMailer
 
   def offer_accepted_reminder(offer)
     recipient = offer.buyer.email
-    @offers_link = "#{ENV['FRONT_END_BASE_URL']}/offers"
+    @cart_link = "#{ENV['FRONT_END_BASE_URL']}/cart"
     @listing_title = offer.listing.title
 
     mail to: recipient, subject: '[REMINDER] You have an accepted offer waiting for payment'

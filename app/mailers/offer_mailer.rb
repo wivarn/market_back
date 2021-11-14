@@ -52,7 +52,7 @@ class OfferMailer < ApplicationMailer
   end
 
   def offer_expired_internal(offer)
-    @offer_id = offer.offer_id
+    @offer_id = offer.id
 
     mail to: ENV['ALERTS_EMAIL'], subject: 'An offer has expired'
   end

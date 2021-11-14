@@ -6,6 +6,7 @@ namespace :local_scheduler do
     # Local runs more often than CloudWatch
     scheduler.every '2m', first: :now do
       OfferJob.perform_now(:expire)
+      OfferJob.perform_now(:reminder)
       OrderJob.perform_now(:mark_received)
     end
 

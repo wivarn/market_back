@@ -58,7 +58,7 @@ class Offer < ApplicationRecord
   scope :active_or_accepted, -> { where(aasm_state: %i[active accepted]) }
 
   def expires_at
-    created_at + EXPIRY_TIME
+    (accepted? ? accepted_at : created_at) + EXPIRY_TIME
   end
 
   def buyer_reject_or_cancel!(account_id)

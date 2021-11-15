@@ -73,8 +73,9 @@ class ProfilesController < ApplicationController
   end
 
   def offers
-    purchase_offers = current_account.purchase_offers.active.includes(:buyer, listing: :account).order(:created_at)
-    sale_offers = current_account.sales_offers.active.includes(:buyer, listing: :account).order(:created_at)
+    purchase_offers = current_account.purchase_offers.active_or_accepted.includes(:buyer,
+                                                                                  listing: :account).order(:created_at)
+    sale_offers = current_account.sales_offers.active_or_accepted.includes(:buyer, listing: :account).order(:created_at)
 
     {
       purchase_offers: OfferBlueprint.render_as_hash(purchase_offers, view: :detailed),

@@ -39,14 +39,15 @@ class OffersController < ApplicationController
   end
 
   def accept
-    @offer.accept!(current_account.id)
-    listing = @offer.listing
-    cart = Cart.where(buyer: @offer.buyer_id, seller_id: listing.account_id).first_or_create
-    cart_item = cart.cart_items.new(listing: listing)
-    cart_item.save
-    listing.offer!
-    @offer.send_accepted_email
-    render json: OfferBlueprint.render(@offer, view: :detailed), status: :accepted
+    ActiveRecord::Base.transaction do
+      @offer.accept!(current_account.id)
+      listing = @offer.listing
+      cart = Cart.where(buyer: @offer.buyer_id, seller_id: listing.account_id).first_or_create!
+      cart.cart_items.where(listing: listing).first_or_create!
+      listing.offer!
+      @offer.send_accepted_email
+      render json: OfferBlueprint.render(@offer, view: :detailed), status: :accepted
+    end
   end
 
   def reject

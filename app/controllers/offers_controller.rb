@@ -20,9 +20,7 @@ class OffersController < ApplicationController
 
   def create
     offer = @listing.offers.new(buyer: current_account, counter: false, amount: params[:amount])
-    if offer.save
-      other_active_offers = Offer.active.other_offers(offer)
-      other_active_offers.each { |o| o.buyer_reject_or_cancel!(current_account.id) }
+    if offer.buyer_save_new_offer(current_account.id)
       OfferMailer.offer_received(offer).deliver
       render json: OfferBlueprint.render(offer, view: :detailed), status: :created
     else
@@ -32,9 +30,7 @@ class OffersController < ApplicationController
 
   def create_counter
     counter_offer = Offer.new(listing: @offer.listing, buyer: @offer.buyer, counter: true, amount: params[:amount])
-    if counter_offer.save
-      other_active_offers = Offer.active.other_offers(counter_offer)
-      other_active_offers.each { |o| o.seller_reject_or_cancel!(current_account.id) }
+    if counter_offer.seller_save_new_offer(current_account.id)
       OfferMailer.counter_offer_received(counter_offer).deliver
       render json: OfferBlueprint.render(counter_offer, view: :detailed), status: :created
     else

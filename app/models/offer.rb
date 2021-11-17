@@ -86,6 +86,20 @@ class Offer < ApplicationRecord
     counter ? cancel!(account_id) : reject!(account_id)
   end
 
+  def buyer_save_new_offer(account_id)
+    ActiveRecord::Base.transaction do
+      buyer_reject_or_cancel_other_offers!(account_id) if save
+      valid?
+    end
+  end
+
+  def seller_save_new_offer(account_id)
+    ActiveRecord::Base.transaction do
+      seller_reject_or_cancel_other_offers!(account_id) if save
+      valid?
+    end
+  end
+
   def buyer_cannot_be_seller
     errors.add(:buyer, "buyer can't be the same as seller") if buyer_id == listing.account_id
   end
@@ -122,5 +136,15 @@ class Offer < ApplicationRecord
 
   def send_active_reminder_email
     counter ? OfferMailer.counter_offer_reminder(self).deliver : OfferMailer.offer_reminder(self).deliver
+  end
+
+  def buyer_reject_or_cancel_other_offers!(account_id)
+    other_active_offers = Offer.active.other_offers(self)
+    other_active_offers.each { |o| o.buyer_reject_or_cancel!(account_id) }
+  end
+
+  def seller_reject_or_cancel_other_offers!(account_id)
+    other_active_offers = Offer.active.other_offers(self)
+    other_active_offers.each { |o| o.seller_reject_or_cancel!(account_id) }
   end
 end

@@ -6,6 +6,8 @@ class Address < ApplicationRecord
 
   PROVINCE_CODES = %w[AB BC MB NB NL NT NS NU ON PE QC SK YT].freeze
 
+  after_update :reset_offers, :empty_carts, if: -> { addressable_type == 'Account' }
+
   belongs_to :addressable, polymorphic: true
 
   validates :street1, :city, :state, :zip, :country, presence: true
@@ -17,4 +19,25 @@ class Address < ApplicationRecord
   validates :zip, format: { with: /\A\d{5}\z/, message: 'invalid zip code' }, if: -> { country == 'USA' }
   validates :zip, format: { with: /\A[A-Z]\d[A-Z]\d[A-Z]\d\z/,
                             message: 'invalid postal code' }, if: -> { country == 'CAN' }
+
+  private
+
+  def empty_carts
+    raise 'Not an account address' unless addressable_type == 'Account'
+
+    addressable.carts.destroy_all
+  end
+
+  def reset_offers
+    raise 'Not an account address' unless addressable_type == 'Account'
+
+    addressable.sales_offers.active.each do |offer|
+      offer.seller_reject_or_cancel!(addressable_id)
+      offer.send_cancelled_email
+    end
+    addressable.purchase_offers.active.each do |offer|
+      offer.buyer_reject_or_cancel!(addressable_id)
+      offer.send_cancelled_email
+    end
+  end
 end

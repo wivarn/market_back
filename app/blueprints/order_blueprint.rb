@@ -11,7 +11,7 @@ class OrderBlueprint < Blueprinter::Base
   association :buyer, blueprint: AccountBlueprint
   association :seller, blueprint: AccountBlueprint
   association :address, blueprint: AddressBlueprint
-  association :listings, blueprint: ListingBlueprint do |order|
+  association :listings, blueprint: ListingBlueprint, view: :order do |order|
     listings = order.listings.to_a
     listings.each { |listing| listing.destination_country = order.address.country }
     listings

@@ -30,6 +30,13 @@ Jets.application.routes.draw do
       post :cancel, on: :member
     end
 
+    resources :offers, only: %i[index create], param: :id do
+      post :create_counter, on: :member
+      post :accept, on: :member
+      post :reject, on: :member
+      post :cancel, on: :member
+    end
+
     prefix :account do
       resource :profile, only: %i[show update] do
         get :presigned_put_url, to: 'profiles#presigned_put_url'

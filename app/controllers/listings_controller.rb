@@ -181,7 +181,7 @@ class ListingsController < ApplicationController
 
   def listing_params
     params.permit({ photos: [] }, :category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :international_shipping, :combined_shipping)
+                  :domestic_shipping, :international_shipping, :combined_shipping, :accept_offers)
   end
 
   def state_transition
@@ -190,6 +190,6 @@ class ListingsController < ApplicationController
 
   def bulk_create_params
     params.permit(listings: %i[category subcategory title grading_company condition description price
-                               domestic_shipping international_shipping combined_shipping])
+                               domestic_shipping international_shipping combined_shipping accept_offers])
   end
 end

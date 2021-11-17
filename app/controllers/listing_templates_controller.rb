@@ -3,7 +3,6 @@
 class ListingTemplatesController < ApplicationController
   before_action :authenticate!
   before_action :set_listing_template
-  before_action :listing_template_params, only: [:update]
 
   def show
     render json: @listing_template
@@ -17,11 +16,6 @@ class ListingTemplatesController < ApplicationController
     end
   end
 
-  def delete
-    @listing_template.destroy
-    render json: { deleted: true }
-  end
-
   private
 
   def set_listing_template
@@ -30,6 +24,6 @@ class ListingTemplatesController < ApplicationController
 
   def listing_template_params
     params.permit(:category, :subcategory, :title, :grading_company, :condition, :description, :price,
-                  :domestic_shipping, :international_shipping, :combined_shipping)
+                  :domestic_shipping, :international_shipping, :combined_shipping, :accept_offers)
   end
 end

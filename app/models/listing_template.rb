@@ -5,6 +5,7 @@ class ListingTemplate < ApplicationRecord
   COLLECTIBLES = %w[ANTIQUES ART COINS COMICS STAMPS TOYS WATCHES OTHER].freeze
   GRADING_COMPANIES = %w[BGS CSG HGA KSA MNT PSA SGC OTHER].freeze
 
+  # TODO: add :accept_offers back in after setting default value for existing listings
   validates :account, presence: true
   validates :title, length: { in: 2..256 }, allow_nil: true, allow_blank: true
 

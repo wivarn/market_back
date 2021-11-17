@@ -5,11 +5,13 @@ class CartsController < ApplicationController
   before_action :validate_address_set!
   before_action :set_cart_through_seller_id, only: %i[add_item checkout remove_item delete]
   before_action :set_checkout_session, only: %i[add_item checkout remove_item delete]
+  before_action :set_listing_through_cart!, only: %i[remove_item]
   before_action :enforce_no_checkout_session!, only: %i[add_item remove_item]
+  before_action :enforce_no_offered_items!, only: %i[delete]
   before_action :continue_checkout, only: %i[checkout]
 
   def index
-    carts = current_account.carts.includes(:listings, :seller)
+    carts = current_account.carts.includes(:seller, listings: :accepted_offer)
     render json: CartBlueprint.render(carts, destination_country: current_account.address.country)
   end
 
@@ -104,6 +106,19 @@ class CartsController < ApplicationController
            status: :bad_request
   end
 
+  def set_listing_through_cart!
+    @listing = @cart.seller.listings.find(listing_params[:listing_id])
+    return unless @listing.offered?
+
+    render json: { error: 'You cannot remove an offered item from your cart.' }, status: :forbidden
+  end
+
+  def enforce_no_offered_items!
+    return if @cart.listings.offered.none?
+
+    render json: { error: 'You cannot empty a cart with offered items.' }, status: :forbidden
+  end
+
   def continue_checkout
     return unless @checkout_session
 
@@ -124,7 +139,7 @@ class CartsController < ApplicationController
   end
 
   def stripe_subtotal(listing)
-    ((listing[:price].to_f + listing[:shipping].to_f) * 100).to_i
+    (((listing.dig(:accepted_offer, :amount) || listing[:price]).to_f + listing[:shipping].to_f) * 100).to_i
   end
 
   def stripe_images(listing)

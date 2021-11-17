@@ -35,6 +35,7 @@ group :development, :test do
   gem 'puma'
   gem 'rack'
   gem 'rubocop', '~> 1.13'
+  gem 'rufus-scheduler', '~> 3.8'
   gem 'shotgun'
 end
 

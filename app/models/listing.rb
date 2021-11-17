@@ -22,6 +22,9 @@ class Listing < ApplicationRecord
     tsearch: { dictionary: 'english' }
   }, order_within_rank: 'listings.updated_at DESC'
 
+  before_update :reset_offers
+
+  # TODO: add :accept_offers back in after setting default value for existing listings
   validates :account, :title, :currency, :shipping_country, presence: true
   validates :title, length: { in: 2..256 }
   validates :currency, inclusion: { in: %w[USD CAD] }
@@ -88,22 +91,26 @@ class Listing < ApplicationRecord
   end
 
   belongs_to :account
+  has_many :offers, dependent: :destroy
+  has_one :accepted_offer, -> { accepted.or(Offer.paid) }, class_name: 'Offer'
+
+  alias_attribute :seller, :account
 
   before_destroy { raise 'Only drafts can be destroyed' unless draft? }
 
   scope :ships_to, lambda { |country|
                      return self unless %w[USA CAN].include?(country)
 
-                     where('shipping_country = :country OR international_shipping IS NOT NULL',
+                     where('listings.shipping_country = :country OR listings.international_shipping IS NOT NULL',
                            country: country)
                    }
-  scope :sports_cards, -> { where('category = :category', category: 'SPORTS_CARDS') }
-  scope :trading_cards, -> { where('category = :category', category: 'TRADING_CARDS') }
-  scope :collectibles, -> { where('category = :category', category: 'COLLECTIBLES') }
+  scope :sports_cards, -> { where('listings.category = :category', category: 'SPORTS_CARDS') }
+  scope :trading_cards, -> { where('listings.category = :category', category: 'TRADING_CARDS') }
+  scope :collectibles, -> { where('listings.category = :category', category: 'COLLECTIBLES') }
 
   aasm timestamps: true, no_direct_assignment: true do
     state :draft, initial: true
-    state :active, :removed, :reserved, :sold
+    state :active, :removed, :reserved, :sold, :offered
 
     event :publish do
       transitions from: %i[draft removed], to: :active
@@ -117,22 +124,38 @@ class Listing < ApplicationRecord
       transitions to: :reserved, guard: :active?
     end
 
+    event :offer do
+      transitions from: :active, to: :offered, guard: :active?
+    end
+
     event :cancel_reservation do
       transitions from: :reserved, to: :active
     end
 
+    event :cancel_offer do
+      transitions from: :offered, to: :active
+    end
+
     event :paid do
-      transitions to: :sold, guard: :reserved?
+      transitions to: :sold, guard: :reserved_or_offered?
+      after_commit do
+        accepted_offer&.pay!
+      end
     end
   end
 
   scope :active, lambda {
-                   where('aasm_state = ? OR (aasm_state = ? AND reserved_at < ?)', :active, :reserved,
-                         Time.now.utc - RESERVE_TIME)
+                   where('listings.aasm_state = ?
+                    OR (listings.aasm_state = ? AND listings.reserved_at < ?)',
+                         :active,
+                         :reserved, Time.now.utc - RESERVE_TIME)
                  }
 
-  scope :reserved, -> { where('aasm_state = ? AND reserved_at >= ?', :reserved, DateTime.now - RESERVE_TIME) }
-  scope :publically_viewable, -> { where.not(aasm_state: %w[draft removed]) }
+  scope :reserved, lambda {
+                     where('listings.aasm_state = ? AND listings.reserved_at >= ?',
+                           :reserved, DateTime.now - RESERVE_TIME)
+                   }
+  scope :publically_viewable, -> { where('listings.aasm_state NOT IN (?)', %w[draft removed]) }
 
   def active?
     aasm_state == 'active' || (aasm_state == 'reserved' && reserved_at < Time.now.utc - RESERVE_TIME)
@@ -146,6 +169,10 @@ class Listing < ApplicationRecord
     draft? || active? || removed?
   end
 
+  def reserved_or_offered?
+    reserved? || offered?
+  end
+
   # Blueprint can pass destination_country in as nil
   def shipping(destination_country: nil, combined: false)
     @combined ||= combined
@@ -156,5 +183,14 @@ class Listing < ApplicationRecord
                       international_shipping
                     end
     @combined ? [combined_shipping, dest_shipping].compact.min : dest_shipping
+  end
+
+  private
+
+  def reset_offers
+    offers.active.each do |offer|
+      offer.seller_reject_or_cancel!(account_id)
+      offer.send_cancelled_email
+    end
   end
 end

@@ -38,7 +38,7 @@ class Auth < Roda
     account_open_status_value 'verified'
     account_closed_status_value 'closed'
     verify_account_skip_resend_email_within 60
-    attempt_to_login_to_unverified_account_error_flash 'verify error message'
+    attempt_to_login_to_unverified_account_error_flash 'Your account has not been verified. Please check your email and spam folder.'
 
     # close account config
     delete_account_on_close? false

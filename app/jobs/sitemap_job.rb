@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 class SitemapJob < ApplicationJob
   rate '1 day'

@@ -4,7 +4,7 @@ module ListingsHelper
   TOTAL_PRICE_SELECT = <<~QUERY
     *,
     (price +
-      (CASE WHEN shipping_country = :destination_country
+      (CASE WHEN shipping_country = :destination_country OR :destination_country IS NULL
         THEN domestic_shipping
         ELSE international_shipping
       END)) AS total_price
@@ -78,6 +78,7 @@ module ListingsHelper
   end
 
   def select_total_price(destination_country = 'USA')
-    ActiveRecord::Base.send(:sanitize_sql_array, [TOTAL_PRICE_SELECT, { destination_country: destination_country }])
+    ActiveRecord::Base.send(:sanitize_sql_array,
+                            [TOTAL_PRICE_SELECT, { destination_country: destination_country.presence }])
   end
 end

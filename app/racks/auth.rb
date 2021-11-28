@@ -58,7 +58,7 @@ class Auth < Roda
     jwt_secret ENV['JWT_SECRET']
     jwt_cors_allow_origin true
     expired_jwt_access_token_status 401
-    jwt_access_token_period 30.minutes
+    jwt_access_token_period 120.minutes
     allow_refresh_with_expired_jwt_access_token? true
 
     # session config

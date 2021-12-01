@@ -2,6 +2,7 @@
 
 class OffersController < ApplicationController
   before_action :authenticate!
+  before_action :validate_address_set!
   before_action :set_offer, only: %i[accept reject cancel]
   before_action :set_listing_and_enforce_buyer, only: %i[create]
   before_action :set_offer_and_enforce_seller, only: %i[create_counter]
@@ -63,6 +64,13 @@ class OffersController < ApplicationController
   end
 
   private
+
+  def validate_address_set!
+    return if current_account.address
+
+    render json: { error: 'You must set your address before you can access offers' },
+           status: :unprocessable_entity
+  end
 
   def set_offer
     @offer = Offer.active.find(params[:id])

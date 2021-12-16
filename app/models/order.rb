@@ -14,6 +14,7 @@ class Order < ApplicationRecord
 
   validates :buyer, :seller, :aasm_state, presence: true
   validates_length_of :order_items, maximum: 100
+  validates :feedback, length: { maximum: 1000 }, allow_blank: false, allow_nil: true
 
   validate :buyer_cannot_be_seller
 

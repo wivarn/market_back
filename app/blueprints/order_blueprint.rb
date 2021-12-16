@@ -2,7 +2,7 @@
 
 class OrderBlueprint < Blueprinter::Base
   identifier :id
-  fields :aasm_state, :total, :tracking, :created_at, :currency
+  fields :aasm_state, :total, :tracking, :created_at, :currency, :recommend, :feedback
 
   field :refunded_total do |order|
     order.refunds.inject(0) { |sum, refund| sum + refund.amount }

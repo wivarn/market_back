@@ -3,7 +3,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :set_orders, only: %i[index]
-  before_action :set_order, only: %i[update show update_state]
+  before_action :set_order, only: %i[update show update_state feedback]
   before_action :set_order_through_seller, only: %i[refund cancel]
   before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
 
@@ -72,6 +72,14 @@ class OrdersController < ApplicationController
     end
   rescue Stripe::InvalidRequestError => e
     render json: { error: e.message }, status: e.http_status
+  end
+
+  def feedback
+    if @order.update(params.slice(:recommend, :feedback))
+      render json: OrderBlueprint.render(@order, view: :with_history)
+    else
+      render json: @order.errors, status: :unprocessable_entity
+    end
   end
 
   private

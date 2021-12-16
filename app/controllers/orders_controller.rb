@@ -3,9 +3,11 @@
 class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :set_orders, only: %i[index]
-  before_action :set_order, only: %i[update show update_state feedback]
+  before_action :set_order, only: %i[update show update_state]
+  before_action :set_order_through_buyer, only: %i[feedback]
   before_action :set_order_through_seller, only: %i[refund cancel]
   before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
+  before_action :enforce_feedback_not_set!, only: %i[feedback]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
@@ -75,7 +77,7 @@ class OrdersController < ApplicationController
   end
 
   def feedback
-    if @order.update(params.slice(:recommend, :feedback))
+    if @order.update(params.permit(:recommend, :feedback))
       render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -98,6 +100,10 @@ class OrdersController < ApplicationController
     @order = current_account.public_send(params[:relation]).find(params[:id])
   end
 
+  def set_order_through_buyer
+    @order = current_account.purchases.find(params[:id])
+  end
+
   def set_order_through_seller
     @order = current_account.sales.find(params[:id])
   end
@@ -112,6 +118,12 @@ class OrdersController < ApplicationController
       render json: { error: "Partially refunded orders can't be cancelled" },
              status: :unprocessable_entity
     end
+  end
+
+  def enforce_feedback_not_set!
+    return if @order.recommend.nil?
+
+    render json: { error: 'Order already has feedback' }, status: :unprocessable_entity
   end
 
   def send_email

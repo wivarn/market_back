@@ -77,8 +77,8 @@ class OrdersController < ApplicationController
   end
 
   def feedback
-    @order.recommend = params.recommend
-    @order.feedback = params.feedback
+    @order.recommend = params[:recommend]
+    @order.feedback = params[:feedback]
     @order.feedback_at = DateTime.now
     if @order.save
       render json: OrderBlueprint.render(@order, view: :with_history)

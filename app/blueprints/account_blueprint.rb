@@ -8,6 +8,7 @@ class AccountBlueprint < Blueprinter::Base
   end
 
   view :with_location do
+    fields :total_sales_with_feedback, :recommendation_rate
     association :address, blueprint: AddressBlueprint, view: :location
   end
 

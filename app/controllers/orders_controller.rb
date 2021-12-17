@@ -7,7 +7,7 @@ class OrdersController < ApplicationController
   before_action :set_order_through_buyer, only: %i[feedback]
   before_action :set_order_through_seller, only: %i[refund cancel]
   before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
-  before_action :enforce_feedback_not_set!, only: %i[feedback]
+  before_action :enforce_feedback_editable!, only: %i[feedback]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
@@ -77,7 +77,10 @@ class OrdersController < ApplicationController
   end
 
   def feedback
-    if @order.update(params.permit(:recommend, :feedback))
+    @order.recommend = params.recommend
+    @order.feedback = params.feedback
+    @order.feedback_at = DateTime.now
+    if @order.save
       render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -120,10 +123,10 @@ class OrdersController < ApplicationController
     end
   end
 
-  def enforce_feedback_not_set!
-    return if @order.recommend.nil?
+  def enforce_feedback_editable!
+    return if @order.feedback_at.nil? || @order.feedback_at > 30.days.ago
 
-    render json: { error: 'Order already has feedback' }, status: :unprocessable_entity
+    render json: { error: 'Order feedback cannot be updated after 30 days' }, status: :unprocessable_entity
   end
 
   def send_email

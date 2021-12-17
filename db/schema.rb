@@ -248,6 +248,7 @@ ActiveRecord::Schema.define(version: 2021_12_16_082448) do
     t.datetime "cancelled_at"
     t.boolean "recommend"
     t.text "feedback"
+    t.datetime "feedback_at"
     t.index ["buyer_id"], name: "index_orders_on_buyer_id"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end

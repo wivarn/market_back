@@ -77,9 +77,8 @@ class OrdersController < ApplicationController
   end
 
   def feedback
-    @order.recommend = params[:recommend]
-    @order.feedback = params[:feedback]
-    @order.feedback_at = DateTime.now
+    @order.assign_attributes(params.permit(:recommend, :feedback))
+    @order.feedback_at = DateTime.now unless @order.feedback_at
     if @order.save
       render json: OrderBlueprint.render(@order, view: :with_history)
     else
@@ -124,9 +123,14 @@ class OrdersController < ApplicationController
   end
 
   def enforce_feedback_editable!
-    return if @order.feedback_at.nil? || @order.feedback_at > 30.days.ago
+    if @order.feedback_at && @order.feedback_at < 30.days.ago
+      render json: { error: 'Order feedback cannot be updated after 30 days' },
+             status: :unprocessable_entity
+    end
 
-    render json: { error: 'Order feedback cannot be updated after 30 days' }, status: :unprocessable_entity
+    return if %w[shipped received].include?(@order.aasm_state)
+
+    render json: { error: 'You cannot give feedback until the order has been shipped' }, status: :unprocessable_entity
   end
 
   def send_email

@@ -77,8 +77,8 @@ class OrdersController < ApplicationController
   end
 
   def feedback
-    @order.assign_attributes(params.permit(:recommend, :feedback))
     @order.feedback_at = DateTime.now unless @order.feedback_at
+    @order.assign_attributes(params.compact.permit(:recommend, :feedback))
     if @order.save
       render json: OrderBlueprint.render(@order, view: :with_history)
     else

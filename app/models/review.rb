@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Review < ApplicationRecord
-  REVIEWERS = %w[BUYER SYSTEM].freeze
-
   belongs_to :order
 
   validates :order_id, :reviewer, presence: true

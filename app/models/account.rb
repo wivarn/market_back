@@ -62,15 +62,16 @@ class Account < ApplicationRecord
   end
 
   def total_sales_with_feedback
-    @total_sales_with_feedback ||= sales.where('orders.recommend IS NOT NULL').count
+    @total_sales_with_feedback ||= sales.joins(:review).count
   end
 
   def recommendation_rate
-    @recommendation_rate ||= if total_sales_with_feedback.zero?
-                               0
-                             else
-                               1.0 * sales.where('orders.recommend is true').count / total_sales_with_feedback
-                             end
+    @recommendation_rate ||=
+      if total_sales_with_feedback.zero?
+        0
+      else
+        1.0 * sales.joins(:review).where('reviews.recommend is true').count / total_sales_with_feedback
+      end
   end
 
   private

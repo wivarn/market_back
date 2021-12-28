@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_16_082448) do
+ActiveRecord::Schema.define(version: 2021_12_28_045701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -246,9 +246,6 @@ ActiveRecord::Schema.define(version: 2021_12_16_082448) do
     t.string "payment_intent_id"
     t.datetime "pending_shipment_at"
     t.datetime "cancelled_at"
-    t.boolean "recommend"
-    t.text "feedback"
-    t.datetime "feedback_at"
     t.index ["buyer_id"], name: "index_orders_on_buyer_id"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
   end
@@ -273,6 +270,16 @@ ActiveRecord::Schema.define(version: 2021_12_16_082448) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_refunds_on_order_id"
     t.index ["refund_id"], name: "index_refunds_on_refund_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.boolean "recommend", null: false
+    t.text "feedback"
+    t.string "reviewer", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_reviews_on_order_id"
   end
 
   add_foreign_key "account_active_session_keys", "accounts"
@@ -304,4 +311,5 @@ ActiveRecord::Schema.define(version: 2021_12_16_082448) do
   add_foreign_key "orders", "accounts", column: "seller_id"
   add_foreign_key "payments", "accounts"
   add_foreign_key "refunds", "orders"
+  add_foreign_key "reviews", "orders"
 end

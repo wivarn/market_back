@@ -128,9 +128,9 @@ class OrdersController < ApplicationController
              status: :unprocessable_entity
     end
 
-    return if %w[shipped received].include?(@order.aasm_state)
+    return unless @order.reserved?
 
-    render json: { error: 'You cannot give feedback until the order has been shipped' }, status: :unprocessable_entity
+    render json: { error: 'You cannot give feedback until the order has been paid' }, status: :unprocessable_entity
   end
 
   def send_email

@@ -25,7 +25,7 @@ class OrderJob < ApplicationJob
       'reviews.id IS NULL AND orders.received_at <= ? AND orders.received_at > ?',
       14.days.ago, 15.days.ago
     ).find_each do |order|
-      order.create_review(recommend: true, feedback: 'DEFAULT', reviewer: 'SYSTEM')
+      order.create_review(recommend: true, feedback: nil, reviewer: 'SYSTEM')
     end
   end
 end

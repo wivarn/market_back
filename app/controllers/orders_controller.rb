@@ -123,7 +123,7 @@ class OrdersController < ApplicationController
   end
 
   def enforce_review_editable!
-    if @review.created_at && @review.created_at < 30.days.ago
+    if @review.created_at && @review.created_at < 14.days.ago
       render json: { error: 'Order review can no longer be updated' },
              status: :unprocessable_entity
     end

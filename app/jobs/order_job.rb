@@ -18,4 +18,14 @@ class OrderJob < ApplicationJob
       OrderMailer.review_reminder(order).deliver
     end
   end
+
+  rate '1 day'
+  def auto_review
+    Order.left_joins(:review).where(
+      'reviews.id IS NULL AND orders.received_at <= ? AND orders.received_at > ?',
+      14.days.ago, 15.days.ago
+    ).find_each do |order|
+      order.create_review(recommend: true, feedback: 'DEFAULT', reviewer: 'SYSTEM')
+    end
+  end
 end

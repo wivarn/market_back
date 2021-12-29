@@ -64,4 +64,12 @@ class OrderMailer < ApplicationMailer
 
     mail to: recipient, subject: 'Your order has been cancelled'
   end
+
+  def review_reminder(order)
+    recipient = order.buyer.email
+
+    @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"
+
+    mail to: recipient, subject: 'Please provide feedback on your purchase'
+  end
 end

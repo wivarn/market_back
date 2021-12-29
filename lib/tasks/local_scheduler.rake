@@ -10,6 +10,10 @@ namespace :local_scheduler do
       OrderJob.perform_now(:mark_received)
     end
 
+    scheduler.every '10m', first: :now do
+      OrderJob.perform_now(:review_reminder)
+    end
+
     scheduler.join
   end
 end

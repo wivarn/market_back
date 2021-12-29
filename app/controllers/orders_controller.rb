@@ -124,13 +124,15 @@ class OrdersController < ApplicationController
 
   def enforce_review_editable!
     if @review.created_at && @review.created_at < 30.days.ago
-      render json: { error: 'Order feedback cannot be updated after 30 days' },
+      render json: { error: 'Order review can no longer be updated' },
              status: :unprocessable_entity
     end
 
-    return unless @order.reserved?
+    render json: { error: 'This order has not been paid yet' }, status: :unprocessable_entity if @order.reserved?
 
-    render json: { error: 'You cannot give feedback until the order has been paid' }, status: :unprocessable_entity
+    return unless params[:feedback] && @review.recommend.nil?
+
+    render json: { error: 'The recommend field must be set first' }, status: :unprocessable_entity
   end
 
   def send_email

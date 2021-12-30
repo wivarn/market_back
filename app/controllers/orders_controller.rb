@@ -7,6 +7,7 @@ class OrdersController < ApplicationController
   before_action :set_order_and_review_through_buyer, only: %i[review]
   before_action :set_order_through_seller, only: %i[refund cancel]
   before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
+  before_action :enforce_review_locked!, only: %i[review]
   before_action :enforce_review_editable!, only: %i[review]
 
   def index
@@ -122,12 +123,16 @@ class OrdersController < ApplicationController
     end
   end
 
-  def enforce_review_editable!
-    if @review.created_at && @review.created_at < 14.days.ago
+  def enforce_review_locked!
+    if @review.created_at&.<(14.days.ago) ||
+       @order.cancelled_at&.<(14.days.ago) ||
+       @order.refunds.order(:created_at).first&.created_at&.<(14.days.ago)
       render json: { error: 'Order review can no longer be updated' },
              status: :unprocessable_entity
     end
+  end
 
+  def enforce_review_editable!
     render json: { error: 'This order has not been paid yet' }, status: :unprocessable_entity if @order.reserved?
 
     return unless params[:feedback] && @review.recommend.nil?

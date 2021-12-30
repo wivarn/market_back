@@ -57,7 +57,7 @@ class OrderMailer < ApplicationMailer
     mail to: recipient, subject: 'Your refund has failed'
   end
 
-  def cancalled(order)
+  def cancelled(order)
     recipient = order.buyer.email
 
     @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"

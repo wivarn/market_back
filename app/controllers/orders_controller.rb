@@ -68,7 +68,7 @@ class OrdersController < ApplicationController
     refund = create_stripe_refund
     if refund.save
       @order.cancel!(current_account.id)
-      OrderMailer.cancalled(@order).deliver
+      OrderMailer.cancelled(@order).deliver
       render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: refund.errors, status: :unprocessable_entity

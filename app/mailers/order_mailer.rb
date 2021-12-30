@@ -72,4 +72,12 @@ class OrderMailer < ApplicationMailer
 
     mail to: recipient, subject: 'Please provide feedback on your purchase'
   end
+
+  def review_received(order)
+    recipient = order.seller.email
+
+    @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/sales/#{order.id}"
+
+    mail to: recipient, subject: 'You have received some feedback'
+  end
 end

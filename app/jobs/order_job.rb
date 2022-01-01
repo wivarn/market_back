@@ -3,10 +3,17 @@
 class OrderJob < ApplicationJob
   rate '1 day'
   def mark_received
-    Order.pending_shipment.or(Order.shipped).where('created_at <= ?', 30.days.ago).find_each do |order|
+    Order.pending_shipment.or(Order.shipped).where('orders.pending_shipment_at <= ?', 30.days.ago).find_each do |order|
       order.receive!(order.buyer_id)
-      order.create_review(recommend: true, feedback: nil, reviewer: 'SYSTEM') unless order.review
       OrderMailer.received(order).deliver
+    end
+  end
+
+  rate '1 day'
+  def auto_review
+    Order.left_joins(:review).where('reviews.id IS NULL AND orders.pending_shipment_at <= ?',
+                                    30.days.ago).find_each do |order|
+      order.create_review(recommend: true, feedback: nil, reviewer: 'SYSTEM')
     end
   end
 

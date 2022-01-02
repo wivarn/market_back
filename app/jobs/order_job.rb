@@ -29,7 +29,8 @@ class OrderJob < ApplicationJob
 
   rate '1 day'
   def review_received
-    Account.joins(sales: :review).where('reviews.updated_at > ?', 1.day.ago).find_each do |account|
+    Account.joins(sales: :review).where("reviews.reviewer != 'SYSTEM' AND reviews.updated_at > ?",
+                                        1.day.ago).find_each do |account|
       OrderMailer.daily_review_received(account).deliver
     end
   end

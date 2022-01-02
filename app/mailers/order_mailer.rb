@@ -76,7 +76,7 @@ class OrderMailer < ApplicationMailer
   def daily_review_received(account)
     recipient = account.email
 
-    orders = account.sales.joins(:review).where('reviews.updated_at > ?', 1.day.ago)
+    orders = account.sales.joins(:review).where("reviews.reviewer != 'SYSTEM' AND reviews.updated_at > ?", 1.day.ago)
     @order_links = orders.map { |order| "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}" }.join("\n")
 
     mail to: recipient, subject: 'You have received some feedback'

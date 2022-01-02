@@ -26,4 +26,11 @@ class OrderJob < ApplicationJob
       OrderMailer.review_reminder(order).deliver
     end
   end
+
+  rate '1 day'
+  def review_received
+    Account.joins(sales: :review).where('reviews.updated_at > ?', 1.day.ago).find_each do |account|
+      OrderMailer.daily_review_received(account).deliver
+    end
+  end
 end

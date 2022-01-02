@@ -33,9 +33,11 @@ class Account < ApplicationRecord
   has_many :cart_items, through: :carts
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
-  has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
-  has_many :sales_offers, through: :listings, source: :offers
   has_many :purchase_offers, class_name: 'Offer', foreign_key: :buyer_id
+  has_many :sales_offers, through: :listings, source: :offers
+  has_many :purchase_reviews, through: :purchases, source: :review
+  has_many :sale_reviews, through: :sales, source: :review
+  has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
   has_one :listing_template
   has_one :payment
   has_one :address, as: :addressable

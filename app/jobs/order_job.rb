@@ -11,6 +11,8 @@ class OrderJob < ApplicationJob
 
   rate '1 day'
   def auto_review
+    return if Jets.env.production?
+
     Order.left_joins(:review).where('reviews.id IS NULL AND orders.pending_shipment_at <= ?',
                                     30.days.ago).find_each do |order|
       order.create_review(recommend: true, feedback: nil, reviewer: 'SYSTEM')

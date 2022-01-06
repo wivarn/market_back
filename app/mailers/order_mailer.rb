@@ -57,11 +57,28 @@ class OrderMailer < ApplicationMailer
     mail to: recipient, subject: 'Your refund has failed'
   end
 
-  def cancalled(order)
+  def cancelled(order)
     recipient = order.buyer.email
 
     @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"
 
     mail to: recipient, subject: 'Your order has been cancelled'
+  end
+
+  def review_reminder(order)
+    recipient = order.buyer.email
+
+    @order_link = "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}"
+
+    mail to: recipient, subject: 'Please provide feedback on your purchase'
+  end
+
+  def daily_review_received(account)
+    recipient = account.email
+
+    orders = account.sales.joins(:review).where("reviews.reviewer != 'SYSTEM' AND reviews.updated_at > ?", 1.day.ago)
+    @order_links = orders.map { |order| "#{ENV['FRONT_END_BASE_URL']}/account/purchases/#{order.id}" }.join("\n")
+
+    mail to: recipient, subject: 'You have received some feedback'
   end
 end

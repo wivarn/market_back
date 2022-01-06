@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_14_024846) do
+ActiveRecord::Schema.define(version: 2021_12_28_045701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -272,6 +272,16 @@ ActiveRecord::Schema.define(version: 2021_11_14_024846) do
     t.index ["refund_id"], name: "index_refunds_on_refund_id"
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.boolean "recommend", null: false
+    t.text "feedback"
+    t.string "reviewer", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_reviews_on_order_id"
+  end
+
   add_foreign_key "account_active_session_keys", "accounts"
   add_foreign_key "account_authentication_audit_logs", "accounts"
   add_foreign_key "account_jwt_refresh_keys", "accounts"
@@ -301,4 +311,5 @@ ActiveRecord::Schema.define(version: 2021_11_14_024846) do
   add_foreign_key "orders", "accounts", column: "seller_id"
   add_foreign_key "payments", "accounts"
   add_foreign_key "refunds", "orders"
+  add_foreign_key "reviews", "orders"
 end

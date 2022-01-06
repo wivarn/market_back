@@ -11,6 +11,7 @@ class Order < ApplicationRecord
   has_many :listings, through: :order_items
   has_many :refunds, -> { order(:updated_at) }, dependent: :destroy
   has_one :address, as: :addressable, dependent: :destroy
+  has_one :review, dependent: :destroy
 
   validates :buyer, :seller, :aasm_state, presence: true
   validates_length_of :order_items, maximum: 100

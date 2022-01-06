@@ -33,9 +33,11 @@ class Account < ApplicationRecord
   has_many :cart_items, through: :carts
   has_many :purchases, class_name: 'Order', foreign_key: :buyer_id
   has_many :sales, class_name: 'Order', foreign_key: :seller_id
-  has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
-  has_many :sales_offers, through: :listings, source: :offers
   has_many :purchase_offers, class_name: 'Offer', foreign_key: :buyer_id
+  has_many :sales_offers, through: :listings, source: :offers
+  has_many :purchase_reviews, through: :purchases, source: :review
+  has_many :sale_reviews, through: :sales, source: :review
+  has_many :sent_messages, class_name: 'Message', foreign_key: :sender_id
   has_one :listing_template
   has_one :payment
   has_one :address, as: :addressable
@@ -59,6 +61,19 @@ class Account < ApplicationRecord
 
   def full_name
     "#{given_name} #{family_name}"
+  end
+
+  def total_sales_with_feedback
+    @total_sales_with_feedback ||= sales.joins(:review).count
+  end
+
+  def recommendation_rate
+    @recommendation_rate ||=
+      if total_sales_with_feedback.zero?
+        0
+      else
+        1.0 * sales.joins(:review).where('reviews.recommend is true').count / total_sales_with_feedback
+      end
   end
 
   private

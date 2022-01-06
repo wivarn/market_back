@@ -4,8 +4,11 @@ class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :set_orders, only: %i[index]
   before_action :set_order, only: %i[update show update_state]
+  before_action :set_order_and_review_through_buyer, only: %i[review]
   before_action :set_order_through_seller, only: %i[refund cancel]
   before_action :filter_orders_that_cannot_be_cancelled, only: %i[cancel]
+  before_action :enforce_review_locked!, only: %i[review]
+  before_action :enforce_review_editable!, only: %i[review]
 
   def index
     paginated_orders = @orders.order(created_at: :desc).page(params[:page].to_i).per(10)
@@ -65,7 +68,7 @@ class OrdersController < ApplicationController
     refund = create_stripe_refund
     if refund.save
       @order.cancel!(current_account.id)
-      OrderMailer.cancalled(@order).deliver
+      OrderMailer.cancelled(@order).deliver
       render json: OrderBlueprint.render(@order, view: :with_history)
     else
       render json: refund.errors, status: :unprocessable_entity
@@ -74,13 +77,22 @@ class OrdersController < ApplicationController
     render json: { error: e.message }, status: e.http_status
   end
 
+  def review
+    @review.assign_attributes(params.compact.permit(:recommend, :feedback).merge(reviewer: 'BUYER'))
+    if @review.save
+      render json: OrderBlueprint.render(@order, view: :with_history)
+    else
+      render json: @review.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_orders
     relation = params[:relation] || params[:view]
     render json: { error: 'invalid view' }, status: 400 unless %w[purchases sales].include?(relation)
 
-    @orders = current_account.public_send(relation).not_reserved.includes(:address, :buyer, :seller,
+    @orders = current_account.public_send(relation).not_reserved.includes(:address, :buyer, :seller, :review,
                                                                           :refunds, listings: :accepted_offer)
   end
 
@@ -88,6 +100,11 @@ class OrdersController < ApplicationController
     render json: { error: 'invalid relation' }, status: 400 unless %w[purchases sales].include?(params[:relation])
 
     @order = current_account.public_send(params[:relation]).find(params[:id])
+  end
+
+  def set_order_and_review_through_buyer
+    @order = current_account.purchases.find(params[:id])
+    @review = Review.where(order: @order).first_or_initialize
   end
 
   def set_order_through_seller
@@ -104,6 +121,23 @@ class OrdersController < ApplicationController
       render json: { error: "Partially refunded orders can't be cancelled" },
              status: :unprocessable_entity
     end
+  end
+
+  def enforce_review_locked!
+    if @review.created_at&.<(14.days.ago) ||
+       @order.cancelled_at&.<(14.days.ago) ||
+       @order.refunds.order(:created_at).first&.created_at&.<(14.days.ago)
+      render json: { error: 'Order review can no longer be updated' },
+             status: :unprocessable_entity
+    end
+  end
+
+  def enforce_review_editable!
+    render json: { error: 'This order has not been paid yet' }, status: :unprocessable_entity if @order.reserved?
+
+    return unless params[:feedback] && @review.recommend.nil?
+
+    render json: { error: 'The recommend field must be set first' }, status: :unprocessable_entity
   end
 
   def send_email

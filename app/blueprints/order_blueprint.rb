@@ -13,9 +13,16 @@ class OrderBlueprint < Blueprinter::Base
   association :address, blueprint: AddressBlueprint
   association :review, blueprint: ReviewBlueprint
   association :listings, blueprint: ListingBlueprint, view: :order do |order|
+    destination = order.address.country
     listings = order.listings.to_a
-    listings.each { |listing| listing.destination_country = order.address.country }
-    listings
+
+    max_shipping_listing =
+      listings.delete(listings.max_by { |listing| listing.shipping(destination_country: destination) })
+    listings.each do |listing|
+      listing.combined = true
+      listing.destination_country = destination
+    end
+    [max_shipping_listing, *listings].compact
   end
 
   view :with_history do

@@ -9,7 +9,10 @@ class CartBlueprint < Blueprinter::Base
 
     max_shipping_listing =
       listings.delete(listings.max_by { |listing| listing.shipping(destination_country: destination) })
-    listings.each { |listing| listing.combined = true }
+    listings.each do |listing|
+      listing.combined = true
+      listing.destination_country = destination
+    end
     [max_shipping_listing, *listings].compact
   end
 

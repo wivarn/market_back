@@ -49,3 +49,7 @@ group :staging, :production do
   gem 'rollbar', '~> 3.2'
   gem 'sentry-ruby', '~> 4.7'
 end
+
+group :production do
+  gem 'sitemap_generator', '~> 6.2'
+end

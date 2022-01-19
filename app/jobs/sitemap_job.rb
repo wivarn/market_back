@@ -11,8 +11,11 @@ class SitemapJob < ApplicationJob
     return unless Jets.env.production?
 
     SitemapGenerator::Sitemap.default_host = ENV['FRONT_END_BASE_URL']
+    SitemapGenerator::Sitemap.public_path = '/tmp/'
+    SitemapGenerator::Sitemap.sitemaps_host = 'https://assets.skwirl.io/'
+    SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new ENV['PUBLIC_ASSETS_BUCKET'],
+                                                                            region: 'us-east-1'
     SitemapGenerator::Sitemap.include_root = false
-    SitemapGenerator::Sitemap.adapter = SitemapGenerator::WaveAdapter.new
     SitemapGenerator::Sitemap.create do
       Listing.publically_viewable.find_each do |listing|
         changefreq = listing.sold? ? :never : :weekly
@@ -20,5 +23,6 @@ class SitemapJob < ApplicationJob
         add "/listings/#{listing.id}", lastmod: listing.updated_at, changefreq: changefreq, priority: priority
       end
     end
+    SitemapGenerator::Sitemap.ping_search_engines
   end
 end

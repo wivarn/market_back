@@ -7,7 +7,7 @@ Jets.application.configure do
 
   config.prewarm.enable = true
   config.prewarm.rate = '5 minutes'
-  config.prewarm.concurrency = 1
+  config.prewarm.concurrency = 2
   config.prewarm.public_ratio = 0
 
   config.function.timeout = 15 # defaults to 30

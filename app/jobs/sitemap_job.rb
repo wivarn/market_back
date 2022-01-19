@@ -11,6 +11,7 @@ class SitemapJob < ApplicationJob
     return unless Jets.env.production?
 
     SitemapGenerator::Sitemap.default_host = ENV['FRONT_END_BASE_URL']
+    SitemapGenerator::Sitemap.public_path = '/tmp/'
     SitemapGenerator::Sitemap.include_root = false
     SitemapGenerator::Sitemap.adapter = SitemapGenerator::WaveAdapter.new
     SitemapGenerator::Sitemap.create do
@@ -20,6 +21,6 @@ class SitemapJob < ApplicationJob
         add "/listings/#{listing.id}", lastmod: listing.updated_at, changefreq: changefreq, priority: priority
       end
     end
-    SitemapGenerator::Sitemap.ping_search_engines
+    # SitemapGenerator::Sitemap.ping_search_engines
   end
 end

@@ -20,5 +20,6 @@ class SitemapJob < ApplicationJob
         add "/listings/#{listing.id}", lastmod: listing.updated_at, changefreq: changefreq, priority: priority
       end
     end
+    SitemapGenerator::Sitemap.ping_search_engines
   end
 end

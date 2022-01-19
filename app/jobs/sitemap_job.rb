@@ -12,9 +12,10 @@ class SitemapJob < ApplicationJob
 
     SitemapGenerator::Sitemap.default_host = ENV['FRONT_END_BASE_URL']
     SitemapGenerator::Sitemap.public_path = '/tmp/'
-    SitemapGenerator::Sitemap.include_root = false
+    SitemapGenerator::Sitemap.sitemaps_host = 'https://assets.skwirl.io/'
     SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new ENV['PUBLIC_ASSETS_BUCKET'],
                                                                             region: 'us-east-1'
+    SitemapGenerator::Sitemap.include_root = false
     SitemapGenerator::Sitemap.create do
       Listing.publically_viewable.find_each do |listing|
         changefreq = listing.sold? ? :never : :weekly

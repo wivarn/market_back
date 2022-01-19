@@ -5,21 +5,20 @@ class SitemapJob < ApplicationJob
   iam_policy({
                action: ['s3:PutObject', 's3:PutObjectAcl'],
                effect: 'Allow',
-               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/sitemap.txt"
+               resource: "#{ENV['PUBLIC_ASSETS_BUCKET_ARN']}/sitemap*"
              })
   def build
     return unless Jets.env.production?
 
-    sitemap = ''
-    Listing.publically_viewable.find_each do |listing|
-      sitemap << "#{ENV['FRONT_END_BASE_URL']}/listings/#{listing.id}\n"
+    SitemapGenerator::Sitemap.default_host = ENV['FRONT_END_BASE_URL']
+    SitemapGenerator::Sitemap.include_root = false
+    SitemapGenerator::Sitemap.adapter = SitemapGenerator::WaveAdapter.new
+    SitemapGenerator::Sitemap.create do
+      Listing.publically_viewable.find_each do |listing|
+        changefreq = listing.sold? ? :never : :weekly
+        priority = listing.sold? ? 0.5 : 0.8
+        add "/listings/#{listing.id}", lastmod: listing.updated_at, changefreq: changefreq, priority: priority
+      end
     end
-    s3_client.put_object(acl: 'public-read', body: sitemap, bucket: ENV['PUBLIC_ASSETS_BUCKET'], key: 'sitemap.txt')
-  end
-
-  private
-
-  def s3_client
-    @s3_client ||= Aws::S3::Client.new
   end
 end

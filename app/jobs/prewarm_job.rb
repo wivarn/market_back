@@ -6,6 +6,6 @@ class PrewarmJob < ApplicationJob
     uri = URI("#{ENV['FRONT_END_BASE_URL']}/listings/#{Listing.publically_viewable.last.id}")
     res = Net::HTTP.get_response(uri)
     puts res.code
-    puts res.body
+    puts Nokogiri::HTML.parse(res.body)
   end
 end

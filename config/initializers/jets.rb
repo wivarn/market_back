@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
 module Jets
-  class Controller
-    module Rack
-      module EnvExtentions
-        private
+  module BareControllerExtentions
+    private
 
-        def path_with_base_path
-          @event['path']
-        end
-
-        def content_type
-          headers['Content-Type'] || headers['content-type'] || Jets::Controller::DEFAULT_CONTENT_TYPE
-        end
-      end
-
-      class Env
-        prepend EnvExtentions
-      end
+    def process!
+      status, headers, body = dispatch!
+      adapter = Jets::Controller::Rack::Adapter.new(event, context)
+      adapter.convert_to_api_gateway(status, headers, body)
     end
+  end
+
+  class BareController
+    prepend BareControllerExtentions
   end
 end

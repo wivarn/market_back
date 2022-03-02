@@ -52,7 +52,8 @@ class Account < ApplicationRecord
   end
 
   def seller?
-    SELLERS.include?(role)
+    # temp change to make everyone a seller
+    true || SELLERS.include?(role)
   end
 
   def fee
